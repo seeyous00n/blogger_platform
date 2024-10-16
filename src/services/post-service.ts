@@ -1,5 +1,4 @@
 import { postsRepository } from '../repositories/posts-repository';
-import { blogsRepository } from '../repositories/blogs-repository';
 import { PostCreateModel } from '../models/post/PostCreateModel';
 import { PostType } from '../types/post-types';
 import { PostUpdateModal } from '../models/post/PostUpdateModal';
@@ -19,7 +18,7 @@ class PostService {
   }
 
   createPost(post: PostCreateModel): PostType {
-    const dataBlog = blogService.getBlogById(+post.blogId)
+    const dataBlog = blogService.getBlogById(+post.blogId); // правильно ли из сервиса обращаться к другому сервису??
     const id = String(new Date().getTime());
     if (!dataBlog) {
       throw new Error('Blog name not found');

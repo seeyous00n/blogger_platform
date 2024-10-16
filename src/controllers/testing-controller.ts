@@ -1,6 +1,5 @@
 import { clearDbBlogs, clearDbPosts } from '../db';
 import { NextFunction, Request, Response } from 'express';
-import { BlogViewModel } from '../models/blog/BlogViewModel';
 import { HTTP_MESSAGE, HTTP_STATUS_CODE } from '../settings';
 
 class TestingController {
