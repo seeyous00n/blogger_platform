@@ -11,5 +11,5 @@ app.use(ROUTER_PATHS.BLOGS, blogsRouter);
 app.use(ROUTER_PATHS.POSTS, postsRouter);
 app.delete(ROUTER_PATHS.TESTING, testingController.clearAllData);
 app.use('*', (req: Request, res: Response, next: NextFunction) => {
-  res.status(400).send('Not Found');
+  res.status(404).send('Not Found');
 });

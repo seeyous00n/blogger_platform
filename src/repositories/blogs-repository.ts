@@ -15,13 +15,13 @@ class BlogsRepository {
     db.blogs.push(data);
   }
 
-  deleteById(id: number) {
-    db.blogs = db.blogs.filter(blog => +blog.id !== id);
-  }
-
   updateById(id: number, data: BlogUpdateModal) {
     const index = db.blogs.findIndex(blog => +blog.id === id);
     db.blogs[index] = { ...db.blogs[index], ...data };
+  }
+
+  deleteById(id: number) {
+    db.blogs = db.blogs.filter(blog => +blog.id !== id);
   }
 }
 

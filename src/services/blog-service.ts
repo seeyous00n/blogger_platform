@@ -2,7 +2,8 @@ import { blogsRepository } from '../repositories/blogs-repository';
 import { BlogType } from '../types/blog-types';
 import { BlogCreateModel } from '../models/blog/BlogCreateModel';
 import { BlogUpdateModal } from '../models/blog/BlogUpdateModal';
-import { BlogViewModel } from '../models/blog/BlogViewModel';
+import { setAndThrowError } from '../utils';
+import { HTTP_MESSAGE, HTTP_STATUS_CODE } from '../settings';
 
 class BlogService {
   getAllBlogs(): BlogType[] {
@@ -12,7 +13,7 @@ class BlogService {
   getBlogById(id: number): BlogType {
     const result = blogsRepository.getById(id);
     if (!result) {
-      throw new Error('Blog not found');
+      throw new Error('blog id not found');
     }
     return result;
   }
@@ -27,7 +28,7 @@ class BlogService {
   updateBlogById(id: number, data: BlogUpdateModal): void {
     const result = blogsRepository.getById(id);
     if (!result) {
-      throw new Error('Blog not found');
+      setAndThrowError({ message: HTTP_MESSAGE.NOT_FOUND, status: HTTP_STATUS_CODE.NOT_FOUND_404 });
     }
     blogsRepository.updateById(id, data);
   }
@@ -35,8 +36,7 @@ class BlogService {
   deleteBlogById(id: number): void {
     const result = blogsRepository.getById(id);
     if (!result) {
-      // тут по идеи нужно выкинуть ошибку
-      throw new Error('Blog not found');
+      setAndThrowError({ message: HTTP_MESSAGE.NOT_FOUND, status: HTTP_STATUS_CODE.NOT_FOUND_404 });
     }
     blogsRepository.deleteById(id);
   }
