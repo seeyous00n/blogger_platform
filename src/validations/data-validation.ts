@@ -37,5 +37,6 @@ export const postDataUpdateValidation = [
   titleValidator,
   shortDescriptionValidator,
   contentValidator,
+  isBlogId,
   errorsValidationMiddleware,
 ];
