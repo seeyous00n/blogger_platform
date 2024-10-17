@@ -13,9 +13,9 @@ class BlogService {
   getBlogById(id: number): BlogType {
     const result = blogsRepository.getById(id);
     if (!result) {
-      throw new Error('blog id not found');
+      setAndThrowError({ message: HTTP_MESSAGE.NOT_FOUND, status: HTTP_STATUS_CODE.NOT_FOUND_404 });
     }
-    return result;
+    return result!;
   }
 
   createBlog(blog: BlogCreateModel): BlogType {
