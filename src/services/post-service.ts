@@ -6,8 +6,6 @@ import { blogService } from './blog-service';
 import { setAndThrowError } from '../utils';
 import { HTTP_MESSAGE, HTTP_STATUS_CODE } from '../settings';
 
-
-
 class PostService {
   getAllPosts(): PostType[] {
     return postsRepository.getAll();
