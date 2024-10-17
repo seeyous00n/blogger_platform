@@ -19,6 +19,7 @@ export const HTTP_STATUS_CODE = {
   'BAD_REQUEST_400': 400,
   'NOT_FOUND_404': 404,
   'SERVER_ERROR_500': 500,
+  'UNAUTHORIZED_401': 401,
 };
 
 export const HTTP_MESSAGE = {
@@ -26,4 +27,5 @@ export const HTTP_MESSAGE = {
   'ID_DOESNT_EXIST': `id doesn't exist`,
   'NOT_FOUND': 'Not Found',
   'SERVER_ERROR': 'Internal Server Error',
+  'UNAUTHORIZED': 'Unauthorized',
 };
