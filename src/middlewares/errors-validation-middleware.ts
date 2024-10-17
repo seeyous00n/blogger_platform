@@ -1,6 +1,7 @@
 import { NextFunction, Request, Response } from 'express';
 import { Result, validationResult } from 'express-validator';
 import { resultErrorsType } from '../types/types';
+import { HTTP_STATUS_CODE } from '../settings';
 
 export const errorsValidationMiddleware = (req: Request, res: Response, next: NextFunction) => {
   const errors: Result = validationResult(req);
@@ -12,8 +13,9 @@ export const errorsValidationMiddleware = (req: Request, res: Response, next: Ne
     resultErrors.errorsMessages = errors.array({ onlyFirstError: true })
       .map((error) => ({ message: error.msg, field: error.path }));
 
-    res.status(400).json(resultErrors);
+    res.status(HTTP_STATUS_CODE.BAD_REQUEST_400).json(resultErrors);
     return;
   }
+
   next();
 };

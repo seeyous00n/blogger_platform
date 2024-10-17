@@ -18,7 +18,7 @@ class BlogsController {
     }
   };
 
-  getBlog = (req: RequestWithParams<URIParamsModel>, res: Response<BlogViewModel | string>, next: NextFunction) => {
+  getBlog = (req: RequestWithParams<URIParamsModel>, res: Response<BlogViewModel>, next: NextFunction) => {
     try {
       const result: BlogType = blogService.getBlogById(+req.params.id);
       res.status(HTTP_STATUS_CODE.OK_200).json(result);

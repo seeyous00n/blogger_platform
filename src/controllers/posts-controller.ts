@@ -1,5 +1,4 @@
 import { NextFunction, Request, Response } from 'express';
-import { blogService } from '../services/blog-service';
 import { HTTP_MESSAGE, HTTP_STATUS_CODE } from '../settings';
 import { postService } from '../services/post-service';
 import { PostType } from '../types/post-types';
@@ -18,7 +17,7 @@ class PostsController {
       res.status(HTTP_STATUS_CODE.SERVER_ERROR_500).json(HTTP_MESSAGE.SERVER_ERROR);
     }
   };
-  getPost = (req: RequestWithParams<URIParamsModel>, res: Response<PostType | string>, next: NextFunction) => {
+  getPost = (req: RequestWithParams<URIParamsModel>, res: Response<PostType>, next: NextFunction) => {
     try {
       const result = <PostType>postService.getPostById(+req.params.id);
       res.status(HTTP_STATUS_CODE.OK_200).json(result);
