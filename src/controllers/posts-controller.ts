@@ -17,6 +17,7 @@ class PostsController {
       res.status(HTTP_STATUS_CODE.SERVER_ERROR_500).json(HTTP_MESSAGE.SERVER_ERROR);
     }
   };
+
   getPost = (req: RequestWithParams<URIParamsModel>, res: Response<PostType>, next: NextFunction) => {
     try {
       const result = <PostType>postService.getPostById(+req.params.id);
@@ -26,6 +27,7 @@ class PostsController {
       res.status(err.status).json(err.message);
     }
   };
+
   creatPost = (req: RequestWithBody<PostCreateModel>, res: Response<PostViewModel | string>, next: NextFunction) => {
     try {
       const result: PostType = postService.createPost(req.body);
@@ -34,6 +36,7 @@ class PostsController {
       res.status(HTTP_STATUS_CODE.SERVER_ERROR_500).json(HTTP_MESSAGE.SERVER_ERROR);
     }
   };
+
   updatePost = (req: RequestWithParamsAndBody<URIParamsModel, PostUpdateModal>, res: Response, next: NextFunction) => {
     try {
       postService.updatePostById(+req.params.id, req.body);
@@ -43,6 +46,7 @@ class PostsController {
       res.status(err.status).json(err.message);
     }
   };
+
   deletePost = (req: RequestWithParams<URIParamsModel>, res: Response, next: NextFunction) => {
     try {
       postService.deletePostById(+req.params.id);
