@@ -5,10 +5,13 @@ import { PostUpdateModal } from '../models/post/PostUpdateModal';
 import { blogService } from './blog-service';
 import { setAndThrowError } from '../utils';
 import { HTTP_MESSAGE, HTTP_STATUS_CODE } from '../settings';
+import { PostsViewDto } from '../dtos/posts-view-dto';
 
 class PostService {
   async getAllPosts(): Promise<PostType[]> {
-    return await postsRepository.getAll();
+    const result = await postsRepository.getAll();
+
+    return result.map(post => new PostsViewDto(post));
   }
 
   async getPostById(id: string): Promise<PostType | null> {
@@ -16,7 +19,8 @@ class PostService {
     if (!result) {
       setAndThrowError({ message: HTTP_MESSAGE.NOT_FOUND, status: HTTP_STATUS_CODE.NOT_FOUND_404 });
     }
-    return result!;
+
+    return new PostsViewDto(result!);
   }
 
   async createPost(post: PostCreateModel): Promise<PostType> {
@@ -26,7 +30,8 @@ class PostService {
       ...post, id, blogName: dataBlog.name, createdAt: new Date().toISOString(),
     };
     await postsRepository.createByData(newPost);
-    return newPost;
+
+    return new PostsViewDto(newPost);
   }
 
   async updatePostById(id: string, data: PostUpdateModal): Promise<void> {

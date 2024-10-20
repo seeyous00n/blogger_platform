@@ -4,10 +4,13 @@ import { BlogCreateModel } from '../models/blog/BlogCreateModel';
 import { BlogUpdateModal } from '../models/blog/BlogUpdateModal';
 import { setAndThrowError } from '../utils';
 import { HTTP_MESSAGE, HTTP_STATUS_CODE } from '../settings';
+import { BlogsViewDto } from '../dtos/blogs-view-dto';
 
 class BlogService {
   async findBLogs(): Promise<BlogType[]> {
-    return await blogsRepository.getAll();
+    const result = await blogsRepository.getAll();
+
+    return result.map((blog: BlogType) => new BlogsViewDto(blog));
   }
 
   async getBlogById(id: string): Promise<BlogType> {
@@ -15,7 +18,8 @@ class BlogService {
     if (!result) {
       setAndThrowError({ message: HTTP_MESSAGE.NOT_FOUND, status: HTTP_STATUS_CODE.NOT_FOUND_404 });
     }
-    return result!;
+
+    return new BlogsViewDto(result!);
   }
 
   async createBlog(blog: BlogCreateModel): Promise<BlogType> {
@@ -24,7 +28,8 @@ class BlogService {
       ...blog, id, isMembership: false, createdAt: new Date().toISOString(),
     };
     await blogsRepository.createByData(newBlog);
-    return newBlog;
+
+    return new BlogsViewDto(newBlog);
   }
 
   async updateBlogById(id: string, data: BlogUpdateModal): Promise<void> {
