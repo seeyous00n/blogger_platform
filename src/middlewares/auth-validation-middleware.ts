@@ -12,6 +12,7 @@ export const authValidationMiddleware = (req: Request, res: Response, next: Next
   const authHeader = req.headers.authorization;
   if (!authHeader) {
     res.status(HTTP_STATUS_CODE.UNAUTHORIZED_401).json(HTTP_MESSAGE.UNAUTHORIZED);
+    return;
   }
 
   if (authHeader) {
@@ -20,6 +21,7 @@ export const authValidationMiddleware = (req: Request, res: Response, next: Next
 
     if (auth !== authorization[1] || authorization[0] !== BASIC) {
       res.status(HTTP_STATUS_CODE.UNAUTHORIZED_401).json(HTTP_MESSAGE.UNAUTHORIZED);
+      return;
     }
   }
 
