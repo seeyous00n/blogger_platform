@@ -1,11 +1,14 @@
 import { body } from 'express-validator';
-import { blogService } from '../services/blog-service';
 import { errorsValidationMiddleware } from '../middlewares/errors-validation-middleware';
+import { blogsRepository } from '../repositories/blogs-repository';
+
+const BLOG_ID_ERROR_MESSAGE = 'Blog ID not found';
 
 const blogIdValidator = async (value: string) => {
-  const blog = await blogService.getBlogById(value);
+  //const blog = await blogService.getBlogById(value);
+  const blog = await blogsRepository.getById(value);
   if (!blog) {
-    throw new Error('blog ID not found');
+    throw new Error(BLOG_ID_ERROR_MESSAGE);
   }
 };
 
