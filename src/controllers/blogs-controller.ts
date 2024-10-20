@@ -9,18 +9,18 @@ import { BlogUpdateModal } from '../models/blog/BlogUpdateModal';
 import { BlogType } from '../types/blog-types';
 
 class BlogsController {
-  getBlogs = (req: Request, res: Response<BlogViewModel[] | string>, next: NextFunction) => {
+  getBlogs = async (req: Request, res: Response<BlogViewModel[] | string>, next: NextFunction) => {
     try {
-      const result: BlogType[] = blogService.getAllBlogs();
+      const result: BlogType[] = await blogService.findBLogs();
       res.status(HTTP_STATUS_CODE.OK_200).json(result);
     } catch (e: any) {
       res.status(HTTP_STATUS_CODE.SERVER_ERROR_500).json(HTTP_MESSAGE.SERVER_ERROR); // res: Response<BlogViewModel[] | string> ?????
     }
   };
 
-  getBlog = (req: RequestWithParams<URIParamsModel>, res: Response<BlogViewModel>, next: NextFunction) => {
+  getBlog = async (req: RequestWithParams<URIParamsModel>, res: Response<BlogViewModel>, next: NextFunction) => {
     try {
-      const result: BlogType = blogService.getBlogById(+req.params.id);
+      const result: BlogType = await blogService.getBlogById(req.params.id);
       res.status(HTTP_STATUS_CODE.OK_200).json(result);
     } catch (e: any) {
       const err = JSON.parse(e.message);
@@ -28,18 +28,18 @@ class BlogsController {
     }
   };
 
-  createBlog = (req: RequestWithBody<BlogCreateModel>, res: Response<BlogViewModel | string>, next: NextFunction) => {
+  createBlog = async (req: RequestWithBody<BlogCreateModel>, res: Response<BlogViewModel | string>, next: NextFunction) => {
     try {
-      const result: BlogType = blogService.createBlog(req.body);
+      const result: BlogType = await blogService.createBlog(req.body);
       res.status(HTTP_STATUS_CODE.CREATED_201).json(result);
     } catch (e: any) {
       res.status(HTTP_STATUS_CODE.SERVER_ERROR_500).json(HTTP_MESSAGE.SERVER_ERROR);
     }
   };
 
-  updateBlog = (req: RequestWithParamsAndBody<URIParamsModel, BlogUpdateModal>, res: Response, next: NextFunction) => {
+  updateBlog = async (req: RequestWithParamsAndBody<URIParamsModel, BlogUpdateModal>, res: Response, next: NextFunction) => {
     try {
-      blogService.updateBlogById(+req.params.id, req.body);
+      await blogService.updateBlogById(req.params.id, req.body);
       res.status(HTTP_STATUS_CODE.NO_CONTENT_204).json();
     } catch (e: any) {
       const err = JSON.parse(e.message);
@@ -47,9 +47,9 @@ class BlogsController {
     }
   };
 
-  deleteBlog = (req: RequestWithParams<URIParamsModel>, res: Response, next: NextFunction) => {
+  deleteBlog = async (req: RequestWithParams<URIParamsModel>, res: Response, next: NextFunction) => {
     try {
-      blogService.deleteBlogById(+req.params.id);
+      await blogService.deleteBlogById(req.params.id);
       res.status(HTTP_STATUS_CODE.NO_CONTENT_204).json();
     } catch (e: any) {
       const err = JSON.parse(e.message);

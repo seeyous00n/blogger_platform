@@ -4,6 +4,8 @@ config();
 
 export const SETTINGS = {
   PORT: process.env.PORT || 3003,
+  MONGO_URI: process.env.mongoURI || 'mongodb://localhost:27017',
+  DB_NAME: 'blogger_platform',
 };
 
 export const ROUTER_PATHS = {

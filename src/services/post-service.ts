@@ -7,41 +7,43 @@ import { setAndThrowError } from '../utils';
 import { HTTP_MESSAGE, HTTP_STATUS_CODE } from '../settings';
 
 class PostService {
-  getAllPosts(): PostType[] {
-    return postsRepository.getAll();
+  async getAllPosts(): Promise<PostType[]> {
+    return await postsRepository.getAll();
   }
 
-  getPostById(id: number): PostType | undefined {
-    const result = postsRepository.getById(id);
+  async getPostById(id: string): Promise<PostType | null> {
+    const result = await postsRepository.getById(id);
     if (!result) {
       setAndThrowError({ message: HTTP_MESSAGE.NOT_FOUND, status: HTTP_STATUS_CODE.NOT_FOUND_404 });
     }
-    return result;
+    return result!;
   }
 
-  createPost(post: PostCreateModel): PostType {
-    const dataBlog = blogService.getBlogById(+post.blogId); // правильно ли из сервиса обращаться к другому сервису??
+  async createPost(post: PostCreateModel): Promise<PostType> {
+    const dataBlog = await blogService.getBlogById(post.blogId); // правильно ли из сервиса обращаться к другому сервису??
     const id = String(new Date().getTime());
-    const newPost = { ...post, id, blogName: dataBlog.name };
-    postsRepository.createByData(newPost);
+    const newPost = {
+      ...post, id, blogName: dataBlog.name, createdAt: new Date().toISOString(),
+    };
+    await postsRepository.createByData(newPost);
     return newPost;
   }
 
-  updatePostById(id: number, data: PostUpdateModal): void {
-    const result = postsRepository.getById(id);
+  async updatePostById(id: string, data: PostUpdateModal): Promise<void> {
+    const result = await postsRepository.getById(id);
     if (!result) {
       setAndThrowError({ message: HTTP_MESSAGE.NOT_FOUND, status: HTTP_STATUS_CODE.NOT_FOUND_404 });
     }
-    postsRepository.updateById(id, data);
+    await postsRepository.updateById(id, data);
   }
 
-  deletePostById(id: number): void {
-    const result = postsRepository.getById(id);
+  async deletePostById(id: string): Promise<void> {
+    const result = await postsRepository.getById(id);
 
     if (!result) {
       setAndThrowError({ message: HTTP_MESSAGE.NOT_FOUND, status: HTTP_STATUS_CODE.NOT_FOUND_404 });
     }
-    postsRepository.deleteById(id);
+    await postsRepository.deleteById(id);
   }
 }
 

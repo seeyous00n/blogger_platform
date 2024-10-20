@@ -9,18 +9,18 @@ import { PostViewModel } from '../models/post/PostViewModel';
 import { PostUpdateModal } from '../models/post/PostUpdateModal';
 
 class PostsController {
-  getPosts = (req: Request, res: Response<PostType[] | string>, next: NextFunction) => {
+  getPosts = async (req: Request, res: Response<PostType[] | string>, next: NextFunction) => {
     try {
-      const result: PostType[] = postService.getAllPosts();
+      const result: PostType[] = await postService.getAllPosts();
       res.status(HTTP_STATUS_CODE.OK_200).json(result);
     } catch (e: any) {
       res.status(HTTP_STATUS_CODE.SERVER_ERROR_500).json(HTTP_MESSAGE.SERVER_ERROR);
     }
   };
 
-  getPost = (req: RequestWithParams<URIParamsModel>, res: Response<PostType>, next: NextFunction) => {
+  getPost = async (req: RequestWithParams<URIParamsModel>, res: Response<PostType>, next: NextFunction) => {
     try {
-      const result = <PostType>postService.getPostById(+req.params.id);
+      const result = await <Promise<PostType>>postService.getPostById(req.params.id);
       res.status(HTTP_STATUS_CODE.OK_200).json(result);
     } catch (e: any) {
       const err = JSON.parse(e.message);
@@ -28,18 +28,18 @@ class PostsController {
     }
   };
 
-  creatPost = (req: RequestWithBody<PostCreateModel>, res: Response<PostViewModel | string>, next: NextFunction) => {
+  creatPost = async (req: RequestWithBody<PostCreateModel>, res: Response<PostViewModel | string>, next: NextFunction) => {
     try {
-      const result: PostType = postService.createPost(req.body);
+      const result: PostType = await postService.createPost(req.body);
       res.status(HTTP_STATUS_CODE.CREATED_201).json(result);
     } catch (e: any) {
       res.status(HTTP_STATUS_CODE.SERVER_ERROR_500).json(HTTP_MESSAGE.SERVER_ERROR);
     }
   };
 
-  updatePost = (req: RequestWithParamsAndBody<URIParamsModel, PostUpdateModal>, res: Response, next: NextFunction) => {
+  updatePost = async (req: RequestWithParamsAndBody<URIParamsModel, PostUpdateModal>, res: Response, next: NextFunction) => {
     try {
-      postService.updatePostById(+req.params.id, req.body);
+      await postService.updatePostById(req.params.id, req.body);
       res.status(HTTP_STATUS_CODE.NO_CONTENT_204).json();
     } catch (e: any) {
       const err = JSON.parse(e.message);
@@ -47,9 +47,9 @@ class PostsController {
     }
   };
 
-  deletePost = (req: RequestWithParams<URIParamsModel>, res: Response, next: NextFunction) => {
+  deletePost = async (req: RequestWithParams<URIParamsModel>, res: Response, next: NextFunction) => {
     try {
-      postService.deletePostById(+req.params.id);
+      await postService.deletePostById(req.params.id);
       res.status(HTTP_STATUS_CODE.NO_CONTENT_204).json();
     } catch (e: any) {
       const err = JSON.parse(e.message);

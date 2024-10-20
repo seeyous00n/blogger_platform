@@ -3,7 +3,7 @@ import { blogService } from '../services/blog-service';
 import { errorsValidationMiddleware } from '../middlewares/errors-validation-middleware';
 
 const blogIdValidator = async (value: string) => {
-  const blog = blogService.getBlogById(+value);
+  const blog = await blogService.getBlogById(value);
   if (!blog) {
     throw new Error('blog ID not found');
   }

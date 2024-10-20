@@ -1,27 +1,29 @@
-import { db } from '../db';
 import { PostType } from '../types/post-types';
 import { PostUpdateModal } from '../models/post/PostUpdateModal';
+import { postsCollection } from '../db';
 
 class PostsRepository {
-  getAll() {
-    return db.posts;
+  async getAll() {
+    return postsCollection.find({}).toArray();
   }
 
-  getById(id: number): PostType | undefined {
-    return db.posts.find((post) => +post.id === id);
+  async getById(id: string): Promise<PostType | null> {
+    return await postsCollection.findOne({ id });
   }
 
-  createByData(data: PostType) {
-    db.posts.push(data);
+  async createByData(data: PostType) {
+    await postsCollection.insertOne(data);
   }
 
-  updateById(id: number, data: PostUpdateModal) {
-    const index = db.posts.findIndex(post => +post.id === id);
-    db.posts[index] = { ...db.posts[index], ...data };
+  async updateById(id: string, data: PostUpdateModal) {
+    await postsCollection.updateOne(
+      { id },
+      { $set: data },
+    );
   }
 
-  deleteById(id: number) {
-    db.posts = db.posts.filter(post => +post.id !== id);
+  async deleteById(id: string) {
+    await postsCollection.deleteOne({ id });
   }
 }
 
