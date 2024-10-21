@@ -3,11 +3,7 @@ import { PostUpdateModal } from '../models/post/PostUpdateModal';
 import { postsCollection } from '../db';
 
 class PostsRepository {
-  async getAll() {
-    return postsCollection.find({}).toArray();
-  }
-
-  async getById(id: string): Promise<PostType | null> {
+  async findById(id: string): Promise<PostType | null> {
     return await postsCollection.findOne({ id });
   }
 

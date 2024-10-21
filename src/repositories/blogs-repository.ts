@@ -3,11 +3,7 @@ import { BlogUpdateModal } from '../models/blog/BlogUpdateModal';
 import { blogsCollection } from '../db';
 
 class BlogsRepository {
-  async getAll() {
-    return blogsCollection.find({}).toArray();
-  }
-
-  async getById(id: string): Promise<BlogType | null> {
+  async findById(id: string): Promise<BlogType | null> {
     return await blogsCollection.findOne({ id });
   }
 
