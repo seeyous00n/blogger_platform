@@ -1,7 +1,5 @@
 import { BlogType } from '../types/blog-types';
-import { BlogUpdateModal } from '../models/blog/BlogUpdateModal';
 import { blogsCollection } from '../db';
-import { ObjectId } from 'mongodb';
 import { setAndThrowError } from '../utils';
 import { HTTP_MESSAGE, HTTP_STATUS_CODE } from '../settings';
 import { BlogsViewDto } from '../dtos/blogs-view-dto';
@@ -9,6 +7,7 @@ import { BlogsViewDto } from '../dtos/blogs-view-dto';
 class BlogsQueryRepository {
   async findBlogs() {
     const result = await blogsCollection.find({}).toArray();
+
     return result.map((blog: BlogType) => new BlogsViewDto(blog));
   }
 

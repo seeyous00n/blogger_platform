@@ -1,9 +1,9 @@
-import { NextFunction, Request, Response } from 'express';
+import { Request, Response } from 'express';
 import { HTTP_MESSAGE, HTTP_STATUS_CODE, SETTINGS } from '../settings';
 import { blogsCollection, postsCollection } from '../db';
 
 class TestingController {
-  async clearAllData(req: Request, res: Response, next: NextFunction) {
+  async clearAllData(req: Request, res: Response) {
     try {
       await blogsCollection.deleteMany({});
       await postsCollection.deleteMany({});

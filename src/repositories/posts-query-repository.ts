@@ -7,6 +7,7 @@ import { HTTP_MESSAGE, HTTP_STATUS_CODE } from '../settings';
 class PostsQueryRepository {
   async findPosts() {
     const result = await postsCollection.find({}).toArray();
+
     return result.map(post => new PostsViewDto(post));
   }
 

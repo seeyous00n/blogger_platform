@@ -5,8 +5,7 @@ import { blogsRepository } from '../repositories/blogs-repository';
 const BLOG_ID_ERROR_MESSAGE = 'Blog ID not found';
 
 const blogIdValidator = async (value: string) => {
-  //const blog = await blogService.getBlogById(value);
-  const blog = await blogsRepository.getById(value);
+  const blog = await blogsRepository.findById(value);
   if (!blog) {
     throw new Error(BLOG_ID_ERROR_MESSAGE);
   }
@@ -36,10 +35,10 @@ export const postDataValidation = [
   errorsValidationMiddleware,
 ];
 
-export const postDataUpdateValidation = [
-  titleValidator,
-  shortDescriptionValidator,
-  contentValidator,
-  isBlogId,
-  errorsValidationMiddleware,
-];
+// export const postDataUpdateValidation = [
+//   titleValidator,
+//   shortDescriptionValidator,
+//   contentValidator,
+//   isBlogId,
+//   errorsValidationMiddleware,
+// ];

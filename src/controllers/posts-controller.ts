@@ -1,4 +1,4 @@
-import { NextFunction, Request, Response } from 'express';
+import { Request, Response } from 'express';
 import { HTTP_MESSAGE, HTTP_STATUS_CODE } from '../settings';
 import { postService } from '../services/post-service';
 import { PostType } from '../types/post-types';
@@ -7,20 +7,21 @@ import { RequestWithBody, RequestWithParams, RequestWithParamsAndBody } from '..
 import { URIParamsModel } from '../models/URIParamsModel';
 import { PostViewModel } from '../models/post/PostViewModel';
 import { PostUpdateModal } from '../models/post/PostUpdateModal';
+import { postsQueryRepository } from '../repositories/posts-query-repository';
 
 class PostsController {
-  getPosts = async (req: Request, res: Response<PostType[] | string>, next: NextFunction) => {
+  getPosts = async (req: Request, res: Response<PostType[] | string>) => {
     try {
-      const result: PostType[] = await postService.getAllPosts();
+      const result: PostType[] = await postsQueryRepository.findPosts();
       res.status(HTTP_STATUS_CODE.OK_200).json(result);
     } catch (e: any) {
       res.status(HTTP_STATUS_CODE.SERVER_ERROR_500).json(HTTP_MESSAGE.SERVER_ERROR);
     }
   };
 
-  getPost = async (req: RequestWithParams<URIParamsModel>, res: Response<PostType>, next: NextFunction) => {
+  getPost = async (req: RequestWithParams<URIParamsModel>, res: Response<PostType>) => {
     try {
-      const result = await <Promise<PostType>>postService.getPostById(req.params.id);
+      const result = await postsQueryRepository.findById(req.params.id);
       res.status(HTTP_STATUS_CODE.OK_200).json(result);
     } catch (e: any) {
       const err = JSON.parse(e.message);
@@ -28,7 +29,7 @@ class PostsController {
     }
   };
 
-  creatPost = async (req: RequestWithBody<PostCreateModel>, res: Response<PostViewModel | string>, next: NextFunction) => {
+  creatPost = async (req: RequestWithBody<PostCreateModel>, res: Response<PostViewModel | string>) => {
     try {
       const result: PostType = await postService.createPost(req.body);
       res.status(HTTP_STATUS_CODE.CREATED_201).json(result);
@@ -37,7 +38,7 @@ class PostsController {
     }
   };
 
-  updatePost = async (req: RequestWithParamsAndBody<URIParamsModel, PostUpdateModal>, res: Response, next: NextFunction) => {
+  updatePost = async (req: RequestWithParamsAndBody<URIParamsModel, PostUpdateModal>, res: Response) => {
     try {
       await postService.updatePostById(req.params.id, req.body);
       res.status(HTTP_STATUS_CODE.NO_CONTENT_204).json();
@@ -47,7 +48,7 @@ class PostsController {
     }
   };
 
-  deletePost = async (req: RequestWithParams<URIParamsModel>, res: Response, next: NextFunction) => {
+  deletePost = async (req: RequestWithParams<URIParamsModel>, res: Response) => {
     try {
       await postService.deletePostById(req.params.id);
       res.status(HTTP_STATUS_CODE.NO_CONTENT_204).json();

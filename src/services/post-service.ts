@@ -8,14 +8,15 @@ import { HTTP_MESSAGE, HTTP_STATUS_CODE } from '../settings';
 import { PostsViewDto } from '../dtos/posts-view-dto';
 
 class PostService {
-  async getAllPosts(): Promise<PostType[]> {
-    const result = await postsRepository.getAll();
+  async createPost(post: PostCreateModel): Promise<PostType> {
+    const dataBlog = await blogService.findBlogById(post.blogId); // правильно ли из сервиса обращаться к другому сервису??
+    const id = String(new Date().getTime());
+    const newPost = {
+      ...post, id, blogName: dataBlog.name, createdAt: new Date().toISOString(),
+    };
+    await postsRepository.createByData(newPost);
+    const result = await postsRepository.findById(id);
 
-    return result.map(post => new PostsViewDto(post));
-  }
-
-  async getPostById(id: string): Promise<PostType | null> {
-    const result = await postsRepository.getById(id);
     if (!result) {
       setAndThrowError({ message: HTTP_MESSAGE.NOT_FOUND, status: HTTP_STATUS_CODE.NOT_FOUND_404 });
     }
@@ -23,19 +24,8 @@ class PostService {
     return new PostsViewDto(result!);
   }
 
-  async createPost(post: PostCreateModel): Promise<PostType> {
-    const dataBlog = await blogService.getBlogById(post.blogId); // правильно ли из сервиса обращаться к другому сервису??
-    const id = String(new Date().getTime());
-    const newPost = {
-      ...post, id, blogName: dataBlog.name, createdAt: new Date().toISOString(),
-    };
-    await postsRepository.createByData(newPost);
-
-    return new PostsViewDto(newPost);
-  }
-
   async updatePostById(id: string, data: PostUpdateModal): Promise<void> {
-    const result = await postsRepository.getById(id);
+    const result = await postsRepository.findById(id);
     if (!result) {
       setAndThrowError({ message: HTTP_MESSAGE.NOT_FOUND, status: HTTP_STATUS_CODE.NOT_FOUND_404 });
     }
@@ -43,7 +33,7 @@ class PostService {
   }
 
   async deletePostById(id: string): Promise<void> {
-    const result = await postsRepository.getById(id);
+    const result = await postsRepository.findById(id);
 
     if (!result) {
       setAndThrowError({ message: HTTP_MESSAGE.NOT_FOUND, status: HTTP_STATUS_CODE.NOT_FOUND_404 });
