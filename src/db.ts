@@ -3,11 +3,14 @@ import { SETTINGS } from './settings';
 import { BlogType } from './types/blog-types';
 import { PostType } from './types/post-types';
 
-const mongoURI = SETTINGS.MONGO_URI;
-const client = new MongoClient(mongoURI);
+const COLLECTION_BLOGS = 'blogs'
+const COLLECTION_POSTS = 'posts'
 
-export const blogsCollection = client.db(SETTINGS.DB_NAME).collection<BlogType>('blogs');
-export const postsCollection = client.db(SETTINGS.DB_NAME).collection<PostType>('posts');
+const mongoURI = SETTINGS.MONGO_URI;
+export const client = new MongoClient(mongoURI);
+
+export const blogsCollection = client.db(SETTINGS.DB_NAME).collection<BlogType>(COLLECTION_BLOGS);
+export const postsCollection = client.db(SETTINGS.DB_NAME).collection<PostType>(COLLECTION_POSTS);
 
 export const runDB = async () => {
   try {
