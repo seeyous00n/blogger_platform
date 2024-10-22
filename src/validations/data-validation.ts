@@ -35,10 +35,9 @@ export const postDataValidation = [
   errorsValidationMiddleware,
 ];
 
-// export const postDataUpdateValidation = [
-//   titleValidator,
-//   shortDescriptionValidator,
-//   contentValidator,
-//   isBlogId,
-//   errorsValidationMiddleware,
-// ];
+export const postDataValidationWithoutId = [
+  titleValidator,
+  shortDescriptionValidator,
+  contentValidator,
+  errorsValidationMiddleware,
+];

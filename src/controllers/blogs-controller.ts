@@ -15,7 +15,9 @@ import { BlogUpdateModal } from '../models/blog/BlogUpdateModal';
 import { BlogType } from '../types/blog-types';
 import { blogsQueryRepository } from '../repositories/blogs-query-repository';
 import { PostViewModel } from '../models/post/PostViewModel';
-import { QueryStringFilter } from '../filters/query-string-filter';
+import { postService } from '../services/post-service';
+import { PostType } from '../types/post-types';
+import { PostCreateModel } from '../models/post/PostCreateModel';
 
 class BlogsController {
   getBlogs = async (req: RequestWithQuery<URIParamsModel, queryStringType>, res: Response<BlogViewModel[] | PostViewModel[] | string>) => {
@@ -23,9 +25,9 @@ class BlogsController {
       const result = await blogsQueryRepository.findBlogs(req.query, req.params.id);
       res.status(HTTP_STATUS_CODE.OK_200).json(result);
     } catch (e: any) {
-      res.status(HTTP_STATUS_CODE.SERVER_ERROR_500).json(HTTP_MESSAGE.SERVER_ERROR);
-      //const err = JSON.parse(e.message);
-      //res.status(err.status).json(err.message);
+      // res.status(HTTP_STATUS_CODE.SERVER_ERROR_500).json(HTTP_MESSAGE.SERVER_ERROR);
+      const err = JSON.parse(e.message);
+      res.status(err.status).json(err.message);
     }
   };
 
@@ -48,6 +50,18 @@ class BlogsController {
     }
   };
 
+  createPost = async (req: RequestWithParamsAndBody<URIParamsModel, PostCreateModel>, res: Response<PostViewModel | string>) => {
+    try {
+      req.body.blogId = req.params.id;
+      const result: PostType = await postService.createPost(req.body);
+
+      res.status(HTTP_STATUS_CODE.CREATED_201).json(result);
+    } catch (e: any) {
+      const err = JSON.parse(e.message);
+      res.status(err.status).json(err.message);
+    }
+  };
+
   updateBlog = async (req: RequestWithParamsAndBody<URIParamsModel, BlogUpdateModal>, res: Response) => {
     try {
       await blogService.updateBlogById(req.params.id, req.body);
@@ -67,16 +81,6 @@ class BlogsController {
       res.status(err.status).json(err.message);
     }
   };
-
-  // findPostsWithIdBlog = async (req: RequestWithParams<URIParamsModel>, res: Response) => {
-  //   try {
-  //     const result = await blogsQueryRepository.findPostsBlog(req.params.id)
-  //     res.status(HTTP_STATUS_CODE.OK_200).json(result);
-  //   } catch (e: any) {
-  //     const err = JSON.parse(e.message);
-  //     res.status(err.status).json(err.message);
-  //   }
-  // };
 }
 
 export const blogsController = new BlogsController();
