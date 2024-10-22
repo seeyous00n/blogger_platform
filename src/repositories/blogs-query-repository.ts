@@ -1,17 +1,17 @@
-import { BlogType } from '../types/blog-types';
+import { BlogsWithQuery, BlogType } from '../types/blog-types';
 import { blogsCollection } from '../db';
 import { setAndThrowError } from '../utils';
 import { HTTP_MESSAGE, HTTP_STATUS_CODE } from '../settings';
 import { BlogsViewDto } from '../dtos/blogs-view-dto';
 import { postsQueryRepository } from './posts-query-repository';
 import { QueryStringFilter } from '../filters/query-string-filter';
+import { queryStringType } from '../types/types';
 
 class BlogsQueryRepository {
   //Promise<BlogType[] | PostType[]>
-  async findBlogs(queryString: any, id: string | undefined): Promise<any> {
+  async findBlogs(queryString: queryStringType, id: string | undefined) {
       if (id) {
         const blog = await blogsCollection.findOne({ id });
-
         if (!blog) {
           setAndThrowError({ message: HTTP_MESSAGE.NOT_FOUND, status: HTTP_STATUS_CODE.NOT_FOUND_404 });
         }
@@ -29,7 +29,7 @@ class BlogsQueryRepository {
         .toArray();
       const blogsCount = await blogsCollection.countDocuments(filter.search);
 
-      return supportFilter.getPrepareData(blogsCount, result);
+      return supportFilter.prepareData(blogsCount, result);
   }
 
   async findById(id: string): Promise<BlogType> {
