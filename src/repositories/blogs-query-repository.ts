@@ -9,26 +9,26 @@ import { queryStringType } from '../types/types';
 
 class BlogsQueryRepository {
   async findBlogs(queryString: queryStringType, id: string | undefined) {
-      if (id) {
-        const blog = await blogsCollection.findOne({ id });
-        if (!blog) {
-          setAndThrowError({ message: HTTP_MESSAGE.NOT_FOUND, status: HTTP_STATUS_CODE.NOT_FOUND_404 });
-        }
-
-        return await postsQueryRepository.findPosts(queryString);
+    if (id) {
+      const blog = await blogsCollection.findOne({ id });
+      if (!blog) {
+        setAndThrowError({ message: HTTP_MESSAGE.NOT_FOUND, status: HTTP_STATUS_CODE.NOT_FOUND_404 });
       }
 
-      const supportFilter = new QueryStringFilter(queryString);
-      const filter = supportFilter.prepareQueryString();
-      const result = await blogsCollection
-        .find(filter.search)
-        .sort(filter.sort as {})
-        .skip(filter.skip)
-        .limit(filter.limit)
-        .toArray();
-      const blogsCount = await blogsCollection.countDocuments(filter.search);
+      return await postsQueryRepository.findPosts(queryString);
+    }
 
-      return supportFilter.prepareData(blogsCount, result);
+    const supportFilter = new QueryStringFilter(queryString);
+    const filter = supportFilter.prepareQueryString();
+    const result = await blogsCollection
+      .find(filter.search)
+      .sort(filter.sort as {})
+      .skip(filter.skip)
+      .limit(filter.limit)
+      .toArray();
+    const blogsCount = await blogsCollection.countDocuments(filter.search);
+
+    return supportFilter.prepareData(blogsCount, result);
   }
 
   async findById(id: string): Promise<BlogType> {
