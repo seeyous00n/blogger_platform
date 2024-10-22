@@ -18,14 +18,14 @@ import { PostViewModel } from '../models/post/PostViewModel';
 import { postService } from '../services/post-service';
 import { PostType } from '../types/post-types';
 import { PostCreateModel } from '../models/post/PostCreateModel';
+import { postsCollection } from '../db';
 
 class BlogsController {
-  getBlogs = async (req: RequestWithQuery<URIParamsModel, queryStringType>, res: Response<BlogViewModel[] | PostViewModel[] | string>) => {
+  getBlogs = async (req: RequestWithQuery<URIParamsModel, queryStringType>, res: Response) => {
     try {
       const result = await blogsQueryRepository.findBlogs(req.query, req.params.id);
       res.status(HTTP_STATUS_CODE.OK_200).json(result);
     } catch (e: any) {
-      // res.status(HTTP_STATUS_CODE.SERVER_ERROR_500).json(HTTP_MESSAGE.SERVER_ERROR);
       const err = JSON.parse(e.message);
       res.status(err.status).json(err.message);
     }

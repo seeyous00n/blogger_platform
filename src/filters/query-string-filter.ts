@@ -2,6 +2,7 @@ import { BlogType } from '../types/blog-types';
 import { BlogsViewDto } from '../dtos/blogs-view-dto';
 import { PostType } from '../types/post-types';
 import { PostsViewDto } from '../dtos/posts-view-dto';
+import { queryStringType } from '../types/types';
 
 export class QueryStringFilter {
   searchNameTerm;
@@ -10,8 +11,8 @@ export class QueryStringFilter {
   pageNumber;
   pageSize;
 
-  constructor(queryString: any) {
-    this.searchNameTerm = queryString.searchNameTerm || '';
+  constructor(queryString: queryStringType) {
+    this.searchNameTerm = queryString.searchNameTerm || null;
     this.sortBy = queryString.sortBy || 'createdAt';
     this.sortDirection = queryString.sortDirection || 'desc';
     this.pageNumber = queryString.pageNumber || '1';
@@ -27,7 +28,7 @@ export class QueryStringFilter {
     };
   }
 
-  getPrepareData(count: number, data: BlogType[] | PostType[], type = 'blogs') {
+  prepareData(count: number, data: BlogType[] | PostType[], type = 'blogs') {
     let mapData;
     if (type === 'blogs') {
       mapData = <BlogType[]>data.map((blog) => new BlogsViewDto(<BlogType>blog));
