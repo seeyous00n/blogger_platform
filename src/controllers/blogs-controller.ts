@@ -17,8 +17,6 @@ import { blogsQueryRepository } from '../repositories/blogs-query-repository';
 import { PostViewModel } from '../models/post/PostViewModel';
 import { postService } from '../services/post-service';
 import { PostType } from '../types/post-types';
-import { PostCreateModel } from '../models/post/PostCreateModel';
-import { postsCollection } from '../db';
 
 class BlogsController {
   getBlogs = async (req: RequestWithQuery<URIParamsModel, queryStringType>, res: Response) => {

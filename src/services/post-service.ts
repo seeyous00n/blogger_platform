@@ -6,11 +6,12 @@ import { blogService } from './blog-service';
 import { setAndThrowError } from '../utils';
 import { HTTP_MESSAGE, HTTP_STATUS_CODE } from '../settings';
 import { PostsViewDto } from '../dtos/posts-view-dto';
+import { v4 as uuidv4 } from 'uuid';
 
 class PostService {
   async createPost(post: PostCreateModel): Promise<PostType> {
     const dataBlog = await blogService.findBlogById(post.blogId);
-    const id = String(new Date().getTime());
+    const id = uuidv4();
     const newPost = {
       ...post, id, blogName: dataBlog.name, createdAt: new Date().toISOString(),
     };

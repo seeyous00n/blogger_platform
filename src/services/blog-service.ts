@@ -5,6 +5,7 @@ import { BlogUpdateModal } from '../models/blog/BlogUpdateModal';
 import { setAndThrowError } from '../utils';
 import { HTTP_MESSAGE, HTTP_STATUS_CODE } from '../settings';
 import { BlogsViewDto } from '../dtos/blogs-view-dto';
+import { v4 as uuidv4 } from 'uuid';
 
 class BlogService {
   async findBlogById(id: string): Promise<BlogType> {
@@ -17,7 +18,7 @@ class BlogService {
   }
 
   async createBlog(blog: BlogCreateModel): Promise<BlogType> {
-    const id = String(new Date().getTime());
+    const id = uuidv4();
     const newBlog = {
       ...blog, id, isMembership: false, createdAt: new Date().toISOString(),
     };
