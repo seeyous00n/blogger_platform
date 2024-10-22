@@ -7,3 +7,11 @@ export type PostType = {
   blogName: string,
   createdAt: string
 }
+
+export type PostsWithQuery = {
+  pagesCount: number,
+  page: number,
+  pageSize: number,
+  totalCount: number,
+  items: PostType[]
+}
