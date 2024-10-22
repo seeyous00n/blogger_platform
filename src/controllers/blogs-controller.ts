@@ -50,7 +50,7 @@ class BlogsController {
     }
   };
 
-  createPost = async (req: RequestWithParamsAndBody<URIParamsModel, PostCreateModel>, res: Response<PostViewModel | string>) => {
+  createPost = async (req: RequestWithParams<URIParamsModel>, res: Response<PostViewModel | string>) => {
     try {
       req.body.blogId = req.params.id;
       const result: PostType = await postService.createPost(req.body);
