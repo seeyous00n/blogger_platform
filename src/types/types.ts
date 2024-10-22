@@ -15,7 +15,7 @@ export type resultErrorsType = {
 }
 
 export type queryStringType = {
-  searchNameTerm: string | null,
+  searchNameTerm?: string | null,
   sortBy: string,
   sortDirection: 'asc' | 'desc',
   pageNumber: string,
