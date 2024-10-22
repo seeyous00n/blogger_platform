@@ -3,12 +3,33 @@ import { blogsCollection } from '../db';
 import { setAndThrowError } from '../utils';
 import { HTTP_MESSAGE, HTTP_STATUS_CODE } from '../settings';
 import { BlogsViewDto } from '../dtos/blogs-view-dto';
+import { postsQueryRepository } from './posts-query-repository';
+import { QueryStringFilter } from '../filters/query-string-filter';
 
 class BlogsQueryRepository {
-  async findBlogs() {
-    const result = await blogsCollection.find({}).toArray();
+  //Promise<BlogType[] | PostType[]>
+  async findBlogs(queryString: any, id: string | undefined): Promise<any> {
+      if (id) {
+        const blog = await blogsCollection.findOne({ id });
 
-    return result.map((blog: BlogType) => new BlogsViewDto(blog));
+        if (!blog) {
+          setAndThrowError({ message: HTTP_MESSAGE.NOT_FOUND, status: HTTP_STATUS_CODE.NOT_FOUND_404 });
+        }
+
+        return await postsQueryRepository.findPosts(queryString);
+      }
+
+      const supportFilter = new QueryStringFilter(queryString);
+      const filter = supportFilter.prepareQueryString();
+      const result = await blogsCollection
+        .find(filter.search)
+        .sort(filter.sort as {})
+        .skip(filter.skip)
+        .limit(filter.limit)
+        .toArray();
+      const blogsCount = await blogsCollection.countDocuments(filter.search);
+
+      return supportFilter.getPrepareData(blogsCount, result);
   }
 
   async findById(id: string): Promise<BlogType> {

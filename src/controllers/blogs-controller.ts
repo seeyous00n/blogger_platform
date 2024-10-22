@@ -1,21 +1,31 @@
 import { Request, Response } from 'express';
 import { HTTP_STATUS_CODE, HTTP_MESSAGE } from '../settings';
 import { BlogViewModel } from '../models/blog/BlogViewModel';
-import { RequestWithBody, RequestWithParams, RequestWithParamsAndBody } from '../types/types';
+import {
+  queryStringType,
+  RequestWithBody,
+  RequestWithParams,
+  RequestWithParamsAndBody,
+  RequestWithQuery,
+} from '../types/types';
 import { URIParamsModel } from '../models/URIParamsModel';
 import { blogService } from '../services/blog-service';
 import { BlogCreateModel } from '../models/blog/BlogCreateModel';
 import { BlogUpdateModal } from '../models/blog/BlogUpdateModal';
 import { BlogType } from '../types/blog-types';
 import { blogsQueryRepository } from '../repositories/blogs-query-repository';
+import { PostViewModel } from '../models/post/PostViewModel';
+import { QueryStringFilter } from '../filters/query-string-filter';
 
 class BlogsController {
-  getBlogs = async (req: Request, res: Response<BlogViewModel[] | string>) => {
+  getBlogs = async (req: RequestWithQuery<URIParamsModel, queryStringType>, res: Response<BlogViewModel[] | PostViewModel[] | string>) => {
     try {
-      const result: BlogType[] = await blogsQueryRepository.findBlogs();
+      const result = await blogsQueryRepository.findBlogs(req.query, req.params.id);
       res.status(HTTP_STATUS_CODE.OK_200).json(result);
     } catch (e: any) {
       res.status(HTTP_STATUS_CODE.SERVER_ERROR_500).json(HTTP_MESSAGE.SERVER_ERROR);
+      //const err = JSON.parse(e.message);
+      //res.status(err.status).json(err.message);
     }
   };
 
@@ -57,6 +67,16 @@ class BlogsController {
       res.status(err.status).json(err.message);
     }
   };
+
+  // findPostsWithIdBlog = async (req: RequestWithParams<URIParamsModel>, res: Response) => {
+  //   try {
+  //     const result = await blogsQueryRepository.findPostsBlog(req.params.id)
+  //     res.status(HTTP_STATUS_CODE.OK_200).json(result);
+  //   } catch (e: any) {
+  //     const err = JSON.parse(e.message);
+  //     res.status(err.status).json(err.message);
+  //   }
+  // };
 }
 
 export const blogsController = new BlogsController();

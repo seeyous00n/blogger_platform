@@ -3,16 +3,22 @@ import { HTTP_MESSAGE, HTTP_STATUS_CODE } from '../settings';
 import { postService } from '../services/post-service';
 import { PostType } from '../types/post-types';
 import { PostCreateModel } from '../models/post/PostCreateModel';
-import { RequestWithBody, RequestWithParams, RequestWithParamsAndBody } from '../types/types';
+import {
+  queryStringType,
+  RequestWithBody,
+  RequestWithParams,
+  RequestWithParamsAndBody,
+  RequestWithQuery,
+} from '../types/types';
 import { URIParamsModel } from '../models/URIParamsModel';
 import { PostViewModel } from '../models/post/PostViewModel';
 import { PostUpdateModal } from '../models/post/PostUpdateModal';
 import { postsQueryRepository } from '../repositories/posts-query-repository';
 
 class PostsController {
-  getPosts = async (req: Request, res: Response<PostType[] | string>) => {
+  getPosts = async (req: RequestWithQuery<URIParamsModel, queryStringType>, res: Response) => {
     try {
-      const result: PostType[] = await postsQueryRepository.findPosts();
+      const result = await postsQueryRepository.findPosts(req.query);
       res.status(HTTP_STATUS_CODE.OK_200).json(result);
     } catch (e: any) {
       res.status(HTTP_STATUS_CODE.SERVER_ERROR_500).json(HTTP_MESSAGE.SERVER_ERROR);

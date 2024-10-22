@@ -3,12 +3,21 @@ import { postsCollection } from '../db';
 import { PostsViewDto } from '../dtos/posts-view-dto';
 import { setAndThrowError } from '../utils';
 import { HTTP_MESSAGE, HTTP_STATUS_CODE } from '../settings';
+import { QueryStringFilter } from '../filters/query-string-filter';
 
 class PostsQueryRepository {
-  async findPosts() {
-    const result = await postsCollection.find({}).toArray();
+  async findPosts(queryString: any) {
+    const supportFilter = new QueryStringFilter(queryString);
+    const filter = supportFilter.prepareQueryString();
+    const result = await postsCollection
+      .find(filter.search)
+      .sort(filter.sort as {})
+      .skip(filter.skip)
+      .limit(filter.limit)
+      .toArray();
+    const count = await postsCollection.countDocuments(filter.search);
 
-    return result.map(post => new PostsViewDto(post));
+    return supportFilter.getPrepareData(count, result, 'posts');
   }
 
   async findById(id: string): Promise<PostType> {
