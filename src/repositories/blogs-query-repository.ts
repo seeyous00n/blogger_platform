@@ -8,7 +8,6 @@ import { QueryStringFilter } from '../filters/query-string-filter';
 import { queryStringType } from '../types/types';
 
 class BlogsQueryRepository {
-  //Promise<BlogType[] | PostType[]>
   async findBlogs(queryString: queryStringType, id: string | undefined) {
       if (id) {
         const blog = await blogsCollection.findOne({ id });
