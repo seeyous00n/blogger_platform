@@ -1,5 +1,5 @@
 import { Request, Response } from 'express';
-import { HTTP_MESSAGE, HTTP_STATUS_CODE, SETTINGS } from '../settings';
+import { HTTP_MESSAGE, HTTP_STATUS_CODE } from '../settings';
 import { blogsCollection, postsCollection } from '../db';
 
 class TestingController {
