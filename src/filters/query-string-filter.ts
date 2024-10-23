@@ -29,14 +29,22 @@ export class QueryStringFilter {
     };
   }
 
-  prepareData(count: number, data: BlogType[] | PostType[], type = 'blogs') {
-    let mapData;
-    if (type === 'blogs') {
-      mapData = <BlogType[]>data.map((blog) => new BlogsViewDto(<BlogType>blog));
-    }
-    if (type === 'posts') {
-      mapData = <PostType[]>data.map((blog) => new PostsViewDto(<PostType>blog));
-    }
+  mapData(data: BlogType[] | PostType[], type: string) {
+    return data.map((item) =>
+      type === 'blogs'
+        ? new BlogsViewDto(item as BlogType)
+        : new PostsViewDto(item as PostType));
+  }
+
+  prepareDataAnswer(count: number, data: BlogType[] | PostType[], type = 'blogs') {
+    //let mapData;
+    const mapData = this.mapData(data, type);
+    // if (type === 'blogs') {
+    //   mapData = <BlogType[]>data.map((blog) => new BlogsViewDto(<BlogType>blog));
+    // }
+    // if (type === 'posts') {
+    //   mapData = <PostType[]>data.map((blog) => new PostsViewDto(<PostType>blog));
+    // }
 
     return {
       'pagesCount': Math.ceil(count / Number(this.pageSize)),

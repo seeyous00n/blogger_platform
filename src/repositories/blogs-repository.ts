@@ -8,7 +8,7 @@ class BlogsRepository {
   }
 
   async createByData(data: BlogType) {
-    await blogsCollection.insertOne(data);
+    return await blogsCollection.insertOne(data);
   }
 
   async updateById(id: string, data: BlogUpdateModal) {

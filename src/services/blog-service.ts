@@ -6,6 +6,8 @@ import { setAndThrowError } from '../utils';
 import { HTTP_MESSAGE, HTTP_STATUS_CODE } from '../settings';
 import { BlogsViewDto } from '../dtos/blogs-view-dto';
 import { v4 as uuidv4 } from 'uuid';
+import { postService } from './post-service';
+import { PostCreateModel } from '../models/post/PostCreateModel';
 
 class BlogService {
   async findBlogById(id: string): Promise<BlogType> {
@@ -46,6 +48,11 @@ class BlogService {
       setAndThrowError({ message: HTTP_MESSAGE.NOT_FOUND, status: HTTP_STATUS_CODE.NOT_FOUND_404 });
     }
     await blogsRepository.deleteById(id);
+  }
+
+  async createPost(post: PostCreateModel, id: string) {
+    post.blogId = id;
+    return await postService.createPost(post);
   }
 }
 
