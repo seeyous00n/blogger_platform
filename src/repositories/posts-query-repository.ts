@@ -1,4 +1,4 @@
-import { PostsWithQuery, PostType } from '../types/post-types';
+import { PostType } from '../types/post-types';
 import { postsCollection } from '../db';
 import { PostsViewDto } from '../dtos/posts-view-dto';
 import { setAndThrowError } from '../utils';
@@ -7,16 +7,16 @@ import { QueryStringFilter } from '../filters/query-string-filter';
 import { queryStringType } from '../types/types';
 
 class PostsQueryRepository {
-  async findPosts(queryString: queryStringType) {
+  async findPosts(queryString: queryStringType, id?: string) {
     const supportFilter = new QueryStringFilter(queryString);
-    const filter = supportFilter.prepareQueryString();
+    const filter = supportFilter.prepareQueryString(id);
     const result = await postsCollection
-      .find({})
+      .find(filter.searchId)
       .sort(filter.sort as {})
       .skip(filter.skip)
       .limit(filter.limit)
       .toArray();
-    const count = await postsCollection.countDocuments();
+    const count = await postsCollection.countDocuments(filter.searchId);
 
     return supportFilter.prepareData(count, result, 'posts');
   }

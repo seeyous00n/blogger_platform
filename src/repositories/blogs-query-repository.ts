@@ -1,4 +1,4 @@
-import { BlogsWithQuery, BlogType } from '../types/blog-types';
+import { BlogType } from '../types/blog-types';
 import { blogsCollection } from '../db';
 import { setAndThrowError } from '../utils';
 import { HTTP_MESSAGE, HTTP_STATUS_CODE } from '../settings';
@@ -15,7 +15,7 @@ class BlogsQueryRepository {
         setAndThrowError({ message: HTTP_MESSAGE.NOT_FOUND, status: HTTP_STATUS_CODE.NOT_FOUND_404 });
       }
 
-      return await postsQueryRepository.findPosts(queryString);
+      return await postsQueryRepository.findPosts(queryString, id);
     }
 
     const supportFilter = new QueryStringFilter(queryString);

@@ -19,12 +19,13 @@ export class QueryStringFilter {
     this.pageSize = queryString.pageSize || '10';
   }
 
-  prepareQueryString() {
+  prepareQueryString(id?: string) {
     return {
       search: this.searchNameTerm ? { name: { $regex: this.searchNameTerm, $options: 'i' } } : {},
       sort: { [this.sortBy]: this.sortDirection === 'asc' ? 1 : -1 },
       skip: (Number(this.pageNumber) - 1) * Number(this.pageSize),
       limit: Number(this.pageSize),
+      searchId: id ? { blogId: id } : {},
     };
   }
 
