@@ -2,7 +2,7 @@ import { PostType } from '../types/post-types';
 import { postsCollection } from '../db';
 import { PostsViewDto } from '../dtos/posts-view-dto';
 import { setAndThrowError } from '../utils';
-import { HTTP_MESSAGE, HTTP_STATUS_CODE } from '../settings';
+import { HTTP_MESSAGE, HTTP_STATUS_CODE, TYPE_COLLECTION } from '../settings';
 import { QueryStringFilter } from '../filters/query-string-filter';
 import { queryStringType } from '../types/types';
 import { blogsQueryRepository } from './blogs-query-repository';
@@ -25,7 +25,7 @@ class PostsQueryRepository {
     const result = await sharedRepository.findData(postsCollection, filter);
     const postsCount = await postsCollection.countDocuments(filter.search);
 
-    return supportFilter.prepareDataAnswer(postsCount, result, 'posts');
+    return supportFilter.prepareDataAnswer(postsCount, result, TYPE_COLLECTION.POSTS);
   }
 
   async findById(_id: string): Promise<PostType> {

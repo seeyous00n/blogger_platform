@@ -5,6 +5,7 @@ import { PostsViewDto } from '../dtos/posts-view-dto';
 import { queryStringType } from '../types/types';
 import { ObjectId } from 'mongodb';
 import { QueryViewModel } from '../models/ViewQueryModel';
+import { TYPE_COLLECTION } from '../settings';
 
 export class QueryStringFilter {
   searchNameTerm;
@@ -32,12 +33,12 @@ export class QueryStringFilter {
 
   mapData(data: BlogType[] | PostType[], type: string) {
     return data.map((item) =>
-      type === 'blogs'
+      type === TYPE_COLLECTION.BLOGS
         ? new BlogsViewDto(item as BlogType)
         : new PostsViewDto(item as PostType)) as BlogsViewDto[] | PostsViewDto[];
   }
 
-  prepareDataAnswer(count: number, data: BlogType[] | PostType[], type = 'blogs'): QueryViewModel {
+  prepareDataAnswer(count: number, data: BlogType[] | PostType[], type = TYPE_COLLECTION.BLOGS): QueryViewModel {
     const mapData = this.mapData(data, type);
 
     return {
