@@ -21,3 +21,7 @@ export type queryStringType = {
   pageNumber: string,
   pageSize: string,
 }
+
+export const enum ERROR_MESSAGE {
+  NOT_FOUND = 'NOT_FOUND',
+}

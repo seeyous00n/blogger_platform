@@ -9,7 +9,7 @@ export class BlogsViewDto {
   isMembership;
 
   constructor(model: BlogType) {
-    this.id = model._id;
+    this.id = model._id.toString();
     this.name = model.name;
     this.description = model.description;
     this.websiteUrl = model.websiteUrl;

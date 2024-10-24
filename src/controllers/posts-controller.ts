@@ -1,5 +1,5 @@
 import { Response } from 'express';
-import { HTTP_MESSAGE, HTTP_STATUS_CODE } from '../settings';
+import { HTTP_STATUS_CODE } from '../settings';
 import { postService } from '../services/post-service';
 import { PostCreateModel } from '../models/post/PostCreateModel';
 import {
@@ -10,9 +10,10 @@ import {
   RequestWithQuery,
 } from '../types/types';
 import { URIParamsModel } from '../models/URIParamsModel';
-import { PostViewModel } from '../models/post/PostViewModel';
 import { PostUpdateModal } from '../models/post/PostUpdateModal';
 import { postsQueryRepository } from '../repositories/posts-query-repository';
+import { PostsViewDto } from '../dtos/posts-view-dto';
+import { sendError } from '../utils';
 
 class PostsController {
   getPosts = async (req: RequestWithQuery<URIParamsModel, queryStringType>, res: Response) => {
@@ -20,26 +21,25 @@ class PostsController {
       const result = await postsQueryRepository.findPosts(req.query);
       res.status(HTTP_STATUS_CODE.OK_200).json(result);
     } catch (e: any) {
-      res.status(HTTP_STATUS_CODE.SERVER_ERROR_500).json(HTTP_MESSAGE.SERVER_ERROR);
+      sendError(e, res);
     }
   };
 
-  getPost = async (req: RequestWithParams<URIParamsModel>, res: Response<PostViewModel>) => {
+  getPost = async (req: RequestWithParams<URIParamsModel>, res: Response<PostsViewDto>) => {
     try {
-      const result = await postsQueryRepository.findById(req.params.id);
+      const result: PostsViewDto = await postsQueryRepository.findById(req.params.id);
       res.status(HTTP_STATUS_CODE.OK_200).json(result);
     } catch (e: any) {
-      const err = JSON.parse(e.message);
-      res.status(err.status).json(err.message);
+      sendError(e, res);
     }
   };
 
-  creatPost = async (req: RequestWithBody<PostCreateModel>, res: Response<PostViewModel | string>) => {
+  creatPost = async (req: RequestWithBody<PostCreateModel>, res: Response<PostsViewDto>) => {
     try {
-      const result = await postService.createPost(req.body);
+      const result: PostsViewDto = await postService.createPost(req.body);
       res.status(HTTP_STATUS_CODE.CREATED_201).json(result);
     } catch (e: any) {
-      res.status(HTTP_STATUS_CODE.SERVER_ERROR_500).json(HTTP_MESSAGE.SERVER_ERROR);
+      sendError(e, res);
     }
   };
 
@@ -48,8 +48,7 @@ class PostsController {
       await postService.updatePostById(req.params.id, req.body);
       res.status(HTTP_STATUS_CODE.NO_CONTENT_204).json();
     } catch (e: any) {
-      const err = JSON.parse(e.message);
-      res.status(err.status).json(err.message);
+      sendError(e, res);
     }
   };
 
@@ -58,8 +57,7 @@ class PostsController {
       await postService.deletePostById(req.params.id);
       res.status(HTTP_STATUS_CODE.NO_CONTENT_204).json();
     } catch (e: any) {
-      const err = JSON.parse(e.message);
-      res.status(err.status).json(err.message);
+      sendError(e, res);
     }
   };
 }

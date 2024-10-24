@@ -4,23 +4,27 @@ import { postsCollection } from '../db';
 import { ObjectId } from 'mongodb';
 
 class PostsRepository {
-  async findById(_id: ObjectId) {
-    return await postsCollection.findOne({ _id });
+  async findById(_id: string) {
+    try {
+      return await postsCollection.findOne({ _id: new ObjectId(_id) });
+    } catch (e) {
+      return;
+    }
   }
 
   async createByData(data: PostType) {
-    await postsCollection.insertOne(data);
+    return await postsCollection.insertOne(data);
   }
 
-  async updateById(_id: ObjectId, data: PostUpdateModal) {
+  async updateById(_id: string, data: PostUpdateModal) {
     await postsCollection.updateOne(
-      { _id },
+      { _id: new ObjectId(_id) },
       { $set: data },
     );
   }
 
-  async deleteById(_id: ObjectId) {
-    await postsCollection.deleteOne({ _id });
+  async deleteById(_id: string) {
+    await postsCollection.deleteOne({ _id: new ObjectId(_id) });
   }
 }
 

@@ -1,9 +1,9 @@
 import { postsCollection } from '../db';
 import { PostsViewDto } from '../dtos/posts-view-dto';
-import { setAndThrowError } from '../utils';
-import { HTTP_MESSAGE, HTTP_STATUS_CODE, TYPE_COLLECTION } from '../settings';
+import { NotFoundError } from '../utils';
+import {  TYPE_COLLECTION } from '../settings';
 import { QueryStringFilter } from '../filters/query-string-filter';
-import { queryStringType } from '../types/types';
+import { ERROR_MESSAGE, queryStringType } from '../types/types';
 import { blogsQueryRepository } from './blogs-query-repository';
 import { ObjectId } from 'mongodb';
 import { sharedRepository } from './shared-repository';
@@ -11,10 +11,7 @@ import { sharedRepository } from './shared-repository';
 class PostsQueryRepository {
   async findPosts(queryString: queryStringType, id?: string) {
     if (id) {
-      const blog = await blogsQueryRepository.findById(id);
-      if (!blog) {
-        setAndThrowError({ message: HTTP_MESSAGE.NOT_FOUND, status: HTTP_STATUS_CODE.NOT_FOUND_404 });
-      }
+      await blogsQueryRepository.findById(id);
     }
 
     const _id = id ? new ObjectId(id) : undefined;
@@ -27,12 +24,17 @@ class PostsQueryRepository {
   }
 
   async findById(id: string) {
-    const result = await postsCollection.findOne({ _id: new ObjectId(id) });
-    if (!result) {
-      setAndThrowError({ message: HTTP_MESSAGE.NOT_FOUND, status: HTTP_STATUS_CODE.NOT_FOUND_404 });
-    }
+    // try {
+      const result = await postsCollection.findOne({ _id: new ObjectId(id) });
+      if (!result) {
+        throw new NotFoundError(ERROR_MESSAGE.NOT_FOUND);
+      }
 
-    return new PostsViewDto(result!);
+      return new PostsViewDto(result);
+
+    // } catch (e) {
+    //   return throwError({ message: HTTP_MESSAGE.NOT_FOUND, status: HTTP_STATUS_CODE.NOT_FOUND_404 });
+    // }
   }
 }
 

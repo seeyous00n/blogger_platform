@@ -1,59 +1,60 @@
 import { blogsRepository } from '../repositories/blogs-repository';
 import { BlogCreateModel } from '../models/blog/BlogCreateModel';
 import { BlogUpdateModal } from '../models/blog/BlogUpdateModal';
-import { setAndThrowError } from '../utils';
-import { HTTP_MESSAGE, HTTP_STATUS_CODE } from '../settings';
+import { NotFoundError } from '../utils';
 import { BlogsViewDto } from '../dtos/blogs-view-dto';
 import { postService } from './post-service';
 import { PostCreateModel } from '../models/post/PostCreateModel';
 import { ObjectId } from 'mongodb';
+import { ERROR_MESSAGE } from '../types/types';
 
 class BlogService {
-  async findBlogById(_id: ObjectId) {
+  async findBlogById(_id: string) {
     const result = await blogsRepository.findById(_id);
     if (!result) {
-      setAndThrowError({ message: HTTP_MESSAGE.NOT_FOUND, status: HTTP_STATUS_CODE.NOT_FOUND_404 });
+      throw new NotFoundError(ERROR_MESSAGE.NOT_FOUND);
     }
 
-    return result!;
+    return result;
   }
 
   async createBlog(blog: BlogCreateModel) {
-    const _id = new ObjectId();
     const newBlog = {
-      ...blog, _id, isMembership: false, createdAt: new Date().toISOString(),
+      ...blog, _id: new ObjectId(), isMembership: false, createdAt: new Date().toISOString(),
     };
-    await blogsRepository.createByData(newBlog);
-    const result = await blogsRepository.findById(_id);
+    const createdBlog = await blogsRepository.createByData(newBlog);
+    const result = await blogsRepository.findById(createdBlog.insertedId.toString());
 
     if (!result) {
-      throw new Error();
+      throw new NotFoundError(ERROR_MESSAGE.NOT_FOUND);
     }
 
     return new BlogsViewDto(result);
   }
 
-  async updateBlogById(_id: string, data: BlogUpdateModal): Promise<void> {
-    const id = new ObjectId(_id);
+  async updateBlogById(id: string, data: BlogUpdateModal): Promise<void> {
     const result = await blogsRepository.findById(id);
     if (!result) {
-      setAndThrowError({ message: HTTP_MESSAGE.NOT_FOUND, status: HTTP_STATUS_CODE.NOT_FOUND_404 });
+      throw new NotFoundError(ERROR_MESSAGE.NOT_FOUND);
     }
     await blogsRepository.updateById(id, data);
   }
 
-  async deleteBlogById(_id: string): Promise<void> {
-    const id = new ObjectId(_id);
+  async deleteBlogById(id: string): Promise<void> {
     const result = await blogsRepository.findById(id);
     if (!result) {
-      setAndThrowError({ message: HTTP_MESSAGE.NOT_FOUND, status: HTTP_STATUS_CODE.NOT_FOUND_404 });
+      throw new NotFoundError(ERROR_MESSAGE.NOT_FOUND);
     }
     await blogsRepository.deleteById(id);
   }
 
   async createPost(post: PostCreateModel, _id: string) {
-    post.blogId = new ObjectId(_id);
-    return await postService.createPost(post);
+    try {
+      post.blogId = new ObjectId(_id);
+      return await postService.createPost(post);
+    } catch (e) {
+      throw new NotFoundError(ERROR_MESSAGE.NOT_FOUND);
+    }
   }
 }
 

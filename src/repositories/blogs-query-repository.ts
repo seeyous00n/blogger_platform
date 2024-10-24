@@ -1,9 +1,8 @@
 import { blogsCollection } from '../db';
-import { setAndThrowError } from '../utils';
-import { HTTP_MESSAGE, HTTP_STATUS_CODE } from '../settings';
+import { NotFoundError } from '../utils';
 import { BlogsViewDto } from '../dtos/blogs-view-dto';
 import { QueryStringFilter } from '../filters/query-string-filter';
-import { queryStringType } from '../types/types';
+import { ERROR_MESSAGE, queryStringType } from '../types/types';
 import { ObjectId } from 'mongodb';
 import { sharedRepository } from './shared-repository';
 
@@ -18,12 +17,15 @@ class BlogsQueryRepository {
   }
 
   async findById(id: string) {
+    // try {
     const result = await blogsCollection.findOne({ _id: new ObjectId(id) });
     if (!result) {
-      setAndThrowError({ message: HTTP_MESSAGE.NOT_FOUND, status: HTTP_STATUS_CODE.NOT_FOUND_404 });
+      throw new NotFoundError(ERROR_MESSAGE.NOT_FOUND);
     }
-
-    return new BlogsViewDto(result!);
+    return new BlogsViewDto(result);
+    // } catch (error) {
+    //   throw new NotFoundError(ERRORS_TYPE.NOT_FOUND);
+    // }
   }
 }
 
