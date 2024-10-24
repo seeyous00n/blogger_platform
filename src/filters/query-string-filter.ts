@@ -38,7 +38,7 @@ export class QueryStringFilter {
         : new PostsViewDto(item as PostType)) as BlogsViewDto[] | PostsViewDto[];
   }
 
-  prepareDataAnswer(count: number, data: BlogType[] | PostType[], type = TYPE_COLLECTION.BLOGS): QueryViewModel {
+  prepareDataAnswer(count: number, data: BlogType[] | PostType[], type = TYPE_COLLECTION.BLOGS) {
     const mapData = this.mapData(data, type);
 
     return {

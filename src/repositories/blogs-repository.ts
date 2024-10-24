@@ -4,23 +4,23 @@ import { blogsCollection } from '../db';
 import { ObjectId } from 'mongodb';
 
 class BlogsRepository {
-  async findById(id: ObjectId): Promise<BlogType | null> {
-    return await blogsCollection.findOne({ id });
+  async findById(_id: ObjectId) {
+    return await blogsCollection.findOne({ _id });
   }
 
   async createByData(data: BlogType) {
     await blogsCollection.insertOne(data);
   }
 
-  async updateById(id: ObjectId, data: BlogUpdateModal) {
+  async updateById(_id: ObjectId, data: BlogUpdateModal) {
     await blogsCollection.updateOne(
-      { id },
+      { _id },
       { $set: data },
     );
   }
 
-  async deleteById(id: ObjectId) {
-    await blogsCollection.deleteOne({ id });
+  async deleteById(_id: ObjectId) {
+    await blogsCollection.deleteOne({ _id });
   }
 }
 

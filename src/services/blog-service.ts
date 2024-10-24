@@ -1,5 +1,4 @@
 import { blogsRepository } from '../repositories/blogs-repository';
-import { BlogType } from '../types/blog-types';
 import { BlogCreateModel } from '../models/blog/BlogCreateModel';
 import { BlogUpdateModal } from '../models/blog/BlogUpdateModal';
 import { setAndThrowError } from '../utils';
@@ -10,8 +9,8 @@ import { PostCreateModel } from '../models/post/PostCreateModel';
 import { ObjectId } from 'mongodb';
 
 class BlogService {
-  async findBlogById(id: ObjectId): Promise<BlogType> {
-    const result = await blogsRepository.findById(id);
+  async findBlogById(_id: ObjectId) {
+    const result = await blogsRepository.findById(_id);
     if (!result) {
       setAndThrowError({ message: HTTP_MESSAGE.NOT_FOUND, status: HTTP_STATUS_CODE.NOT_FOUND_404 });
     }
@@ -19,13 +18,13 @@ class BlogService {
     return result!;
   }
 
-  async createBlog(blog: BlogCreateModel): Promise<BlogType> {
-    const id = new ObjectId();
+  async createBlog(blog: BlogCreateModel) {
+    const _id = new ObjectId();
     const newBlog = {
-      ...blog, id, isMembership: false, createdAt: new Date().toISOString(),
+      ...blog, _id, isMembership: false, createdAt: new Date().toISOString(),
     };
     await blogsRepository.createByData(newBlog);
-    const result = await blogsRepository.findById(id);
+    const result = await blogsRepository.findById(_id);
 
     if (!result) {
       throw new Error();

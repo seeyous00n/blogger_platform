@@ -1,7 +1,6 @@
 import { Response } from 'express';
 import { HTTP_MESSAGE, HTTP_STATUS_CODE } from '../settings';
 import { postService } from '../services/post-service';
-import { PostType } from '../types/post-types';
 import { PostCreateModel } from '../models/post/PostCreateModel';
 import {
   queryStringType,
@@ -25,7 +24,7 @@ class PostsController {
     }
   };
 
-  getPost = async (req: RequestWithParams<URIParamsModel>, res: Response<PostType>) => {
+  getPost = async (req: RequestWithParams<URIParamsModel>, res: Response<PostViewModel>) => {
     try {
       const result = await postsQueryRepository.findById(req.params.id);
       res.status(HTTP_STATUS_CODE.OK_200).json(result);
@@ -37,7 +36,7 @@ class PostsController {
 
   creatPost = async (req: RequestWithBody<PostCreateModel>, res: Response<PostViewModel | string>) => {
     try {
-      const result: PostType = await postService.createPost(req.body);
+      const result = await postService.createPost(req.body);
       res.status(HTTP_STATUS_CODE.CREATED_201).json(result);
     } catch (e: any) {
       res.status(HTTP_STATUS_CODE.SERVER_ERROR_500).json(HTTP_MESSAGE.SERVER_ERROR);

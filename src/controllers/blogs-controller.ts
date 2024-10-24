@@ -12,10 +12,8 @@ import { URIParamsModel } from '../models/URIParamsModel';
 import { blogService } from '../services/blog-service';
 import { BlogCreateModel } from '../models/blog/BlogCreateModel';
 import { BlogUpdateModal } from '../models/blog/BlogUpdateModal';
-import { BlogType } from '../types/blog-types';
 import { blogsQueryRepository } from '../repositories/blogs-query-repository';
 import { PostViewModel } from '../models/post/PostViewModel';
-import { PostType } from '../types/post-types';
 import { postsQueryRepository } from '../repositories/posts-query-repository';
 import { PostCreateModel } from '../models/post/PostCreateModel';
 
@@ -32,7 +30,7 @@ class BlogsController {
 
   getBlog = async (req: RequestWithParams<URIParamsModel>, res: Response<BlogViewModel>) => {
     try {
-      const result: BlogType = await blogsQueryRepository.findById(req.params.id);
+      const result = await blogsQueryRepository.findById(req.params.id);
       res.status(HTTP_STATUS_CODE.OK_200).json(result);
     } catch (e: any) {
       const err = JSON.parse(e.message);
@@ -42,7 +40,7 @@ class BlogsController {
 
   createBlog = async (req: RequestWithBody<BlogCreateModel>, res: Response<BlogViewModel | string>) => {
     try {
-      const result: BlogType = await blogService.createBlog(req.body);
+      const result = await blogService.createBlog(req.body);
       res.status(HTTP_STATUS_CODE.CREATED_201).json(result);
     } catch (e: any) {
       res.status(HTTP_STATUS_CODE.SERVER_ERROR_500).json(HTTP_MESSAGE.SERVER_ERROR);
@@ -71,7 +69,7 @@ class BlogsController {
 
   createPostFromBlog = async (req: RequestWithParamsAndBody<URIParamsModel, PostCreateModel>, res: Response<PostViewModel>) => {
     try {
-      const result: PostType = await blogService.createPost(req.body, req.params.id);
+      const result = await blogService.createPost(req.body, req.params.id);
       res.status(HTTP_STATUS_CODE.CREATED_201).json(result);
     } catch (e: any) {
       const err = JSON.parse(e.message);

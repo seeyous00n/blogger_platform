@@ -10,7 +10,7 @@ export class PostsViewDto {
   createdAt;
 
   constructor(model: PostType) {
-    this.id = model.id;
+    this.id = model._id;
     this.title = model.title;
     this.shortDescription = model.shortDescription;
     this.content = model.content;

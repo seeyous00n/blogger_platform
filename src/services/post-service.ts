@@ -1,6 +1,5 @@
 import { postsRepository } from '../repositories/posts-repository';
 import { PostCreateModel } from '../models/post/PostCreateModel';
-import { PostType } from '../types/post-types';
 import { PostUpdateModal } from '../models/post/PostUpdateModal';
 import { blogService } from './blog-service';
 import { setAndThrowError } from '../utils';
@@ -9,15 +8,15 @@ import { PostsViewDto } from '../dtos/posts-view-dto';
 import { ObjectId } from 'mongodb';
 
 class PostService {
-  async createPost(post: PostCreateModel): Promise<PostType> {
+  async createPost(post: PostCreateModel) {
     const dataBlog = await blogService.findBlogById(new ObjectId(post.blogId));
-    const id = new ObjectId();
-    post.blogId = dataBlog.id;
+    const _id = new ObjectId();
+    post.blogId = dataBlog._id;
     const newPost = {
-      ...post, id, blogName: dataBlog.name, createdAt: new Date().toISOString(),
+      ...post, _id, blogName: dataBlog.name, createdAt: new Date().toISOString(),
     };
     await postsRepository.createByData(newPost);
-    const result = await postsRepository.findById(id);
+    const result = await postsRepository.findById(_id);
 
     if (!result) {
       setAndThrowError({ message: HTTP_MESSAGE.NOT_FOUND, status: HTTP_STATUS_CODE.NOT_FOUND_404 });
