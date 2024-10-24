@@ -1,5 +1,5 @@
 import { Response } from 'express';
-import { HTTP_MESSAGE, HTTP_STATUS_CODE } from '../settings';
+import { HTTP_STATUS_CODE } from '../settings';
 import {
   queryStringType,
   RequestWithBody,
