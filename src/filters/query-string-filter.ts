@@ -3,6 +3,8 @@ import { BlogsViewDto } from '../dtos/blogs-view-dto';
 import { PostType } from '../types/post-types';
 import { PostsViewDto } from '../dtos/posts-view-dto';
 import { queryStringType } from '../types/types';
+import { ObjectId } from 'mongodb';
+import { QueryViewModel } from '../models/ViewQueryModel';
 
 export class QueryStringFilter {
   searchNameTerm;
@@ -19,13 +21,12 @@ export class QueryStringFilter {
     this.pageSize = queryString.pageSize || '10';
   }
 
-  prepareQueryString(id?: string) {
+  prepareQueryString(id?: ObjectId) {
     return {
-      search: this.searchNameTerm ? { name: { $regex: this.searchNameTerm, $options: 'i' } } : {},
+      search: id ? { blogId: id } : this.searchNameTerm ? { name: { $regex: this.searchNameTerm, $options: 'i' } } : {},
       sort: { [this.sortBy]: this.sortDirection === 'asc' ? 1 : -1 },
       skip: (Number(this.pageNumber) - 1) * Number(this.pageSize),
       limit: Number(this.pageSize),
-      searchId: id ? { blogId: id } : {},
     };
   }
 
@@ -33,18 +34,11 @@ export class QueryStringFilter {
     return data.map((item) =>
       type === 'blogs'
         ? new BlogsViewDto(item as BlogType)
-        : new PostsViewDto(item as PostType));
+        : new PostsViewDto(item as PostType)) as BlogsViewDto[] | PostsViewDto[];
   }
 
-  prepareDataAnswer(count: number, data: BlogType[] | PostType[], type = 'blogs') {
-    //let mapData;
+  prepareDataAnswer(count: number, data: BlogType[] | PostType[], type = 'blogs'): QueryViewModel {
     const mapData = this.mapData(data, type);
-    // if (type === 'blogs') {
-    //   mapData = <BlogType[]>data.map((blog) => new BlogsViewDto(<BlogType>blog));
-    // }
-    // if (type === 'posts') {
-    //   mapData = <PostType[]>data.map((blog) => new PostsViewDto(<PostType>blog));
-    // }
 
     return {
       'pagesCount': Math.ceil(count / Number(this.pageSize)),

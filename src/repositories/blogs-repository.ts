@@ -1,24 +1,25 @@
 import { BlogType } from '../types/blog-types';
 import { BlogUpdateModal } from '../models/blog/BlogUpdateModal';
 import { blogsCollection } from '../db';
+import { ObjectId } from 'mongodb';
 
 class BlogsRepository {
-  async findById(id: string): Promise<BlogType | null> {
+  async findById(id: ObjectId): Promise<BlogType | null> {
     return await blogsCollection.findOne({ id });
   }
 
   async createByData(data: BlogType) {
-    return await blogsCollection.insertOne(data);
+    await blogsCollection.insertOne(data);
   }
 
-  async updateById(id: string, data: BlogUpdateModal) {
+  async updateById(id: ObjectId, data: BlogUpdateModal) {
     await blogsCollection.updateOne(
       { id },
       { $set: data },
     );
   }
 
-  async deleteById(id: string) {
+  async deleteById(id: ObjectId) {
     await blogsCollection.deleteOne({ id });
   }
 }

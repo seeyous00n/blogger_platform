@@ -1,3 +1,9 @@
+import { BlogsViewDto } from '../../dtos/blogs-view-dto';
+
 export type GetBlogsQueryModel = {
-  // ?? For filters
+  pagesCount: number,
+  page: number,
+  pageSize: number,
+  totalCount: number,
+  items: BlogsViewDto[]
 }

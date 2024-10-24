@@ -1,11 +1,12 @@
 import { body } from 'express-validator';
 import { errorsValidationMiddleware } from '../middlewares/errors-validation-middleware';
 import { blogsRepository } from '../repositories/blogs-repository';
+import { ObjectId } from 'mongodb';
 
 const BLOG_ID_ERROR_MESSAGE = 'Blog ID not found';
 
 const blogIdValidator = async (value: string) => {
-  const blog = await blogsRepository.findById(value);
+  const blog = await blogsRepository.findById(new ObjectId(value));
   if (!blog) {
     throw new Error(BLOG_ID_ERROR_MESSAGE);
   }

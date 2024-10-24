@@ -1,3 +1,9 @@
+import { PostsViewDto } from '../../dtos/posts-view-dto';
+
 export type GetPostQueryModel = {
-  // ?? For filters
+  pagesCount: number,
+  page: number,
+  pageSize: number,
+  totalCount: number,
+  items: PostsViewDto[]
 }

@@ -1,4 +1,4 @@
-import { Request, Response } from 'express';
+import { Response } from 'express';
 import { HTTP_STATUS_CODE, HTTP_MESSAGE } from '../settings';
 import { BlogViewModel } from '../models/blog/BlogViewModel';
 import {

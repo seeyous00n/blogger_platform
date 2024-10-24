@@ -1,17 +1,11 @@
+import { ObjectId } from 'mongodb';
+
 export type PostType = {
-  id: string,
+  id: ObjectId,
   title: string,
   shortDescription: string,
   content: string,
-  blogId: string,
+  blogId: ObjectId,
   blogName: string,
   createdAt: string
-}
-
-export type PostsWithQuery = {
-  pagesCount: number,
-  page: number,
-  pageSize: number,
-  totalCount: number,
-  items: PostType[]
 }

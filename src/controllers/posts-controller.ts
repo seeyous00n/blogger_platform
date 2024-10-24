@@ -1,4 +1,4 @@
-import { Request, Response } from 'express';
+import { Response } from 'express';
 import { HTTP_MESSAGE, HTTP_STATUS_CODE } from '../settings';
 import { postService } from '../services/post-service';
 import { PostType } from '../types/post-types';

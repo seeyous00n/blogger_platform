@@ -6,12 +6,13 @@ import { blogService } from './blog-service';
 import { setAndThrowError } from '../utils';
 import { HTTP_MESSAGE, HTTP_STATUS_CODE } from '../settings';
 import { PostsViewDto } from '../dtos/posts-view-dto';
-import { v4 as uuidv4 } from 'uuid';
+import { ObjectId } from 'mongodb';
 
 class PostService {
   async createPost(post: PostCreateModel): Promise<PostType> {
-    const dataBlog = await blogService.findBlogById(post.blogId);
-    const id = uuidv4();
+    const dataBlog = await blogService.findBlogById(new ObjectId(post.blogId));
+    const id = new ObjectId();
+    post.blogId = dataBlog.id;
     const newPost = {
       ...post, id, blogName: dataBlog.name, createdAt: new Date().toISOString(),
     };
@@ -25,7 +26,8 @@ class PostService {
     return new PostsViewDto(result!);
   }
 
-  async updatePostById(id: string, data: PostUpdateModal): Promise<void> {
+  async updatePostById(_id: string, data: PostUpdateModal): Promise<void> {
+    const id = new ObjectId(_id);
     const result = await postsRepository.findById(id);
     if (!result) {
       setAndThrowError({ message: HTTP_MESSAGE.NOT_FOUND, status: HTTP_STATUS_CODE.NOT_FOUND_404 });
@@ -33,7 +35,8 @@ class PostService {
     await postsRepository.updateById(id, data);
   }
 
-  async deletePostById(id: string): Promise<void> {
+  async deletePostById(_id: string): Promise<void> {
+    const id = new ObjectId(_id);
     const result = await postsRepository.findById(id);
     if (!result) {
       setAndThrowError({ message: HTTP_MESSAGE.NOT_FOUND, status: HTTP_STATUS_CODE.NOT_FOUND_404 });

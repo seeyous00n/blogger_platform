@@ -5,12 +5,12 @@ import { BlogUpdateModal } from '../models/blog/BlogUpdateModal';
 import { setAndThrowError } from '../utils';
 import { HTTP_MESSAGE, HTTP_STATUS_CODE } from '../settings';
 import { BlogsViewDto } from '../dtos/blogs-view-dto';
-import { v4 as uuidv4 } from 'uuid';
 import { postService } from './post-service';
 import { PostCreateModel } from '../models/post/PostCreateModel';
+import { ObjectId } from 'mongodb';
 
 class BlogService {
-  async findBlogById(id: string): Promise<BlogType> {
+  async findBlogById(id: ObjectId): Promise<BlogType> {
     const result = await blogsRepository.findById(id);
     if (!result) {
       setAndThrowError({ message: HTTP_MESSAGE.NOT_FOUND, status: HTTP_STATUS_CODE.NOT_FOUND_404 });
@@ -20,7 +20,7 @@ class BlogService {
   }
 
   async createBlog(blog: BlogCreateModel): Promise<BlogType> {
-    const id = uuidv4();
+    const id = new ObjectId();
     const newBlog = {
       ...blog, id, isMembership: false, createdAt: new Date().toISOString(),
     };
@@ -34,7 +34,8 @@ class BlogService {
     return new BlogsViewDto(result);
   }
 
-  async updateBlogById(id: string, data: BlogUpdateModal): Promise<void> {
+  async updateBlogById(_id: string, data: BlogUpdateModal): Promise<void> {
+    const id = new ObjectId(_id);
     const result = await blogsRepository.findById(id);
     if (!result) {
       setAndThrowError({ message: HTTP_MESSAGE.NOT_FOUND, status: HTTP_STATUS_CODE.NOT_FOUND_404 });
@@ -42,7 +43,8 @@ class BlogService {
     await blogsRepository.updateById(id, data);
   }
 
-  async deleteBlogById(id: string): Promise<void> {
+  async deleteBlogById(_id: string): Promise<void> {
+    const id = new ObjectId(_id);
     const result = await blogsRepository.findById(id);
     if (!result) {
       setAndThrowError({ message: HTTP_MESSAGE.NOT_FOUND, status: HTTP_STATUS_CODE.NOT_FOUND_404 });
@@ -50,8 +52,8 @@ class BlogService {
     await blogsRepository.deleteById(id);
   }
 
-  async createPost(post: PostCreateModel, id: string) {
-    post.blogId = id;
+  async createPost(post: PostCreateModel, _id: string) {
+    post.blogId = new ObjectId(_id);
     return await postService.createPost(post);
   }
 }

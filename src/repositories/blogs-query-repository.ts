@@ -5,46 +5,22 @@ import { HTTP_MESSAGE, HTTP_STATUS_CODE } from '../settings';
 import { BlogsViewDto } from '../dtos/blogs-view-dto';
 import { QueryStringFilter } from '../filters/query-string-filter';
 import { queryStringType } from '../types/types';
+import { ObjectId } from 'mongodb';
+import { QueryViewModel } from '../models/ViewQueryModel';
+import { sharedRepository } from './shared-repository';
 
 class BlogsQueryRepository {
-  async findBlogs(queryString: queryStringType) {
+  async findBlogs(queryString: queryStringType): Promise<QueryViewModel> {
     const supportFilter = new QueryStringFilter(queryString);
     const filter = supportFilter.prepareQueryString();
-    const result = await blogsCollection
-      .find(filter.search)
-      .sort(filter.sort as {})
-      .skip(filter.skip)
-      .limit(filter.limit)
-      .toArray();
+    const result = await sharedRepository.findData(blogsCollection, filter);
     const blogsCount = await blogsCollection.countDocuments(filter.search);
 
     return supportFilter.prepareDataAnswer(blogsCount, result);
   }
 
-  // async findBlogs(queryString: queryStringType, id: string | undefined) {
-  //   if (id) {
-  //     const blog = await blogsCollection.findOne({ id });
-  //     if (!blog) {
-  //       setAndThrowError({ message: HTTP_MESSAGE.NOT_FOUND, status: HTTP_STATUS_CODE.NOT_FOUND_404 });
-  //     }
-  //
-  //     return await postsQueryRepository.findPosts(queryString, id);
-  //   }
-  //
-  //   const supportFilter = new QueryStringFilter(queryString);
-  //   const filter = supportFilter.prepareQueryString();
-  //   const result = await blogsCollection
-  //     .find(filter.search)
-  //     .sort(filter.sort as {})
-  //     .skip(filter.skip)
-  //     .limit(filter.limit)
-  //     .toArray();
-  //   const blogsCount = await blogsCollection.countDocuments(filter.search);
-  //
-  //   return supportFilter.prepareDataAnswer(blogsCount, result);
-  // }
-
-  async findById(id: string): Promise<BlogType> {
+  async findById(_id: string): Promise<BlogType> {
+    const id = new ObjectId(_id);
     const result = await blogsCollection.findOne({ id });
     if (!result) {
       setAndThrowError({ message: HTTP_MESSAGE.NOT_FOUND, status: HTTP_STATUS_CODE.NOT_FOUND_404 });

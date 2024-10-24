@@ -1,6 +1,6 @@
 import { Router } from 'express';
 import { blogsController } from '../controllers/blogs-controller';
-import { blogDataValidation, postDataValidation, postDataValidationWithoutId } from '../validations/data-validation';
+import { blogDataValidation, postDataValidationWithoutId } from '../validations/data-validation';
 import { authValidationMiddleware } from '../middlewares/auth-validation-middleware';
 
 const blogsRouter = Router();
