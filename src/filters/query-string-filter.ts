@@ -4,8 +4,17 @@ import { PostType } from '../types/post-types';
 import { PostsViewDto } from '../dtos/posts-view-dto';
 import { queryStringType } from '../types/types';
 import { ObjectId } from 'mongodb';
-import { QueryViewModel } from '../models/ViewQueryModel';
 import { TYPE_COLLECTION } from '../settings';
+
+export type filterType = {
+  search: { blogId: ObjectId, name?: undefined } | {
+    name: { $regex: string, $options: string },
+    blogId?: undefined
+  } | { blogId?: undefined, name?: undefined },
+  sort: {},
+  skip: number,
+  limit: number
+}
 
 export class QueryStringFilter {
   searchNameTerm;
@@ -22,7 +31,7 @@ export class QueryStringFilter {
     this.pageSize = queryString.pageSize || '10';
   }
 
-  prepareQueryString(id?: ObjectId) {
+  prepareQueryString(id?: ObjectId): filterType {
     return {
       search: id ? { blogId: id } : this.searchNameTerm ? { name: { $regex: this.searchNameTerm, $options: 'i' } } : {},
       sort: { [this.sortBy]: this.sortDirection === 'asc' ? 1 : -1 },
