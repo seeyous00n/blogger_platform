@@ -17,15 +17,11 @@ class BlogsQueryRepository {
   }
 
   async findById(id: string) {
-    // try {
     const result = await blogsCollection.findOne({ _id: new ObjectId(id) });
     if (!result) {
       throw new NotFoundError(ERROR_MESSAGE.NOT_FOUND);
     }
     return new BlogsViewDto(result);
-    // } catch (error) {
-    //   throw new NotFoundError(ERRORS_TYPE.NOT_FOUND);
-    // }
   }
 }
 

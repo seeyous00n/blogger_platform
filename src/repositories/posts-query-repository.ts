@@ -10,11 +10,12 @@ import { sharedRepository } from './shared-repository';
 
 class PostsQueryRepository {
   async findPosts(queryString: queryStringType, id?: string) {
+    let _id = undefined;
     if (id) {
-      await blogsQueryRepository.findById(id);
+      const result =  await blogsQueryRepository.findById(id);
+      _id = new ObjectId(result.id)
     }
 
-    const _id = id ? new ObjectId(id) : undefined;
     const supportFilter = new QueryStringFilter(queryString);
     const filter = supportFilter.prepareQueryString(_id);
     const result = await sharedRepository.findData(postsCollection, filter);
@@ -24,17 +25,12 @@ class PostsQueryRepository {
   }
 
   async findById(id: string) {
-    // try {
       const result = await postsCollection.findOne({ _id: new ObjectId(id) });
       if (!result) {
         throw new NotFoundError(ERROR_MESSAGE.NOT_FOUND);
       }
 
       return new PostsViewDto(result);
-
-    // } catch (e) {
-    //   return throwError({ message: HTTP_MESSAGE.NOT_FOUND, status: HTTP_STATUS_CODE.NOT_FOUND_404 });
-    // }
   }
 }
 
