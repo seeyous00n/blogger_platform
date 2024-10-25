@@ -16,7 +16,7 @@ import { postsQueryRepository } from '../repositories/posts-query-repository';
 import { PostCreateModel } from '../models/post/PostCreateModel';
 import { PostsViewDto } from '../dtos/posts-view-dto';
 import { BlogsViewDto } from '../dtos/blogs-view-dto';
-import { sendError } from '../utils/utils';
+import { sendError } from '../utils/error-handler';
 
 class BlogsController {
   getBlogs = async (req: RequestWithQuery<URIParamsModel, queryStringType>, res: Response) => {
@@ -75,6 +75,7 @@ class BlogsController {
 
   getPostsFromBLog = async (req: RequestWithQuery<URIParamsModel, queryStringType>, res: Response) => {
     try {
+      await blogsQueryRepository.findById(req.params.id);
       const result = await postsQueryRepository.findPosts(req.query, req.params.id);
       res.status(HTTP_STATUS_CODE.OK_200).json(result);
     } catch (e: any) {

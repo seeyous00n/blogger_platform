@@ -13,7 +13,7 @@ import { URIParamsModel } from '../models/URIParamsModel';
 import { PostUpdateModal } from '../models/post/PostUpdateModal';
 import { postsQueryRepository } from '../repositories/posts-query-repository';
 import { PostsViewDto } from '../dtos/posts-view-dto';
-import { sendError } from '../utils/utils';
+import { sendError } from '../utils/error-handler';
 
 class PostsController {
   getPosts = async (req: RequestWithQuery<URIParamsModel, queryStringType>, res: Response) => {

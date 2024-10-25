@@ -1,7 +1,7 @@
 import { blogsRepository } from '../repositories/blogs-repository';
 import { BlogCreateModel } from '../models/blog/BlogCreateModel';
 import { BlogUpdateModal } from '../models/blog/BlogUpdateModal';
-import { NotFoundError } from '../utils/utils';
+import { NotFoundError } from '../utils/error-handler';
 import { BlogsViewDto } from '../dtos/blogs-view-dto';
 import { postService } from './post-service';
 import { PostCreateModel } from '../models/post/PostCreateModel';

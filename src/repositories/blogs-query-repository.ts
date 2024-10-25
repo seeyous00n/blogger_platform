@@ -1,5 +1,5 @@
 import { blogsCollection } from '../db';
-import { NotFoundError } from '../utils/utils';
+import { NotFoundError } from '../utils/error-handler';
 import { BlogsViewDto } from '../dtos/blogs-view-dto';
 import { ERROR_MESSAGE, queryStringType } from '../types/types';
 import { ObjectId } from 'mongodb';

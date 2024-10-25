@@ -1,21 +1,15 @@
 import { postsCollection } from '../db';
 import { PostsViewDto } from '../dtos/posts-view-dto';
-import { NotFoundError } from '../utils/utils';
+import { NotFoundError } from '../utils/error-handler';
 import { TYPE_COLLECTION } from '../settings';
 import { ERROR_MESSAGE, queryStringType } from '../types/types';
-import { blogsQueryRepository } from './blogs-query-repository';
 import { ObjectId } from 'mongodb';
 import { QueryHelper } from '../filters/query-helper';
 import { dataMapper, prepareDataAnswer } from '../utils/map-data';
 
 class PostsQueryRepository {
   async findPosts(queryString: queryStringType, id?: string) {
-    let _id = undefined;
-    if (id) {
-      const result = await blogsQueryRepository.findById(id);
-      _id = new ObjectId(result.id);
-    }
-
+    const _id = id ? new ObjectId(id) : undefined;
     const queryHelper = new QueryHelper(queryString);
     const filter = queryHelper.parsFilter(_id);
     const result = await postsCollection
