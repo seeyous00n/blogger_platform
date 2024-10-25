@@ -16,7 +16,7 @@ import { postsQueryRepository } from '../repositories/posts-query-repository';
 import { PostCreateModel } from '../models/post/PostCreateModel';
 import { PostsViewDto } from '../dtos/posts-view-dto';
 import { BlogsViewDto } from '../dtos/blogs-view-dto';
-import { sendError } from '../utils';
+import { sendError } from '../utils/utils';
 
 class BlogsController {
   getBlogs = async (req: RequestWithQuery<URIParamsModel, queryStringType>, res: Response) => {

@@ -1,7 +1,6 @@
 import { body } from 'express-validator';
 import { errorsValidationMiddleware } from '../middlewares/errors-validation-middleware';
 import { blogsRepository } from '../repositories/blogs-repository';
-import { ObjectId } from 'mongodb';
 
 const BLOG_ID_ERROR_MESSAGE = 'Blog ID not found';
 

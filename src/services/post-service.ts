@@ -2,7 +2,7 @@ import { postsRepository } from '../repositories/posts-repository';
 import { PostCreateModel } from '../models/post/PostCreateModel';
 import { PostUpdateModal } from '../models/post/PostUpdateModal';
 import { blogService } from './blog-service';
-import { NotFoundError } from '../utils';
+import { NotFoundError } from '../utils/utils';
 import { PostsViewDto } from '../dtos/posts-view-dto';
 import { ObjectId } from 'mongodb';
 import { ERROR_MESSAGE } from '../types/types';
