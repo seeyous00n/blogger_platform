@@ -4,7 +4,6 @@ import { BlogsViewDto } from '../dtos/blogs-view-dto';
 import { ERROR_MESSAGE, queryStringType } from '../types/types';
 import { ObjectId } from 'mongodb';
 import { QueryHelper } from '../filters/query-helper';
-import { dataMapper, prepareDataAnswer } from '../utils/map-data';
 
 class BlogsQueryRepository {
   async findBlogs(queryString: queryStringType) {
@@ -19,9 +18,15 @@ class BlogsQueryRepository {
       .toArray();
 
     const blogsCount = await blogsCollection.countDocuments(filter.search);
-    const blogs = dataMapper(result);
+    const blogs = result.map((item) => new BlogsViewDto(item));
 
-    return prepareDataAnswer(blogs, blogsCount, queryHelper);
+    return {
+      'pagesCount': Math.ceil(blogsCount / Number(queryHelper.pageSize)),
+      'page': Number(queryHelper.pageNumber),
+      'pageSize': Number(queryHelper.pageSize),
+      'totalCount': blogsCount,
+      'items': blogs,
+    };
   }
 
   async findById(id: string) {

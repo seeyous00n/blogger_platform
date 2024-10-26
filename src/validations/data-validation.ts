@@ -46,7 +46,6 @@ export const postDataValidationWithoutId = [
   errorsValidationMiddleware,
 ];
 
-
 export const userDataValidation = [
   loginValidator,
   emailValidator,

@@ -1,5 +1,6 @@
 import { queryStringType } from '../types/types';
 import { ObjectId } from 'mongodb';
+import { ParsFilterType } from './types';
 
 export class QueryHelper {
   searchNameTerm;
@@ -16,7 +17,7 @@ export class QueryHelper {
     this.pageSize = queryString.pageSize || '10';
   }
 
-  parsFilter(id?: ObjectId) {
+  parsFilter(id?: ObjectId): ParsFilterType {
     return {
       search: id ? { blogId: id } : this.searchNameTerm ? { name: { $regex: this.searchNameTerm, $options: 'i' } } : {},
       sort: { [this.sortBy]: this.sortDirection === 'asc' ? 1 : -1 },
@@ -24,4 +25,5 @@ export class QueryHelper {
       limit: Number(this.pageSize),
     };
   }
+
 }

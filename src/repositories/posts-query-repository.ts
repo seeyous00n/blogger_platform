@@ -1,11 +1,9 @@
 import { postsCollection } from '../db';
 import { PostsViewDto } from '../dtos/posts-view-dto';
 import { NotFoundError } from '../utils/error-handler';
-import { TYPE_COLLECTION } from '../settings';
 import { ERROR_MESSAGE, queryStringType } from '../types/types';
 import { ObjectId } from 'mongodb';
 import { QueryHelper } from '../filters/query-helper';
-import { dataMapper, prepareDataAnswer } from '../utils/map-data';
 
 class PostsQueryRepository {
   async findPosts(queryString: queryStringType, id?: string) {
@@ -20,9 +18,15 @@ class PostsQueryRepository {
       .toArray();
 
     const postsCount = await postsCollection.countDocuments(filter.search);
-    const posts = dataMapper(result, TYPE_COLLECTION.POSTS);
+    const posts = result.map((item) => new PostsViewDto(item));
 
-    return prepareDataAnswer(posts, postsCount, queryHelper)
+    return {
+      'pagesCount': Math.ceil(postsCount / Number(queryHelper.pageSize)),
+      'page': Number(queryHelper.pageNumber),
+      'pageSize': Number(queryHelper.pageSize),
+      'totalCount': postsCount,
+      'items': posts,
+    };
   }
 
   async findById(id: string) {

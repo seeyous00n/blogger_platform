@@ -19,12 +19,6 @@ class UsersController {
 
   createUser = async (req: RequestWithBody<UserCreateModel>, res: Response) => {
     try {
-      // const isUser = await usersRepository.isUserEmpty(req.body);
-      // if (isUser.email || isUser.login) {
-      //   res.status(HTTP_STATUS_CODE.BAD_REQUEST_400).json({'errorsMessages': [{field: 'email or login', message: 'email should be unique'}] });
-      //   return
-      // }
-
       const result = await userService.createUser(req.body);
       res.status(HTTP_STATUS_CODE.CREATED_201).json(result);
     } catch (e: any) {

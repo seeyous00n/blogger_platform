@@ -14,7 +14,6 @@ class UsersQueryRepository {
       .toArray();
 
     const blogsCount = await usersCollection.countDocuments(filter.search);
-
     const resultData = result.map((item: any) => new UserViewDto(item));
 
     return {
