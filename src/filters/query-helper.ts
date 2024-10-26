@@ -1,16 +1,6 @@
 import { queryStringType } from '../types/types';
 import { ObjectId } from 'mongodb';
 
-export type parserFilterType = {
-  search: { blogId: ObjectId, name?: undefined } | {
-    name: { $regex: string, $options: string },
-    blogId?: undefined
-  } | { blogId?: undefined, name?: undefined },
-  sort: {},
-  skip: number,
-  limit: number
-}
-
 export class QueryHelper {
   searchNameTerm;
   sortBy;
@@ -26,7 +16,7 @@ export class QueryHelper {
     this.pageSize = queryString.pageSize || '10';
   }
 
-  parsFilter(id?: ObjectId): parserFilterType {
+  parsFilter(id?: ObjectId) {
     return {
       search: id ? { blogId: id } : this.searchNameTerm ? { name: { $regex: this.searchNameTerm, $options: 'i' } } : {},
       sort: { [this.sortBy]: this.sortDirection === 'asc' ? 1 : -1 },

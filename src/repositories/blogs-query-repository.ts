@@ -13,15 +13,15 @@ class BlogsQueryRepository {
     const filter = queryHelper.parsFilter();
     const result = await blogsCollection
       .find(filter.search)
-      .sort(filter.sort)
+      .sort(filter.sort as {})
       .skip(filter.skip)
       .limit(filter.limit)
       .toArray();
 
     const blogsCount = await blogsCollection.countDocuments(filter.search);
-    const blogs = dataMapper(result)
+    const blogs = dataMapper(result);
 
-    return prepareDataAnswer(blogs, blogsCount, queryHelper)
+    return prepareDataAnswer(blogs, blogsCount, queryHelper);
   }
 
   async findById(id: string) {

@@ -20,6 +20,10 @@ const shortDescriptionValidator = body('shortDescription').isString().trim().not
 const contentValidator = body('content').isString().trim().notEmpty().escape().isLength({ max: 1000 });
 const isBlogId = body('blogId').custom(blogIdValidator);
 
+const loginValidator = body('login').isString().trim().notEmpty().isLength({min: 3, max: 10 }).matches(/^[a-zA-Z0-9_-]*$/);
+const emailValidator = body('email').isString().trim().notEmpty().matches(/^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/);
+const passwordValidator = body('password').isString().trim().notEmpty().isLength({min: 6, max: 20 });
+
 export const blogDataValidation = [
   nameValidator,
   descriptionValidator,
@@ -40,4 +44,12 @@ export const postDataValidationWithoutId = [
   shortDescriptionValidator,
   contentValidator,
   errorsValidationMiddleware,
+];
+
+
+export const userDataValidation = [
+  loginValidator,
+  emailValidator,
+  passwordValidator,
+  errorsValidationMiddleware
 ];

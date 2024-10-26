@@ -14,7 +14,7 @@ class PostsQueryRepository {
     const filter = queryHelper.parsFilter(_id);
     const result = await postsCollection
       .find(filter.search)
-      .sort(filter.sort)
+      .sort(filter.sort as {})
       .skip(filter.skip)
       .limit(filter.limit)
       .toArray();

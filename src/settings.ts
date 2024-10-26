@@ -15,7 +15,9 @@ export const SETTINGS = {
 export const ROUTER_PATHS = {
   BLOGS: '/blogs',
   POSTS: '/posts',
-  TESTING: '/testing/all-data',
+  AUTH: '/auth/login',
+  USERS: '/users',
+  TESTING: '/testing/all-data'
 };
 
 export const HTTP_STATUS_CODE = {
@@ -39,4 +41,4 @@ export const HTTP_MESSAGE = {
 export const TYPE_COLLECTION = {
   BLOGS: 'blogs',
   POSTS: 'posts',
-}
+};

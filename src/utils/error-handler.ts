@@ -8,9 +8,29 @@ export class NotFoundError extends Error {
   }
 }
 
+export class ValidationError extends Error {
+  constructor(message: string) {
+    super();
+    this.message = message;
+  }
+}
+
+export class AuthError extends Error {
+  constructor(message: string) {
+    super();
+    this.message = message;
+  }
+}
+
 export const sendError = (error: any, res: Response) => {
   if (error instanceof NotFoundError) {
     res.status(HTTP_STATUS_CODE.NOT_FOUND_404).json(error.message);
+    return;
+  } else if (error instanceof ValidationError) {
+    res.status(HTTP_STATUS_CODE.BAD_REQUEST_400).json(JSON.parse(error.message));
+    return;
+  } else if (error instanceof AuthError) {
+    res.status(HTTP_STATUS_CODE.UNAUTHORIZED_401).json(error.message);
     return;
   }
 
