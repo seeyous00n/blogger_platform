@@ -14,6 +14,10 @@ export type resultErrorsType = {
   errorsMessages: errorsMessagesType[]
 }
 
+export const enum ERROR_MESSAGE {
+  NOT_FOUND = 'NOT_FOUND',
+}
+
 export type queryStringType = {
   searchNameTerm?: string | null,
   sortBy: string,
@@ -22,6 +26,7 @@ export type queryStringType = {
   pageSize: string,
 }
 
-export const enum ERROR_MESSAGE {
-  NOT_FOUND = 'NOT_FOUND',
-}
+export type userQueryStringType = {
+  searchLoginTerm: string | null,
+  searchEmailTerm: string | null,
+} & queryStringType

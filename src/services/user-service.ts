@@ -2,16 +2,16 @@ import { UserCreateModel } from '../models/user/UserCreateModel';
 import { ObjectId } from 'mongodb';
 import { UserType } from '../types/user-types';
 import bcrypt from 'bcrypt';
-import { usersRepository } from '../repositories/users-repository';
+import { userRepository } from '../repositories/users-repository';
 import { NotFoundError, ValidationError } from '../utils/error-handler';
 import { ERROR_MESSAGE } from '../types/types';
 import { UserViewDto } from '../dtos/users-view-dto';
 
 class UserService {
   async createUser(data: UserCreateModel) {
-    const isUser = await usersRepository.isUserEmpty(data);
+    const userData = await userRepository.getUserByEmailOrLogin(data);
     const error = { field: 'email or login', message: 'email should be unique' };
-    if (isUser.email || isUser.login) {
+    if (userData.email || userData.login) {
       throw new ValidationError(JSON.stringify(error));
     }
 
@@ -26,8 +26,8 @@ class UserService {
       createdAt: new Date().toISOString(),
     };
 
-    const user = await usersRepository.create(newUser);
-    const result = await usersRepository.findById(user.insertedId.toString());
+    const user = await userRepository.create(newUser);
+    const result = await userRepository.findById(user.insertedId.toString());
     if (!result) {
       throw new NotFoundError(ERROR_MESSAGE.NOT_FOUND);
     }
@@ -36,12 +36,12 @@ class UserService {
   }
 
   async deleteUser(id: string) {
-    const result = await usersRepository.findById(id);
+    const result = await userRepository.findById(id);
     if (!result) {
       throw new NotFoundError(ERROR_MESSAGE.NOT_FOUND);
     }
 
-    await usersRepository.deleteById(id);
+    await userRepository.deleteById(id);
   }
 }
 

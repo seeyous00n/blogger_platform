@@ -1,17 +1,18 @@
 import { QueryHelper } from './query-helper';
+import { ParsFilterType } from './types';
+import { userQueryStringType } from '../types/types';
 
 export class UserQueryHelper extends QueryHelper {
   searchLoginTerm;
   searchEmailTerm;
 
-  constructor(queryString: any) {
+  constructor(queryString: userQueryStringType) {
     super(queryString);
     this.searchLoginTerm = queryString.searchLoginTerm || null;
     this.searchEmailTerm = queryString.searchEmailTerm || null;
   }
 
-  // @ts-ignore
-  parsFilter() {
+  parsFilter(): ParsFilterType {
     const loginFilter = this.searchLoginTerm ? { login: { $regex: this.searchLoginTerm, $options: 'i' } } : {};
     const emailFilter = this.searchEmailTerm ? { email: { $regex: this.searchEmailTerm, $options: 'i' } } : {};
 

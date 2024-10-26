@@ -1,18 +1,12 @@
 import { usersCollection } from '../db';
 import { UserType } from '../types/user-types';
 import { ObjectId } from 'mongodb';
+import { UserCreateModel } from '../models/user/UserCreateModel';
 
-class UsersRepository {
+class UserRepository {
   async create(data: UserType) {
     return await usersCollection.insertOne(data);
   };
-
-  async isUserEmpty(data: any) {
-    const email = await usersCollection.findOne({ email: data.email });
-    const login = await usersCollection.findOne({ login: data.login });
-
-    return { email, login };
-  }
 
   async findById(id: string) {
     try {
@@ -25,6 +19,14 @@ class UsersRepository {
   async deleteById(id: string) {
     await usersCollection.deleteOne({ _id: new ObjectId(id) });
   }
+
+  async getUserByEmailOrLogin(data: UserCreateModel) {
+    const email = await usersCollection.findOne({ email: data.email });
+    const login = await usersCollection.findOne({ login: data.login });
+
+    return { email, login };
+  }
+
 }
 
-export const usersRepository = new UsersRepository();
+export const userRepository = new UserRepository();

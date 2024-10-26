@@ -28,7 +28,7 @@ class BlogsController {
     }
   };
 
-  getBlog = async (req: RequestWithParams<URIParamsModel>, res: Response<BlogsViewDto | string>) => {
+  getBlog = async (req: RequestWithParams<URIParamsModel>, res: Response<BlogsViewDto>) => {
     try {
       const result = await blogsQueryRepository.findById(req.params.id);
       res.status(HTTP_STATUS_CODE.OK_200).json(result);
