@@ -1,26 +1,13 @@
-import { QueryHelper } from './query-helper';
-import { ParsFilterType } from './types';
 import { userQueryStringType } from '../types/types';
+import { BaseQueryHelper } from './base-query-helper';
 
-export class UserQueryHelper extends QueryHelper {
-  searchLoginTerm;
-  searchEmailTerm;
+export class UserQueryHelper extends BaseQueryHelper {
+  protected searchLoginTerm;
+  protected searchEmailTerm;
 
-  constructor(queryString: userQueryStringType) {
-    super(queryString);
+  constructor(queryString: userQueryStringType, search: any) {
+    super(queryString, search);
     this.searchLoginTerm = queryString.searchLoginTerm || null;
     this.searchEmailTerm = queryString.searchEmailTerm || null;
-  }
-
-  parsFilter(): ParsFilterType {
-    const loginFilter = this.searchLoginTerm ? { login: { $regex: this.searchLoginTerm, $options: 'i' } } : {};
-    const emailFilter = this.searchEmailTerm ? { email: { $regex: this.searchEmailTerm, $options: 'i' } } : {};
-
-    return {
-      search: { $or: [loginFilter, emailFilter] },
-      sort: { [this.sortBy]: this.sortDirection === 'asc' ? 1 : -1 },
-      skip: (Number(this.pageNumber) - 1) * Number(this.pageSize),
-      limit: Number(this.pageSize),
-    };
   }
 }

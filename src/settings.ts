@@ -37,8 +37,3 @@ export const HTTP_MESSAGE = {
   'SERVER_ERROR': 'Internal Server Error',
   'UNAUTHORIZED': 'Unauthorized',
 };
-
-export const TYPE_COLLECTION = {
-  BLOGS: 'blogs',
-  POSTS: 'posts',
-};

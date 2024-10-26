@@ -1,5 +1,5 @@
 import { Request, Response } from 'express';
-import { queryStringType, RequestWithBody, RequestWithQuery } from '../types/types';
+import { RequestWithBody, RequestWithQuery, userQueryStringType } from '../types/types';
 import { UserCreateModel } from '../models/user/UserCreateModel';
 import { userService } from '../services/user-service';
 import { HTTP_STATUS_CODE } from '../settings';
@@ -8,7 +8,7 @@ import { usersQueryRepository } from '../repositories/users-query-repository';
 import { URIParamsModel } from '../models/URIParamsModel';
 
 class UsersController {
-  getUsers = async (req: RequestWithQuery<URIParamsModel, queryStringType>, res: Response) => {
+  getUsers = async (req: RequestWithQuery<URIParamsModel, userQueryStringType>, res: Response) => {
     try {
       const result = await usersQueryRepository.findUsers(req.query);
       res.status(HTTP_STATUS_CODE.OK_200).json(result);

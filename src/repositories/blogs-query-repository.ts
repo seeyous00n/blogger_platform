@@ -3,21 +3,21 @@ import { NotFoundError } from '../utils/error-handler';
 import { BlogsViewDto } from '../dtos/blogs-view-dto';
 import { ERROR_MESSAGE, queryStringType } from '../types/types';
 import { ObjectId } from 'mongodb';
-import { QueryHelper } from '../filters/query-helper';
+import { BaseQueryHelper } from '../filters/base-query-helper';
 
 class BlogsQueryRepository {
   async findBlogs(queryString: queryStringType) {
+    const searchString = queryString.searchNameTerm ? { name: { $regex: queryString.searchNameTerm, $options: 'i', }, } : {};
+    const queryHelper = new BaseQueryHelper(queryString, searchString);
 
-    const queryHelper = new QueryHelper(queryString);
-    const filter = queryHelper.parsFilter();
     const result = await blogsCollection
-      .find(filter.search)
-      .sort(filter.sort as {})
-      .skip(filter.skip)
-      .limit(filter.limit)
+      .find(queryHelper.filter.search)
+      .sort(queryHelper.filter.sort)
+      .skip(queryHelper.filter.skip)
+      .limit(queryHelper.filter.limit)
       .toArray();
 
-    const blogsCount = await blogsCollection.countDocuments(filter.search);
+    const blogsCount = await blogsCollection.countDocuments(queryHelper.filter.search);
     const blogs = result.map((item) => new BlogsViewDto(item));
 
     return {
