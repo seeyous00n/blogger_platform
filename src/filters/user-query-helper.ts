@@ -1,25 +1,17 @@
 import { QueryHelper } from './query-helper';
-import { ObjectId } from 'mongodb';
 
-export class UserQueryHelper extends QueryHelper{
-  // sortBy;
-  // sortDirection;
-  // pageNumber;
-  // pageSize;
+export class UserQueryHelper extends QueryHelper {
   searchLoginTerm;
   searchEmailTerm;
 
   constructor(queryString: any) {
     super(queryString);
-    // this.sortBy = queryString.sortBy || 'createdAt';
-    // this.sortDirection = queryString.sortDirection || 'desc';
-    // this.pageNumber = queryString.pageNumber || '1';
-    // this.pageSize = queryString.pageSize || '10';
     this.searchLoginTerm = queryString.searchLoginTerm || null;
     this.searchEmailTerm = queryString.searchEmailTerm || null;
   }
 
-  userParsFilter() {
+  // @ts-ignore
+  parsFilter() {
     const loginFilter = this.searchLoginTerm ? { login: { $regex: this.searchLoginTerm, $options: 'i' } } : {};
     const emailFilter = this.searchEmailTerm ? { email: { $regex: this.searchEmailTerm, $options: 'i' } } : {};
 
