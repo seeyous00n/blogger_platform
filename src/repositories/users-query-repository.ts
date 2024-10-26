@@ -5,7 +5,7 @@ import { UserViewDto } from '../dtos/users-view-dto';
 class UsersQueryRepository {
   async findUsers(queryString: any) {
     const userQueryHelper = new UserQueryHelper(queryString);
-    const filter = userQueryHelper.userParsFilter();
+    const filter = userQueryHelper.parsFilter();
     const result = await usersCollection
       .find(filter.search)
       .sort(filter.sort as {})
