@@ -1,7 +1,9 @@
 import { usersCollection } from '../db';
 import { UserViewDto } from '../dtos/users-view-dto';
-import { userQueryStringType } from '../types/types';
+import { ERROR_MESSAGE, userQueryStringType } from '../types/types';
 import { BaseQueryHelper } from '../filters/base-query-helper';
+import { ObjectId } from 'mongodb';
+import { NotFoundError } from '../utils/error-handler';
 
 class UsersQueryRepository {
   async findUsers(queryString: userQueryStringType) {
@@ -27,6 +29,15 @@ class UsersQueryRepository {
       'totalCount': blogsCount,
       'items': resultData,
     };
+  }
+
+  async findById(id: string) {
+    const result = await usersCollection.findOne({ _id: new ObjectId(id) });
+    if (!result) {
+      throw new NotFoundError(ERROR_MESSAGE.NOT_FOUND);
+    }
+
+    return new UserViewDto(result);
   }
 }
 

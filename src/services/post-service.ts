@@ -3,26 +3,22 @@ import { PostCreateModel } from '../models/post/PostCreateModel';
 import { PostUpdateModal } from '../models/post/PostUpdateModal';
 import { blogService } from './blog-service';
 import { NotFoundError } from '../utils/error-handler';
-import { PostsViewDto } from '../dtos/posts-view-dto';
 import { ObjectId } from 'mongodb';
 import { ERROR_MESSAGE } from '../types/types';
+import { PostType } from '../types/post-types';
 
 class PostService {
   async createPost(post: PostCreateModel) {
     const dataBlog = await blogService.findBlogById(post.blogId.toString());
-    post.blogId = new ObjectId(dataBlog._id);
-    const newPost = {
-      ...post, _id: new ObjectId(), blogName: dataBlog.name, createdAt: new Date().toISOString(),
+    const newPost: PostType = {
+      ...post,
+      blogId: new ObjectId(dataBlog._id),
+      _id: new ObjectId(),
+      blogName: dataBlog.name,
+      createdAt: new Date().toISOString(),
     };
 
-    const createdPost = await postsRepository.createByData(newPost);
-    const result = await postsRepository.findById(createdPost.insertedId.toString());
-
-    if (!result) {
-      throw new NotFoundError(ERROR_MESSAGE.NOT_FOUND);
-    }
-
-    return new PostsViewDto(result);
+    return await postsRepository.createByData(newPost);
   }
 
   async updatePostById(id: string, data: PostUpdateModal): Promise<void> {

@@ -11,11 +11,9 @@ class AuthService {
 
     if (!result) throw new AuthError(ERROR_LOGIN_MESSAGE);
 
-    if (result) {
-      const { hash } = await generatePassword(data.password, result.salt);
-      if (hash !== result.password) {
-        throw new AuthError(ERROR_LOGIN_MESSAGE);
-      }
+    const { hash } = await generatePassword(data.password, result.salt);
+    if (hash !== result.password) {
+      throw new AuthError(ERROR_LOGIN_MESSAGE);
     }
   }
 }

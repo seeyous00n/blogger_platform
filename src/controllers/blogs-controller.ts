@@ -39,7 +39,8 @@ class BlogsController {
 
   createBlog = async (req: RequestWithBody<BlogCreateModel>, res: Response<BlogsViewDto>) => {
     try {
-      const result: BlogsViewDto = await blogService.createBlog(req.body);
+      const blogId = await blogService.createBlog(req.body);
+      const result = await blogsQueryRepository.findById(blogId.insertedId.toString());
       res.status(HTTP_STATUS_CODE.CREATED_201).json(result);
     } catch (e: any) {
       sendError(e, res);
@@ -66,7 +67,8 @@ class BlogsController {
 
   createPostFromBlog = async (req: RequestWithParamsAndBody<URIParamsModel, PostCreateModel>, res: Response<PostsViewDto>) => {
     try {
-      const result: PostsViewDto = await blogService.createPost(req.body, req.params.id);
+      const postId = await blogService.createPost(req.body, req.params.id);
+      const result = await postsQueryRepository.findById(postId.insertedId.toString());
       res.status(HTTP_STATUS_CODE.CREATED_201).json(result);
     } catch (e: any) {
       sendError(e, res);
@@ -75,7 +77,7 @@ class BlogsController {
 
   getPostsFromBLog = async (req: RequestWithQuery<URIParamsModel, queryStringType>, res: Response) => {
     try {
-      await blogsQueryRepository.findById(req.params.id);
+      await blogService.findBlogById(req.params.id);
       const result = await postsQueryRepository.findPosts(req.query, req.params.id);
       res.status(HTTP_STATUS_CODE.OK_200).json(result);
     } catch (e: any) {

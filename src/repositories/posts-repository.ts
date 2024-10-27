@@ -4,9 +4,9 @@ import { postsCollection } from '../db';
 import { ObjectId } from 'mongodb';
 
 class PostsRepository {
-  async findById(_id: string) {
+  async findById(id: string) {
     try {
-      return await postsCollection.findOne({ _id: new ObjectId(_id) });
+      return await postsCollection.findOne({ _id: new ObjectId(id) });
     } catch (e) {
       return;
     }
@@ -16,15 +16,15 @@ class PostsRepository {
     return await postsCollection.insertOne(data);
   }
 
-  async updateById(_id: string, data: PostUpdateModal) {
+  async updateById(id: string, data: PostUpdateModal) {
     await postsCollection.updateOne(
-      { _id: new ObjectId(_id) },
+      { _id: new ObjectId(id) },
       { $set: data },
     );
   }
 
-  async deleteById(_id: string) {
-    await postsCollection.deleteOne({ _id: new ObjectId(_id) });
+  async deleteById(id: string) {
+    await postsCollection.deleteOne({ _id: new ObjectId(id) });
   }
 }
 

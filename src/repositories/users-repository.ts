@@ -19,14 +19,13 @@ class UserRepository {
   async deleteById(id: string) {
     await usersCollection.deleteOne({ _id: new ObjectId(id) });
   }
-  
+
   async getUserByEmailOrLogin(data: UserCreateModel) {
     const email = await usersCollection.findOne({ email: data.email });
     const login = await usersCollection.findOne({ login: data.login });
 
     return { email, login };
   }
-
 }
 
 export const userRepository = new UserRepository();

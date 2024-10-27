@@ -4,7 +4,6 @@ import { UserType } from '../types/user-types';
 import { userRepository } from '../repositories/users-repository';
 import { NotFoundError, ValidationError } from '../utils/error-handler';
 import { ERROR_MESSAGE } from '../types/types';
-import { UserViewDto } from '../dtos/users-view-dto';
 import { generatePassword } from '../utils/utils';
 
 class UserService {
@@ -25,14 +24,7 @@ class UserService {
       createdAt: new Date().toISOString(),
     };
 
-    const user = await userRepository.create(newUser);
-    const result = await userRepository.findById(user.insertedId.toString());
-
-    if (!result) {
-      throw new NotFoundError(ERROR_MESSAGE.NOT_FOUND);
-    }
-
-    return new UserViewDto(result);
+    return await userRepository.create(newUser);
   }
 
   async deleteUser(id: string) {

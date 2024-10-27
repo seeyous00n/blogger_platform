@@ -10,7 +10,7 @@ export class BaseQueryHelper {
 
   public filter;
 
-  constructor(queryString: queryStringType, search?: any) {
+  constructor(queryString: queryStringType, search = {}) {
     this.searchNameTerm = queryString.searchNameTerm || null;
     this.sortBy = queryString.sortBy || 'createdAt';
     this.sortDirection = queryString.sortDirection || 'desc';
@@ -18,7 +18,7 @@ export class BaseQueryHelper {
     this.pageSize = queryString.pageSize || '10';
 
     this.filter = {
-      search: search ? search : {},
+      search: search,
       sort: { [this.sortBy]: this.sortDirection === 'asc' ? 1 : -1 } as Sort,
       skip: (Number(this.pageNumber) - 1) * Number(this.pageSize),
       limit: Number(this.pageSize),
