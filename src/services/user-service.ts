@@ -1,11 +1,11 @@
 import { UserCreateModel } from '../models/user/UserCreateModel';
 import { ObjectId } from 'mongodb';
 import { UserType } from '../types/user-types';
-import bcrypt from 'bcrypt';
 import { userRepository } from '../repositories/users-repository';
 import { NotFoundError, ValidationError } from '../utils/error-handler';
 import { ERROR_MESSAGE } from '../types/types';
 import { UserViewDto } from '../dtos/users-view-dto';
+import { generatePassword } from '../utils/utils';
 
 class UserService {
   async createUser(data: UserCreateModel) {
@@ -15,8 +15,7 @@ class UserService {
       throw new ValidationError(JSON.stringify(error));
     }
 
-    const salt = await bcrypt.genSalt(10);
-    const hash = await bcrypt.hash(data.password, salt);
+    const { hash, salt } = await generatePassword(data.password);
 
     const newUser: UserType = {
       ...data,
@@ -28,6 +27,7 @@ class UserService {
 
     const user = await userRepository.create(newUser);
     const result = await userRepository.findById(user.insertedId.toString());
+
     if (!result) {
       throw new NotFoundError(ERROR_MESSAGE.NOT_FOUND);
     }

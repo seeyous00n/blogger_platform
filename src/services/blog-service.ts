@@ -23,6 +23,7 @@ class BlogService {
       ...blog, _id: new ObjectId(), isMembership: false, createdAt: new Date().toISOString(),
     };
     const createdBlog = await blogsRepository.createByData(newBlog);
+    console.log('createdBlog', createdBlog)
     const result = await blogsRepository.findById(createdBlog.insertedId.toString());
 
     if (!result) {
