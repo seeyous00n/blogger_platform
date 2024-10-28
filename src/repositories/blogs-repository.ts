@@ -1,27 +1,30 @@
-import { db } from '../db';
 import { BlogType } from '../types/blog-types';
 import { BlogUpdateModal } from '../models/blog/BlogUpdateModal';
+import { blogsCollection } from '../db';
+import { ObjectId } from 'mongodb';
 
 class BlogsRepository {
-  getAll() {
-    return db.blogs;
+  async findById(id: string) {
+    try {
+      return await blogsCollection.findOne({ _id: new ObjectId(id) });
+    } catch (e) {
+      return;
+    }
   }
 
-  getById(id: number): BlogType | undefined {
-    return db.blogs.find((blog) => +blog.id === id);
+  async createByData(data: BlogType) {
+    return await blogsCollection.insertOne(data);
   }
 
-  createByData(data: BlogType) {
-    db.blogs.push(data);
+  async updateById(id: string, data: BlogUpdateModal) {
+    await blogsCollection.updateOne(
+      { _id: new ObjectId(id) },
+      { $set: data },
+    );
   }
 
-  updateById(id: number, data: BlogUpdateModal) {
-    const index = db.blogs.findIndex(blog => +blog.id === id);
-    db.blogs[index] = { ...db.blogs[index], ...data };
-  }
-
-  deleteById(id: number) {
-    db.blogs = db.blogs.filter(blog => +blog.id !== id);
+  async deleteById(id: string) {
+    await blogsCollection.deleteOne({ _id: new ObjectId(id) });
   }
 }
 

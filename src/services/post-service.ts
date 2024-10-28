@@ -1,47 +1,44 @@
 import { postsRepository } from '../repositories/posts-repository';
 import { PostCreateModel } from '../models/post/PostCreateModel';
-import { PostType } from '../types/post-types';
 import { PostUpdateModal } from '../models/post/PostUpdateModal';
-import { blogService } from './blog-service';
-import { setAndThrowError } from '../utils';
-import { HTTP_MESSAGE, HTTP_STATUS_CODE } from '../settings';
+import { NotFoundError } from '../utils/error-handler';
+import { ObjectId } from 'mongodb';
+import { ERROR_MESSAGE } from '../types/types';
+import { PostType } from '../types/post-types';
+import { blogsRepository } from '../repositories/blogs-repository';
 
 class PostService {
-  getAllPosts(): PostType[] {
-    return postsRepository.getAll();
-  }
-
-  getPostById(id: number): PostType | undefined {
-    const result = postsRepository.getById(id);
-    if (!result) {
-      setAndThrowError({ message: HTTP_MESSAGE.NOT_FOUND, status: HTTP_STATUS_CODE.NOT_FOUND_404 });
+  async createPost(post: PostCreateModel) {
+    const dataBlog = await blogsRepository.findById(post.blogId.toString());
+    if (!dataBlog) {
+      throw new NotFoundError(ERROR_MESSAGE.NOT_FOUND);
     }
-    return result;
+
+    const newPost: PostType = {
+      ...post,
+      blogId: new ObjectId(dataBlog._id),
+      _id: new ObjectId(),
+      blogName: dataBlog.name,
+      createdAt: new Date().toISOString(),
+    };
+
+    return await postsRepository.createByData(newPost);
   }
 
-  createPost(post: PostCreateModel): PostType {
-    const dataBlog = blogService.getBlogById(+post.blogId); // правильно ли из сервиса обращаться к другому сервису??
-    const id = String(new Date().getTime());
-    const newPost = { ...post, id, blogName: dataBlog.name };
-    postsRepository.createByData(newPost);
-    return newPost;
-  }
-
-  updatePostById(id: number, data: PostUpdateModal): void {
-    const result = postsRepository.getById(id);
+  async updatePostById(id: string, data: PostUpdateModal): Promise<void> {
+    const result = await postsRepository.findById(id);
     if (!result) {
-      setAndThrowError({ message: HTTP_MESSAGE.NOT_FOUND, status: HTTP_STATUS_CODE.NOT_FOUND_404 });
+      throw new NotFoundError(ERROR_MESSAGE.NOT_FOUND);
     }
-    postsRepository.updateById(id, data);
+    await postsRepository.updateById(id, data);
   }
 
-  deletePostById(id: number): void {
-    const result = postsRepository.getById(id);
-
+  async deletePostById(id: string): Promise<void> {
+    const result = await postsRepository.findById(id);
     if (!result) {
-      setAndThrowError({ message: HTTP_MESSAGE.NOT_FOUND, status: HTTP_STATUS_CODE.NOT_FOUND_404 });
+      throw new NotFoundError(ERROR_MESSAGE.NOT_FOUND);
     }
-    postsRepository.deleteById(id);
+    await postsRepository.deleteById(id);
   }
 }
 

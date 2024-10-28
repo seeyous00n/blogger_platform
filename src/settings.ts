@@ -4,12 +4,20 @@ config();
 
 export const SETTINGS = {
   PORT: process.env.PORT || 3003,
+  MONGO_URI: process.env.MONGO_URL || 'mongodb://localhost:27017',
+  DB_NAME: 'blogger_platform',
+  auth: {
+    name: process.env.LOG || 'admin',
+    password: process.env.PASS || 'qwerty',
+  },
 };
 
 export const ROUTER_PATHS = {
   BLOGS: '/blogs',
   POSTS: '/posts',
-  TESTING: '/testing/all-data',
+  AUTH: '/auth/login',
+  USERS: '/users',
+  TESTING: '/testing/all-data'
 };
 
 export const HTTP_STATUS_CODE = {

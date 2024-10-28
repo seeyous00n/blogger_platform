@@ -1,27 +1,30 @@
-import { db } from '../db';
 import { PostType } from '../types/post-types';
 import { PostUpdateModal } from '../models/post/PostUpdateModal';
+import { postsCollection } from '../db';
+import { ObjectId } from 'mongodb';
 
 class PostsRepository {
-  getAll() {
-    return db.posts;
+  async findById(id: string) {
+    try {
+      return await postsCollection.findOne({ _id: new ObjectId(id) });
+    } catch (e) {
+      return;
+    }
   }
 
-  getById(id: number): PostType | undefined {
-    return db.posts.find((post) => +post.id === id);
+  async createByData(data: PostType) {
+    return await postsCollection.insertOne(data);
   }
 
-  createByData(data: PostType) {
-    db.posts.push(data);
+  async updateById(id: string, data: PostUpdateModal) {
+    await postsCollection.updateOne(
+      { _id: new ObjectId(id) },
+      { $set: data },
+    );
   }
 
-  updateById(id: number, data: PostUpdateModal) {
-    const index = db.posts.findIndex(post => +post.id === id);
-    db.posts[index] = { ...db.posts[index], ...data };
-  }
-
-  deleteById(id: number) {
-    db.posts = db.posts.filter(post => +post.id !== id);
+  async deleteById(id: string) {
+    await postsCollection.deleteOne({ _id: new ObjectId(id) });
   }
 }
 

@@ -1,59 +1,64 @@
-import { NextFunction, Request, Response } from 'express';
-import { HTTP_MESSAGE, HTTP_STATUS_CODE } from '../settings';
+import { Response } from 'express';
+import { HTTP_STATUS_CODE } from '../settings';
 import { postService } from '../services/post-service';
-import { PostType } from '../types/post-types';
 import { PostCreateModel } from '../models/post/PostCreateModel';
-import { RequestWithBody, RequestWithParams, RequestWithParamsAndBody } from '../types/types';
+import {
+  queryStringType,
+  RequestWithBody,
+  RequestWithParams,
+  RequestWithParamsAndBody,
+  RequestWithQuery,
+} from '../types/types';
 import { URIParamsModel } from '../models/URIParamsModel';
-import { PostViewModel } from '../models/post/PostViewModel';
 import { PostUpdateModal } from '../models/post/PostUpdateModal';
+import { postsQueryRepository } from '../repositories/posts-query-repository';
+import { PostsViewDto } from '../dtos/posts-view-dto';
+import { sendError } from '../utils/error-handler';
 
 class PostsController {
-  getPosts = (req: Request, res: Response<PostType[] | string>, next: NextFunction) => {
+  getPosts = async (req: RequestWithQuery<URIParamsModel, queryStringType>, res: Response) => {
     try {
-      const result: PostType[] = postService.getAllPosts();
+      const result = await postsQueryRepository.findPosts(req.query);
       res.status(HTTP_STATUS_CODE.OK_200).json(result);
     } catch (e: any) {
-      res.status(HTTP_STATUS_CODE.SERVER_ERROR_500).json(HTTP_MESSAGE.SERVER_ERROR);
+      sendError(e, res);
     }
   };
 
-  getPost = (req: RequestWithParams<URIParamsModel>, res: Response<PostType>, next: NextFunction) => {
+  getPost = async (req: RequestWithParams<URIParamsModel>, res: Response<PostsViewDto>) => {
     try {
-      const result = <PostType>postService.getPostById(+req.params.id);
+      const result: PostsViewDto = await postsQueryRepository.findById(req.params.id);
       res.status(HTTP_STATUS_CODE.OK_200).json(result);
     } catch (e: any) {
-      const err = JSON.parse(e.message);
-      res.status(err.status).json(err.message);
+      sendError(e, res);
     }
   };
 
-  creatPost = (req: RequestWithBody<PostCreateModel>, res: Response<PostViewModel | string>, next: NextFunction) => {
+  creatPost = async (req: RequestWithBody<PostCreateModel>, res: Response<PostsViewDto>) => {
     try {
-      const result: PostType = postService.createPost(req.body);
+      const postId = await postService.createPost(req.body);
+      const result = await postsQueryRepository.findById(postId.insertedId.toString());
       res.status(HTTP_STATUS_CODE.CREATED_201).json(result);
     } catch (e: any) {
-      res.status(HTTP_STATUS_CODE.SERVER_ERROR_500).json(HTTP_MESSAGE.SERVER_ERROR);
+      sendError(e, res);
     }
   };
 
-  updatePost = (req: RequestWithParamsAndBody<URIParamsModel, PostUpdateModal>, res: Response, next: NextFunction) => {
+  updatePost = async (req: RequestWithParamsAndBody<URIParamsModel, PostUpdateModal>, res: Response) => {
     try {
-      postService.updatePostById(+req.params.id, req.body);
+      await postService.updatePostById(req.params.id, req.body);
       res.status(HTTP_STATUS_CODE.NO_CONTENT_204).json();
     } catch (e: any) {
-      const err = JSON.parse(e.message);
-      res.status(err.status).json(err.message);
+      sendError(e, res);
     }
   };
 
-  deletePost = (req: RequestWithParams<URIParamsModel>, res: Response, next: NextFunction) => {
+  deletePost = async (req: RequestWithParams<URIParamsModel>, res: Response) => {
     try {
-      postService.deletePostById(+req.params.id);
+      await postService.deletePostById(req.params.id);
       res.status(HTTP_STATUS_CODE.NO_CONTENT_204).json();
     } catch (e: any) {
-      const err = JSON.parse(e.message);
-      res.status(err.status).json(err.message);
+      sendError(e, res);
     }
   };
 }

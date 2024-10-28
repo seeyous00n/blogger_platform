@@ -1,11 +1,13 @@
 import { body } from 'express-validator';
-import { blogService } from '../services/blog-service';
 import { errorsValidationMiddleware } from '../middlewares/errors-validation-middleware';
+import { blogsRepository } from '../repositories/blogs-repository';
+
+const BLOG_ID_ERROR_MESSAGE = 'Blog ID not found';
 
 const blogIdValidator = async (value: string) => {
-  const blog = blogService.getBlogById(+value);
+  const blog = await blogsRepository.findById(value);
   if (!blog) {
-    throw new Error('blog ID not found');
+    throw new Error(BLOG_ID_ERROR_MESSAGE);
   }
 };
 
@@ -17,6 +19,10 @@ const titleValidator = body('title').isString().trim().notEmpty().escape().isLen
 const shortDescriptionValidator = body('shortDescription').isString().trim().notEmpty().escape().isLength({ max: 100 });
 const contentValidator = body('content').isString().trim().notEmpty().escape().isLength({ max: 1000 });
 const isBlogId = body('blogId').custom(blogIdValidator);
+
+const loginValidator = body('login').isString().trim().notEmpty().isLength({min: 3, max: 10 }).matches(/^[a-zA-Z0-9_-]*$/);
+const emailValidator = body('email').isString().trim().notEmpty().matches(/^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/);
+const passwordValidator = body('password').isString().trim().notEmpty().isLength({min: 6, max: 20 });
 
 export const blogDataValidation = [
   nameValidator,
@@ -33,10 +39,16 @@ export const postDataValidation = [
   errorsValidationMiddleware,
 ];
 
-export const postDataUpdateValidation = [
+export const postDataValidationWithoutId = [
   titleValidator,
   shortDescriptionValidator,
   contentValidator,
-  isBlogId,
   errorsValidationMiddleware,
+];
+
+export const userDataValidation = [
+  loginValidator,
+  emailValidator,
+  passwordValidator,
+  errorsValidationMiddleware
 ];

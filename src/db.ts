@@ -1,15 +1,27 @@
+import { MongoClient } from 'mongodb';
+import { SETTINGS } from './settings';
 import { BlogType } from './types/blog-types';
 import { PostType } from './types/post-types';
+import { UserType } from './types/user-types';
 
-export type DBType = {
-  blogs: BlogType[],
-  posts: PostType[]
-}
+const COLLECTION_BLOGS = 'blogs'
+const COLLECTION_POSTS = 'posts'
+const COLLECTION_USERS = 'users'
 
-export const db: DBType = {
-  blogs: [],
-  posts: [],
+const mongoURI = SETTINGS.MONGO_URI;
+export const client = new MongoClient(mongoURI);
+
+export const blogsCollection = client.db(SETTINGS.DB_NAME).collection<BlogType>(COLLECTION_BLOGS);
+export const postsCollection = client.db(SETTINGS.DB_NAME).collection<PostType>(COLLECTION_POSTS);
+export const usersCollection = client.db(SETTINGS.DB_NAME).collection<UserType>(COLLECTION_USERS);
+
+export const runDB = async () => {
+  try {
+    await client.connect();
+    await client.db(SETTINGS.DB_NAME).command({ ping: 1 });
+    console.log('Connected successfully to server..');
+  } catch (e) {
+    console.error('console.error', e);
+    await client.close();
+  }
 };
-
-export const clearDbBlogs = () => db.blogs = []
-export const clearDbPosts = () => db.posts = []
