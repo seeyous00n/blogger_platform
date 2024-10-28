@@ -17,6 +17,7 @@ import { PostCreateModel } from '../models/post/PostCreateModel';
 import { PostsViewDto } from '../dtos/posts-view-dto';
 import { BlogsViewDto } from '../dtos/blogs-view-dto';
 import { sendError } from '../utils/error-handler';
+import { postService } from '../services/post-service';
 
 class BlogsController {
   getBlogs = async (req: RequestWithQuery<URIParamsModel, queryStringType>, res: Response) => {
@@ -67,7 +68,8 @@ class BlogsController {
 
   createPostFromBlog = async (req: RequestWithParamsAndBody<URIParamsModel, PostCreateModel>, res: Response<PostsViewDto>) => {
     try {
-      const postId = await blogService.createPost(req.body, req.params.id);
+      req.body.blogId = req.params.id;
+      const postId = await postService.createPost(req.body);
       const result = await postsQueryRepository.findById(postId.insertedId.toString());
       res.status(HTTP_STATUS_CODE.CREATED_201).json(result);
     } catch (e: any) {
@@ -77,8 +79,8 @@ class BlogsController {
 
   getPostsFromBLog = async (req: RequestWithQuery<URIParamsModel, queryStringType>, res: Response) => {
     try {
-      await blogService.findBlogById(req.params.id);
-      const result = await postsQueryRepository.findPosts(req.query, req.params.id);
+      const blogId = await blogService.findBlogById(req.params.id);
+      const result = await postsQueryRepository.findPosts(req.query, blogId);
       res.status(HTTP_STATUS_CODE.OK_200).json(result);
     } catch (e: any) {
       sendError(e, res);

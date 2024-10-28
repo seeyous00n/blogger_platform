@@ -1,15 +1,19 @@
 import { postsRepository } from '../repositories/posts-repository';
 import { PostCreateModel } from '../models/post/PostCreateModel';
 import { PostUpdateModal } from '../models/post/PostUpdateModal';
-import { blogService } from './blog-service';
 import { NotFoundError } from '../utils/error-handler';
 import { ObjectId } from 'mongodb';
 import { ERROR_MESSAGE } from '../types/types';
 import { PostType } from '../types/post-types';
+import { blogsRepository } from '../repositories/blogs-repository';
 
 class PostService {
   async createPost(post: PostCreateModel) {
-    const dataBlog = await blogService.findBlogById(post.blogId.toString());
+    const dataBlog = await blogsRepository.findById(post.blogId.toString());
+    if (!dataBlog) {
+      throw new NotFoundError(ERROR_MESSAGE.NOT_FOUND);
+    }
+
     const newPost: PostType = {
       ...post,
       blogId: new ObjectId(dataBlog._id),

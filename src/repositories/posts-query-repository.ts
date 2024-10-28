@@ -6,9 +6,8 @@ import { ObjectId } from 'mongodb';
 import { BaseQueryHelper } from '../filters/base-query-helper';
 
 class PostsQueryRepository {
-  async findPosts(queryString: queryStringType, id?: string) {
-    const _id = id ? new ObjectId(id) : undefined;
-    const searchString = _id ? { blogId: _id } : queryString.searchNameTerm ? { name: { $regex: queryString.searchNameTerm, $options: 'i', }, } : {};
+  async findPosts(queryString: queryStringType, id?: ObjectId) {
+    const searchString = id ? { blogId: id } : queryString.searchNameTerm ? { name: { $regex: queryString.searchNameTerm, $options: 'i', }, } : {};
     const queryHelper = new BaseQueryHelper(queryString, searchString);
 
     const result = await postsCollection

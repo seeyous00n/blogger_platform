@@ -2,8 +2,6 @@ import { blogsRepository } from '../repositories/blogs-repository';
 import { BlogCreateModel } from '../models/blog/BlogCreateModel';
 import { BlogUpdateModal } from '../models/blog/BlogUpdateModal';
 import { NotFoundError } from '../utils/error-handler';
-import { postService } from './post-service';
-import { PostCreateModel } from '../models/post/PostCreateModel';
 import { ObjectId } from 'mongodb';
 import { ERROR_MESSAGE } from '../types/types';
 
@@ -14,7 +12,7 @@ class BlogService {
       throw new NotFoundError(ERROR_MESSAGE.NOT_FOUND);
     }
 
-    return result;
+    return result._id;
   }
 
   async createBlog(blog: BlogCreateModel) {
@@ -39,11 +37,6 @@ class BlogService {
       throw new NotFoundError(ERROR_MESSAGE.NOT_FOUND);
     }
     await blogsRepository.deleteById(id);
-  }
-
-  async createPost(post: PostCreateModel, id: string) {
-    post.blogId = id;
-    return await postService.createPost(post);
   }
 }
 
