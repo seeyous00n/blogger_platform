@@ -1,7 +1,6 @@
 import bcrypt from 'bcrypt';
 
-export const generatePassword = async (password: string, soldFromDB?: string) => {
-  const salt = soldFromDB ?? await bcrypt.genSalt(10);
-  const hash = await bcrypt.hash(password, salt);
-  return { hash, salt };
+export const generatePasswordHash = async (password: string) => {
+  const salt = await bcrypt.genSalt(10);
+  return await bcrypt.hash(password, salt);
 };

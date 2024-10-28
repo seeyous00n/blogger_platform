@@ -4,7 +4,7 @@ import { UserType } from '../types/user-types';
 import { userRepository } from '../repositories/users-repository';
 import { NotFoundError, ValidationError } from '../utils/error-handler';
 import { ERROR_MESSAGE } from '../types/types';
-import { generatePassword } from '../utils/utils';
+import { generatePasswordHash } from '../utils/utils';
 
 class UserService {
   async createUser(data: UserCreateModel) {
@@ -14,13 +14,12 @@ class UserService {
       throw new ValidationError(JSON.stringify(error));
     }
 
-    const { hash, salt } = await generatePassword(data.password);
+    const hash = await generatePasswordHash(data.password);
 
     const newUser: UserType = {
       ...data,
-      password: hash,
+      passwordHash: hash,
       _id: new ObjectId(),
-      salt: salt,
       createdAt: new Date().toISOString(),
     };
 

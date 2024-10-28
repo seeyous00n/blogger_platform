@@ -1,7 +1,7 @@
 import { AuthType } from '../types/auth-type';
 import { authRepository } from '../repositories/auth-repository';
 import { AuthError } from '../utils/error-handler';
-import { generatePassword } from '../utils/utils';
+import bcrypt from 'bcrypt';
 
 const ERROR_LOGIN_MESSAGE = 'Error email/login';
 
@@ -11,8 +11,8 @@ class AuthService {
 
     if (!result) throw new AuthError(ERROR_LOGIN_MESSAGE);
 
-    const { hash } = await generatePassword(data.password, result.salt);
-    if (hash !== result.password) {
+    const isAuth = await bcrypt.compare(data.password, result.passwordHash);
+    if (!isAuth) {
       throw new AuthError(ERROR_LOGIN_MESSAGE);
     }
   }
