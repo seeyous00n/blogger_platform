@@ -26,6 +26,7 @@ class UserRepository {
 
     return { email, login };
   }
+
 }
 
 export const userRepository = new UserRepository();
