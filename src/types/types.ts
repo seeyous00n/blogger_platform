@@ -16,6 +16,7 @@ export type resultErrorsType = {
 
 export const enum ERROR_MESSAGE {
   NOT_FOUND = 'NOT_FOUND',
+  FORBIDDEN = 'FORBIDDEN',
 }
 
 export type queryStringType = {

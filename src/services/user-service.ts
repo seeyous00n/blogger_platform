@@ -8,12 +8,7 @@ import { generatePasswordHash } from '../utils/utils';
 
 class UserService {
   async createUser(data: UserCreateModel) {
-    const userData = await userRepository.getUserByEmailOrLogin(data);
-    const error = { field: 'email or login', message: 'email should be unique' };
-    if (userData.email || userData.login) {
-      throw new ValidationError(JSON.stringify(error));
-    }
-
+    await this.isUniqueEmailAndLogin(data);
     const hash = await generatePasswordHash(data.password);
 
     const newUser: UserType = {
@@ -26,13 +21,26 @@ class UserService {
     return await userRepository.create(newUser);
   }
 
-  async deleteUser(id: string) {
+  async deleteUserById(id: string) {
+    await this.isExistsUser(id);
+    await userRepository.deleteById(id);
+  }
+
+  async isExistsUser(id: string) {
     const result = await userRepository.findById(id);
     if (!result) {
       throw new NotFoundError(ERROR_MESSAGE.NOT_FOUND);
     }
 
-    await userRepository.deleteById(id);
+    return result;
+  }
+
+  async isUniqueEmailAndLogin(data: UserCreateModel) {
+    const userData = await userRepository.getUserByEmailOrLogin(data);
+
+    if (userData.email || userData.login) {
+      throw new ValidationError('email and login should be unique', 'email or login');
+    }
   }
 }
 

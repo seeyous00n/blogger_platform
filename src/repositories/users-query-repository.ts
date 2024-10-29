@@ -1,5 +1,5 @@
 import { usersCollection } from '../db';
-import { UserViewDto } from '../dtos/users-view-dto';
+import { UserViewAuthDto, UserViewDto } from '../dtos/users-view-dto';
 import { ERROR_MESSAGE, userQueryStringType } from '../types/types';
 import { BaseQueryHelper } from '../filters/base-query-helper';
 import { ObjectId } from 'mongodb';
@@ -31,10 +31,14 @@ class UsersQueryRepository {
     };
   }
 
-  async findById(id: string) {
+  async findById(id: string, type: boolean = false) {
     const result = await usersCollection.findOne({ _id: new ObjectId(id) });
     if (!result) {
       throw new NotFoundError(ERROR_MESSAGE.NOT_FOUND);
+    }
+
+    if (type) {
+      return new UserViewAuthDto(result);
     }
 
     return new UserViewDto(result);

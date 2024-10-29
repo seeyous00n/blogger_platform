@@ -4,8 +4,9 @@ import { BlogsViewDto } from '../dtos/blogs-view-dto';
 import { ERROR_MESSAGE, queryStringType } from '../types/types';
 import { ObjectId } from 'mongodb';
 import { BaseQueryHelper } from '../filters/base-query-helper';
+import { BaseRepository } from './base-repository';
 
-class BlogsQueryRepository {
+class BlogsQueryRepository extends BaseRepository {
   async findBlogs(queryString: queryStringType) {
     const searchString = queryString.searchNameTerm ? { name: { $regex: queryString.searchNameTerm, $options: 'i', }, } : {};
     const queryHelper = new BaseQueryHelper(queryString, searchString);
@@ -30,6 +31,7 @@ class BlogsQueryRepository {
   }
 
   async findById(id: string) {
+    await this.isObjectId(id);
     const result = await blogsCollection.findOne({ _id: new ObjectId(id) });
     if (!result) {
       throw new NotFoundError(ERROR_MESSAGE.NOT_FOUND);

@@ -29,7 +29,7 @@ class UsersController {
 
   deleteUser = async (req: Request, res: Response) => {
     try {
-      await userService.deleteUser(req.params.id);
+      await userService.deleteUserById(req.params.id);
       res.status(HTTP_STATUS_CODE.NO_CONTENT_204).json();
     } catch (e: any) {
       sendError(e, res);

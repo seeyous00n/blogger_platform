@@ -8,6 +8,11 @@ import { PostType } from '../types/post-types';
 import { blogsRepository } from '../repositories/blogs-repository';
 
 class PostService {
+  async findPostById(id: string) {
+    const result = await this.isExistsPos(id);
+    return result._id;
+  }
+
   async createPost(post: PostCreateModel) {
     const dataBlog = await blogsRepository.findById(post.blogId.toString());
     if (!dataBlog) {
@@ -26,19 +31,22 @@ class PostService {
   }
 
   async updatePostById(id: string, data: PostUpdateModal): Promise<void> {
-    const result = await postsRepository.findById(id);
-    if (!result) {
-      throw new NotFoundError(ERROR_MESSAGE.NOT_FOUND);
-    }
+    await this.isExistsPos(id);
     await postsRepository.updateById(id, data);
   }
 
   async deletePostById(id: string): Promise<void> {
+    await this.isExistsPos(id);
+    await postsRepository.deleteById(id);
+  }
+
+  async isExistsPos(id: string) {
     const result = await postsRepository.findById(id);
     if (!result) {
       throw new NotFoundError(ERROR_MESSAGE.NOT_FOUND);
     }
-    await postsRepository.deleteById(id);
+
+    return result;
   }
 }
 

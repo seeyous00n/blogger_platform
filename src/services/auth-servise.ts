@@ -15,6 +15,8 @@ class AuthService {
     if (!isAuth) {
       throw new AuthError(ERROR_LOGIN_MESSAGE);
     }
+
+    return { userId: result._id.toString() };
   }
 }
 

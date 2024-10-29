@@ -2,18 +2,16 @@ import { usersCollection } from '../db';
 import { UserType } from '../types/user-types';
 import { ObjectId } from 'mongodb';
 import { UserCreateModel } from '../models/user/UserCreateModel';
+import { BaseRepository } from './base-repository';
 
-class UserRepository {
+class UserRepository extends BaseRepository {
   async create(data: UserType) {
     return await usersCollection.insertOne(data);
   };
 
   async findById(id: string) {
-    try {
-      return await usersCollection.findOne({ _id: new ObjectId(id) });
-    } catch (e) {
-      return;
-    }
+    await this.isObjectId(id);
+    return await usersCollection.findOne({ _id: new ObjectId(id) });
   }
 
   async deleteById(id: string) {

@@ -10,14 +10,16 @@ export const SETTINGS = {
     name: process.env.LOG || 'admin',
     password: process.env.PASS || 'qwerty',
   },
+  JWT_TOKEN: process.env.JWT_ACCESS_SECRET,
 };
 
 export const ROUTER_PATHS = {
   BLOGS: '/blogs',
   POSTS: '/posts',
-  AUTH: '/auth/login',
+  AUTH: '/auth',
   USERS: '/users',
-  TESTING: '/testing/all-data'
+  COMMENTS: '/comments',
+  TESTING: '/testing/all-data',
 };
 
 export const HTTP_STATUS_CODE = {
@@ -28,6 +30,7 @@ export const HTTP_STATUS_CODE = {
   'NOT_FOUND_404': 404,
   'SERVER_ERROR_500': 500,
   'UNAUTHORIZED_401': 401,
+  'FORBIDDEN_403': 403,
 };
 
 export const HTTP_MESSAGE = {

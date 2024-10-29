@@ -14,6 +14,9 @@ import { PostUpdateModal } from '../models/post/PostUpdateModal';
 import { postsQueryRepository } from '../repositories/posts-query-repository';
 import { PostsViewDto } from '../dtos/posts-view-dto';
 import { sendError } from '../utils/error-handler';
+import { CommentInputParamModel } from '../models/comment/CommentInputParamModel';
+import { commentService } from '../services/comment-service';
+import { commentQueryRepository } from '../repositories/comment-query-repository';
 
 class PostsController {
   getPosts = async (req: RequestWithQuery<URIParamsModel, queryStringType>, res: Response) => {
@@ -57,6 +60,30 @@ class PostsController {
     try {
       await postService.deletePostById(req.params.id);
       res.status(HTTP_STATUS_CODE.NO_CONTENT_204).json();
+    } catch (e: any) {
+      sendError(e, res);
+    }
+  };
+
+  createCommentByPost = async (req: RequestWithParamsAndBody<URIParamsModel, CommentInputParamModel>, res: Response) => {
+    try {
+      const commentId = await commentService.createComment({
+        postId: req.params.id,
+        userId: req.body.userId,
+        comment: req.body.content
+      });
+      const result = await commentQueryRepository.findCommentById(commentId.insertedId.toString());
+      res.status(HTTP_STATUS_CODE.CREATED_201).json(result);
+    } catch (e: any) {
+      sendError(e, res);
+    }
+  };
+
+  getCommentsByPost = async (req: RequestWithQuery<URIParamsModel, queryStringType>, res: Response) => {
+    try {
+      const postId = await postService.findPostById(req.params.id)
+      const result = await commentQueryRepository.findComments(req.query, postId.toString());
+      res.status(HTTP_STATUS_CODE.OK_200).json(result);
     } catch (e: any) {
       sendError(e, res);
     }

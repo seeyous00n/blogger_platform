@@ -13,14 +13,12 @@ export const authValidationMiddleware = (req: Request, res: Response, next: Next
     return;
   }
 
-  if (authHeader) {
-    const authorization = authHeader.split(' ');
-    const auth = convertToBase64();
+  const authorization = authHeader.split(' ');
+  const auth = convertToBase64();
 
-    if (auth !== authorization[1] || authorization[0] !== BASIC) {
-      res.status(HTTP_STATUS_CODE.UNAUTHORIZED_401).json(HTTP_MESSAGE.UNAUTHORIZED);
-      return;
-    }
+  if (auth !== authorization[1] || authorization[0] !== BASIC) {
+    res.status(HTTP_STATUS_CODE.UNAUTHORIZED_401).json(HTTP_MESSAGE.UNAUTHORIZED);
+    return;
   }
 
   next();

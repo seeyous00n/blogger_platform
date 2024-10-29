@@ -20,9 +20,12 @@ const shortDescriptionValidator = body('shortDescription').isString().trim().not
 const contentValidator = body('content').isString().trim().notEmpty().escape().isLength({ max: 1000 });
 const isBlogId = body('blogId').custom(blogIdValidator);
 
-const loginValidator = body('login').isString().trim().notEmpty().isLength({min: 3, max: 10 }).matches(/^[a-zA-Z0-9_-]*$/);
-const emailValidator = body('email').isString().trim().notEmpty().matches(/^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/);
-const passwordValidator = body('password').isString().trim().notEmpty().isLength({min: 6, max: 20 });
+const loginValidator = body('login').isString().trim().isLength({ min: 3, max: 10 }).matches(/^[a-zA-Z0-9_-]*$/);
+const emailValidator = body('email').isString().trim().matches(/^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/);
+const passwordValidator = body('password').isString().trim().isLength({ min: 6, max: 20 });
+const loginOrEmailValidator = body('loginOrEmail').isString().trim().notEmpty();
+
+export const commentContentValidator = body('content').isString().trim().isLength({ min: 20, max: 300 });
 
 export const blogDataValidation = [
   nameValidator,
@@ -50,5 +53,10 @@ export const userDataValidation = [
   loginValidator,
   emailValidator,
   passwordValidator,
-  errorsValidationMiddleware
+  errorsValidationMiddleware,
+];
+
+export const authDataValidation = [
+  loginOrEmailValidator,
+  passwordValidator,
 ];
