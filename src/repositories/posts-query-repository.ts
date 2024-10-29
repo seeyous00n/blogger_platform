@@ -4,9 +4,9 @@ import { NotFoundError } from '../utils/error-handler';
 import { ERROR_MESSAGE, queryStringType } from '../types/types';
 import { ObjectId } from 'mongodb';
 import { BaseQueryHelper } from '../filters/base-query-helper';
-import { BaseRepository } from './base-repository';
+import { isObjectId } from '../utils/utils';
 
-class PostsQueryRepository extends BaseRepository {
+class PostsQueryRepository {
   async findPosts(queryString: queryStringType, id?: ObjectId) {
     const searchString = id ? { blogId: id } : queryString.searchNameTerm ? { name: { $regex: queryString.searchNameTerm, $options: 'i', }, } : {};
     const queryHelper = new BaseQueryHelper(queryString, searchString);
@@ -31,7 +31,7 @@ class PostsQueryRepository extends BaseRepository {
   }
 
   async findById(id: string) {
-    await this.isObjectId(id);
+    await isObjectId(id);
     const result = await postsCollection.findOne({ _id: new ObjectId(id) });
     if (!result) {
       throw new NotFoundError(ERROR_MESSAGE.NOT_FOUND);

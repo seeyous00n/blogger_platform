@@ -1,11 +1,11 @@
 import { commentsCollection } from '../db';
 import { ObjectId } from 'mongodb';
 import { CommentCreateModel } from '../models/comment/CommentCreateModel';
-import { BaseRepository } from './base-repository';
+import { isObjectId } from '../utils/utils';
 
-class CommentRepository extends BaseRepository {
+class CommentRepository {
   async findById(id: string) {
-    await this.isObjectId(id);
+    await isObjectId(id);
     return await commentsCollection.findOne({ _id: new ObjectId(id) });
   }
 

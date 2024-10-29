@@ -2,11 +2,11 @@ import { BlogType } from '../types/blog-types';
 import { BlogUpdateModal } from '../models/blog/BlogUpdateModal';
 import { blogsCollection } from '../db';
 import { ObjectId } from 'mongodb';
-import { BaseRepository } from './base-repository';
+import { isObjectId } from '../utils/utils';
 
-class BlogsRepository extends BaseRepository {
+class BlogsRepository {
   async findById(id: string) {
-    await this.isObjectId(id);
+    await isObjectId(id);
     return await blogsCollection.findOne({ _id: new ObjectId(id) });
   }
 

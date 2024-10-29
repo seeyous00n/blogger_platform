@@ -4,9 +4,9 @@ import { ERROR_MESSAGE, queryStringType } from '../types/types';
 import { ObjectId } from 'mongodb';
 import { BaseQueryHelper } from '../filters/base-query-helper';
 import { CommentViewDto } from '../dtos/comment-view-dto';
-import { BaseRepository } from './base-repository';
+import { isObjectId } from '../utils/utils';
 
-class CommentQueryRepository extends BaseRepository {
+class CommentQueryRepository {
   async findComments(queryString: queryStringType, id?: string) {
     const searchString = { postId: id };
 
@@ -32,7 +32,7 @@ class CommentQueryRepository extends BaseRepository {
   }
 
   async findCommentById(id: string) {
-    await this.isObjectId(id);
+    await isObjectId(id);
     const result = await commentsCollection.findOne({ _id: new ObjectId(id) });
     if (!result) {
       throw new NotFoundError(ERROR_MESSAGE.NOT_FOUND);

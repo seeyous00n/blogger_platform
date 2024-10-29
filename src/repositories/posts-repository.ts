@@ -2,11 +2,11 @@ import { PostType } from '../types/post-types';
 import { PostUpdateModal } from '../models/post/PostUpdateModal';
 import { postsCollection } from '../db';
 import { ObjectId } from 'mongodb';
-import { BaseRepository } from './base-repository';
+import { isObjectId } from '../utils/utils';
 
-class PostsRepository extends BaseRepository {
+class PostsRepository {
   async findById(id: string) {
-    await this.isObjectId(id);
+    await isObjectId(id);
     return await postsCollection.findOne({ _id: new ObjectId(id) });
   }
 

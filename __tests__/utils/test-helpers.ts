@@ -1,6 +1,6 @@
 import { app } from '../../src/app';
 import { agent } from 'supertest';
-import { BASIC, convertToBase64, LOG, PASS } from '../../src/middlewares/auth-validation-middleware';
+import { BASIC, convertToBase64 } from '../../src/middlewares/auth-validation-middleware';
 
 export const req = agent(app);
 

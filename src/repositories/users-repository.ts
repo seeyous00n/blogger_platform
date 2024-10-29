@@ -2,15 +2,15 @@ import { usersCollection } from '../db';
 import { UserType } from '../types/user-types';
 import { ObjectId } from 'mongodb';
 import { UserCreateModel } from '../models/user/UserCreateModel';
-import { BaseRepository } from './base-repository';
+import { isObjectId } from '../utils/utils';
 
-class UserRepository extends BaseRepository {
+class UserRepository {
   async create(data: UserType) {
     return await usersCollection.insertOne(data);
   };
 
   async findById(id: string) {
-    await this.isObjectId(id);
+    await isObjectId(id);
     return await usersCollection.findOne({ _id: new ObjectId(id) });
   }
 
