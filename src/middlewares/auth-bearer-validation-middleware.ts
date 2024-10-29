@@ -25,7 +25,6 @@ export const authBearerValidationMiddleware = async (req: Request, res: Response
     return;
   }
 
-  //@ts-ignore
   req.body.userId = payload.userId;
 
   next();
