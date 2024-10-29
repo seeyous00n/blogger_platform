@@ -1,9 +1,9 @@
 import { MongoClient } from 'mongodb';
-import { SETTINGS } from './settings';
-import { BlogType } from './types/blog-types';
-import { PostType } from './types/post-types';
-import { UserType } from './types/user-types';
-import { CommentTypes } from './types/comment-types';
+import { SETTINGS } from './common/settings';
+import { BlogType } from './blogs/types/blog-types';
+import { PostType } from './posts/types/post.types';
+import { UserType } from './users/types/user.types';
+import { CommentTypes } from './comments/types/comment-types';
 
 const COLLECTION_BLOGS = 'blogs'
 const COLLECTION_POSTS = 'posts'

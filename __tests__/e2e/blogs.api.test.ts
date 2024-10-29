@@ -1,6 +1,6 @@
 import { req, mokDataCreateBlog, authorized, mokDataUpdateBlog, mokDataCreatePost } from '../utils/test-helpers';
 import { describe } from 'node:test';
-import { HTTP_STATUS_CODE, ROUTER_PATHS } from '../../src/settings';
+import { HTTP_STATUS_CODE, ROUTER_PATHS } from '../../src/common/settings';
 import { blogsTestManager } from '../utils/blogsTestManager';
 
 describe('/blogs', () => {

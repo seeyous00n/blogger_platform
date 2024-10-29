@@ -1,5 +1,5 @@
 import { app } from './app';
-import { SETTINGS } from './settings';
+import { SETTINGS } from './common/settings';
 import { runDB } from './db';
 
 const startApp = async () => {
