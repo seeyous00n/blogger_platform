@@ -1,4 +1,4 @@
-import { BlogType } from '../types/blog-types';
+import { BlogType } from '../types/blog.types';
 
 export class BlogsViewDto {
   id;

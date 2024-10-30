@@ -1,12 +1,12 @@
 import { Response } from 'express';
 import { sendError } from '../common/errorHandler';
-import { commentQueryRepository } from './comment-query-repository';
+import { commentQueryRepository } from './commentQuery.repository';
 import { HTTP_STATUS_CODE } from '../common/settings';
 import { RequestWithParams, RequestWithParamsAndBody } from '../common/types/types';
 import { UriParamsModel } from '../common/models/uriParams.model';
-import { commentService } from './comment-service';
-import { CommentInputUpdateModel } from './models/CommentInputUpdateModel';
-import { TokenType } from '../auth/types/auth-type';
+import { commentService } from './comment.service';
+import { CommentInputUpdateModel } from './models/CommentInputUpdate.model';
+import { TokenType } from '../auth/types/auth.type';
 
 class CommentsController {
   getComment = async (req: RequestWithParams<UriParamsModel>, res: Response) => {

@@ -1,6 +1,6 @@
 import { Router } from 'express';
 import { postsController } from './posts.controller';
-import { commentContentValidator, postDataValidation } from '../common/validation/dataValidation';
+import { commentContentValidator, postDataValidation } from '../common/validation/data.validation';
 import { authBaseGuard } from '../common/middlewares/guards/authBase.guard';
 import { authJwtGuard } from '../common/middlewares/guards/authJwt.guard';
 import { inputValidation } from '../common/validation/input.validation';

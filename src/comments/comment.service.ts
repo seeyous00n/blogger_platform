@@ -2,10 +2,10 @@ import { ObjectId } from 'mongodb';
 import { postsRepository } from '../posts/posts.repository';
 import { ForbiddenError, NotFoundError } from '../common/errorHandler';
 import { ERROR_MESSAGE } from '../common/types/types';
-import { commentRepository } from './comment-repository';
-import { CommentCreateModel } from './models/CommentCreateModel';
-import { CommentUpdateModel } from './models/CommentUpdateModel';
-import { CommentCreateInputModel } from './models/CommentCreateInputModel';
+import { commentRepository } from './comment.repository';
+import { CommentCreateModel } from './models/CommentCreate.model';
+import { CommentUpdateModel } from './models/CommentUpdate.model';
+import { CommentCreateInputModel } from './models/CommentCreateInput.model';
 
 class CommentService {
   async createComment(data: CommentCreateInputModel) {

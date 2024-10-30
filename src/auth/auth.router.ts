@@ -1,7 +1,7 @@
 import { Router } from 'express';
-import { authController } from './auth-controller';
+import { authController } from './auth.controller';
 import { authJwtGuard } from '../common/middlewares/guards/authJwt.guard';
-import { authDataValidation } from '../common/validation/dataValidation';
+import { authDataValidation } from '../common/validation/data.validation';
 
 const authRouter = Router();
 

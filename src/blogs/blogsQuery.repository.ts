@@ -1,6 +1,6 @@
 import { blogsCollection } from '../db';
 import { NotFoundError } from '../common/errorHandler';
-import { BlogsViewDto } from './dto/blogs-view-dto';
+import { BlogsViewDto } from './dto/blogsView.dto';
 import { ERROR_MESSAGE, queryStringType } from '../common/types/types';
 import { ObjectId } from 'mongodb';
 import { BaseQueryFieldsUtil } from '../common/utils/baseQueryFields.util';

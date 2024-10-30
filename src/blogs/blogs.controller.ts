@@ -8,14 +8,14 @@ import {
   RequestWithQuery,
 } from '../common/types/types';
 import { UriParamsModel } from '../common/models/uriParams.model';
-import { blogService } from './blog-service';
-import { BlogCreateModel } from './models/BlogCreateModel';
-import { BlogUpdateModal } from './models/BlogUpdateModal';
-import { blogsQueryRepository } from './blogs-query-repository';
+import { blogService } from './blog.service';
+import { BlogCreateModel } from './models/blogCreate.model';
+import { BlogUpdateModal } from './models/blogUpdate.modal';
+import { blogsQueryRepository } from './blogsQuery.repository';
 import { postsQueryRepository } from '../posts/postsQuery.repository';
 import { PostCreateModel } from '../posts/models/postCreate.model';
 import { PostsViewDto } from '../posts/dto/postsView.dto';
-import { BlogsViewDto } from './dto/blogs-view-dto';
+import { BlogsViewDto } from './dto/blogsView.dto';
 import { sendError } from '../common/errorHandler';
 import { postService } from '../posts/post.service';
 

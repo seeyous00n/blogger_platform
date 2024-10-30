@@ -1,7 +1,7 @@
 import { Response } from 'express';
-import { authService } from './auth-servise';
+import { authService } from './auth.service';
 import { RequestWithBody } from '../common/types/types';
-import { AuthType, TokenType } from './types/auth-type';
+import { AuthType, TokenType } from './types/auth.type';
 import { sendError } from '../common/errorHandler';
 import { HTTP_STATUS_CODE } from '../common/settings';
 import { tokenService } from '../common/services/token.service';

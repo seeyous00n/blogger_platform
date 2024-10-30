@@ -5,7 +5,7 @@ import { NotFoundError } from '../common/errorHandler';
 import { ObjectId } from 'mongodb';
 import { ERROR_MESSAGE } from '../common/types/types';
 import { PostType } from './types/post.types';
-import { blogsRepository } from '../blogs/blogs-repository';
+import { blogsRepository } from '../blogs/blogs.repository';
 
 class PostService {
   async findPostById(id: string) {

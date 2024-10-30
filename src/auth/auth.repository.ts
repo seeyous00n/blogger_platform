@@ -1,4 +1,4 @@
-import { AuthType } from './types/auth-type';
+import { AuthType } from './types/auth.type';
 import { usersCollection } from '../db';
 
 class AuthRepository {

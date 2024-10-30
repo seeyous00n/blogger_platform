@@ -1,5 +1,5 @@
-import { AuthType } from './types/auth-type';
-import { authRepository } from './auth-repository';
+import { AuthType } from './types/auth.type';
+import { authRepository } from './auth.repository';
 import { AuthError } from '../common/errorHandler';
 import bcrypt from 'bcrypt';
 

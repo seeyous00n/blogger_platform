@@ -3,7 +3,7 @@ import { NotFoundError } from '../common/errorHandler';
 import { ERROR_MESSAGE, queryStringType } from '../common/types/types';
 import { ObjectId } from 'mongodb';
 import { BaseQueryFieldsUtil } from '../common/utils/baseQueryFields.util';
-import { CommentViewDto } from './dto/comment-view-dto';
+import { CommentViewDto } from './dto/commentView.dto';
 import { isObjectId } from '../common/adapters/mongodb.service';
 
 class CommentQueryRepository {

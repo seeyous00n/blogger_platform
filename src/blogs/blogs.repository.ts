@@ -1,5 +1,5 @@
-import { BlogType } from './types/blog-types';
-import { BlogUpdateModal } from './models/BlogUpdateModal';
+import { BlogType } from './types/blog.types';
+import { BlogUpdateModal } from './models/blogUpdate.modal';
 import { blogsCollection } from '../db';
 import { ObjectId } from 'mongodb';
 import { isObjectId } from '../common/adapters/mongodb.service';

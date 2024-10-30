@@ -1,4 +1,4 @@
-import { CommentUpdateModel } from './CommentUpdateModel';
+import { CommentUpdateModel } from './CommentUpdate.model';
 
 export type CommentInputUpdateModel = {
   userId: string

@@ -1,10 +1,10 @@
-import { blogsRepository } from './blogs-repository';
-import { BlogCreateModel } from './models/BlogCreateModel';
-import { BlogUpdateModal } from './models/BlogUpdateModal';
+import { blogsRepository } from './blogs.repository';
+import { BlogCreateModel } from './models/blogCreate.model';
+import { BlogUpdateModal } from './models/blogUpdate.modal';
 import { NotFoundError } from '../common/errorHandler';
 import { InsertOneResult, ObjectId } from 'mongodb';
 import { ERROR_MESSAGE } from '../common/types/types';
-import { BlogType } from './types/blog-types';
+import { BlogType } from './types/blog.types';
 
 class BlogService {
   async findBlogById(id: string) {

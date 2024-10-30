@@ -1,11 +1,11 @@
 import express, { Response, Request } from 'express';
-import { blogsRouter } from './blogs/blogs-router';
+import { blogsRouter } from './blogs/blogs.router';
 import { HTTP_MESSAGE, HTTP_STATUS_CODE, ROUTER_PATHS } from './common/settings';
 import { postsRouter } from './posts/posts.router';
 import { testingController } from './testing/testing.controller';
 import { usersRouter } from './users/users.router';
-import { authRouter } from './auth/auth-router';
-import { commentsRouter } from './comments/comments-router';
+import { authRouter } from './auth/auth.router';
+import { commentsRouter } from './comments/comments.router';
 
 export const app = express();
 

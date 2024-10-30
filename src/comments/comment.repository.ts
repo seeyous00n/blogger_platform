@@ -1,6 +1,6 @@
 import { commentsCollection } from '../db';
 import { ObjectId } from 'mongodb';
-import { CommentCreateModel } from './models/CommentCreateModel';
+import { CommentCreateModel } from './models/CommentCreate.model';
 import { isObjectId } from '../common/adapters/mongodb.service';
 
 class CommentRepository {

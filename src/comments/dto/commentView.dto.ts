@@ -1,4 +1,4 @@
-import { CommentTypes } from '../types/comment-types';
+import { CommentTypes } from '../types/comment.types';
 
 export class CommentViewDto {
   id;

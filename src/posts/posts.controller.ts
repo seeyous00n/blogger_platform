@@ -14,9 +14,9 @@ import { PostUpdateModal } from './models/postUpdate.modal';
 import { postsQueryRepository } from './postsQuery.repository';
 import { PostsViewDto } from './dto/postsView.dto';
 import { sendError } from '../common/errorHandler';
-import { CommentInputParamModel } from '../comments/models/CommentInputParamModel';
-import { commentService } from '../comments/comment-service';
-import { commentQueryRepository } from '../comments/comment-query-repository';
+import { CommentInputParamModel } from '../comments/models/CommentInputParam.model';
+import { commentService } from '../comments/comment.service';
+import { commentQueryRepository } from '../comments/commentQuery.repository';
 
 class PostsController {
   getPosts = async (req: RequestWithQuery<UriParamsModel, queryStringType>, res: Response) => {
