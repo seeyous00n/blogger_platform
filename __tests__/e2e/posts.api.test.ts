@@ -1,5 +1,3 @@
-// @ts-ignore
-
 import { req, mokDataCreateBlog, authorized, mokDataCreatePost, mokDataUpdatePost } from '../utils/test-helpers';
 import { describe } from 'node:test';
 import { HTTP_STATUS_CODE, ROUTER_PATHS } from '../../src/common/settings';
