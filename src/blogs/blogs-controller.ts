@@ -66,7 +66,7 @@ class BlogsController {
     }
   };
 
-  createPostFromBlog = async (req: RequestWithParamsAndBody<UriParamsModel, PostCreateModel>, res: Response<PostsViewDto>) => {
+  createPostByBlog = async (req: RequestWithParamsAndBody<UriParamsModel, PostCreateModel>, res: Response<PostsViewDto>) => {
     try {
       req.body.blogId = req.params.id;
       const postId = await postService.createPost(req.body);
@@ -77,7 +77,7 @@ class BlogsController {
     }
   };
 
-  getPostsFromBLog = async (req: RequestWithQuery<UriParamsModel, queryStringType>, res: Response) => {
+  getPostsByBLog = async (req: RequestWithQuery<UriParamsModel, queryStringType>, res: Response) => {
     try {
       const blogId = await blogService.findBlogById(req.params.id);
       const result = await postsQueryRepository.findPosts(req.query, blogId);
