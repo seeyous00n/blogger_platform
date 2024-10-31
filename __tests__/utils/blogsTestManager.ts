@@ -1,6 +1,6 @@
 import { authorized, mokDataCreateBlog, req } from './test-helpers';
-import { HTTP_STATUS_CODE, ROUTER_PATHS } from '../../src/settings';
-import { BlogCreateModel } from '../../src/models/blog/BlogCreateModel';
+import { HTTP_STATUS_CODE, ROUTER_PATHS } from '../../src/common/settings';
+import { BlogCreateModel } from '../../src/blogs/models/blogCreate.model';
 
 export const blogsTestManager = {
   async createBlog(data: BlogCreateModel, httpStatusCode = HTTP_STATUS_CODE.CREATED_201) {
