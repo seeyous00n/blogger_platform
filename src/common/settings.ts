@@ -10,7 +10,7 @@ export const SETTINGS = {
     name: process.env.LOG || 'admin',
     password: process.env.PASS || 'qwerty',
   },
-  JWT_TOKEN: process.env.JWT_ACCESS_SECRET,
+  JWT_TOKEN: process.env.JWT_ACCESS_SECRET || 'JWT_ACCESS_SECRET',
 };
 
 export const ROUTER_PATHS = {
