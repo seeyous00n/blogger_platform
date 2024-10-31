@@ -7,7 +7,7 @@ import { BaseQueryFieldsUtil } from '../common/utils/baseQueryFields.util';
 import { isObjectId } from '../common/adapters/mongodb.service';
 
 class PostsQueryRepository {
-  async findPosts(queryString: queryStringType, id?: ObjectId) {
+  async findPosts(queryString: queryStringType, id?: string) {
     const searchString = id ? { blogId: id } : queryString.searchNameTerm ? { name: { $regex: queryString.searchNameTerm, $options: 'i', }, } : {};
     const queryHelper = new BaseQueryFieldsUtil(queryString, searchString);
 

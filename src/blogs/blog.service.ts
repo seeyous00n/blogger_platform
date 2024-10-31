@@ -10,7 +10,7 @@ class BlogService {
   async findBlogById(id: string) {
     const result = await this.isExistsBlog(id);
 
-    return result._id;
+    return result._id.toString();
   }
 
   async createBlog(blog: BlogCreateModel): Promise<InsertOneResult<BlogEntityType>> {
