@@ -2,9 +2,9 @@ import { blogsRepository } from './blogs.repository';
 import { BlogCreateModel } from './models/blogCreate.model';
 import { BlogUpdateModal } from './models/blogUpdate.modal';
 import { NotFoundError } from '../common/errorHandler';
-import { InsertOneResult, ObjectId } from 'mongodb';
+import { InsertOneResult } from 'mongodb';
 import { ERROR_MESSAGE } from '../common/types/types';
-import { BlogType } from './types/blog.types';
+import { BlogEntityType } from './types/blog.types';
 
 class BlogService {
   async findBlogById(id: string) {
@@ -13,9 +13,9 @@ class BlogService {
     return result._id;
   }
 
-  async createBlog(blog: BlogCreateModel): Promise<InsertOneResult<BlogType>> {
+  async createBlog(blog: BlogCreateModel): Promise<InsertOneResult<BlogEntityType>> {
     const newBlog = {
-      ...blog, _id: new ObjectId(), isMembership: false, createdAt: new Date().toISOString(),
+      ...blog, isMembership: false, createdAt: new Date().toISOString(),
     };
 
     return await blogsRepository.createByData(newBlog);

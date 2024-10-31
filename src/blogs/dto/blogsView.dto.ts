@@ -1,4 +1,4 @@
-import { BlogType } from '../types/blog.types';
+import { BlogViewType } from '../types/blog.types';
 
 export class BlogsViewDto {
   id;
@@ -8,7 +8,7 @@ export class BlogsViewDto {
   createdAt;
   isMembership;
 
-  constructor(model: BlogType) {
+  constructor(model: BlogViewType) {
     this.id = model._id.toString();
     this.name = model.name;
     this.description = model.description;

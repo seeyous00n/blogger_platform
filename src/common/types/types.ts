@@ -27,7 +27,7 @@ export type queryStringType = {
   pageSize: string,
 }
 
-export type userQueryStringType = {
+export type userQueryStringType = queryStringType & {
   searchLoginTerm: string | null,
   searchEmailTerm: string | null,
-} & queryStringType
+}

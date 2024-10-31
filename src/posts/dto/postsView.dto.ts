@@ -1,4 +1,4 @@
-import { PostType } from '../types/post.types';
+import { PostViewType } from '../types/post.types';
 
 export class PostsViewDto {
   id;
@@ -9,7 +9,7 @@ export class PostsViewDto {
   blogName;
   createdAt;
 
-  constructor(model: PostType) {
+  constructor(model: PostViewType) {
     this.id = model._id.toString();
     this.title = model.title;
     this.shortDescription = model.shortDescription;

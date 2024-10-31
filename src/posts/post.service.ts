@@ -2,9 +2,8 @@ import { postsRepository } from './posts.repository';
 import { PostCreateModel } from './models/postCreate.model';
 import { PostUpdateModal } from './models/postUpdate.modal';
 import { NotFoundError } from '../common/errorHandler';
-import { ObjectId } from 'mongodb';
 import { ERROR_MESSAGE } from '../common/types/types';
-import { PostType } from './types/post.types';
+import { PostEntityType } from './types/post.types';
 import { blogsRepository } from '../blogs/blogs.repository';
 
 class PostService {
@@ -19,10 +18,9 @@ class PostService {
       throw new NotFoundError(ERROR_MESSAGE.NOT_FOUND);
     }
 
-    const newPost: PostType = {
+    const newPost: PostEntityType = {
       ...post,
-      blogId: new ObjectId(dataBlog._id),
-      _id: new ObjectId(),
+      blogId: dataBlog._id.toString(),
       blogName: dataBlog.name,
       createdAt: new Date().toISOString(),
     };

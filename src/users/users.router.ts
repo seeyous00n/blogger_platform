@@ -3,7 +3,6 @@ import { usersController } from './users.controller';
 import { userDataValidation } from '../common/validation/data.validation';
 import { authBaseGuard } from '../common/middlewares/guards/authBase.guard';
 
-
 const usersRouter = Router();
 
 usersRouter.get('/', usersController.getUsers);

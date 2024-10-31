@@ -1,4 +1,4 @@
-import { BlogType } from './types/blog.types';
+import { BlogEntityType } from './types/blog.types';
 import { BlogUpdateModal } from './models/blogUpdate.modal';
 import { blogsCollection } from '../db';
 import { ObjectId } from 'mongodb';
@@ -10,7 +10,7 @@ class BlogsRepository {
     return await blogsCollection.findOne({ _id: new ObjectId(id) });
   }
 
-  async createByData(data: BlogType) {
+  async createByData(data: BlogEntityType) {
     return await blogsCollection.insertOne(data);
   }
 

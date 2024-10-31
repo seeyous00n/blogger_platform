@@ -1,4 +1,4 @@
-import { CommentTypes } from '../types/comment.types';
+import { CommentViewType } from '../types/comment.types';
 
 export class CommentViewDto {
   id;
@@ -6,7 +6,7 @@ export class CommentViewDto {
   commentatorInfo;
   createdAt;
 
-  constructor(model: CommentTypes) {
+  constructor(model: CommentViewType) {
     this.id = model._id.toString();
     this.content = model.content;
     this.commentatorInfo = model.commentatorInfo;

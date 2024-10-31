@@ -1,7 +1,7 @@
 import { commentsCollection } from '../db';
 import { ObjectId } from 'mongodb';
-import { CommentCreateModel } from './models/CommentCreate.model';
 import { isObjectId } from '../common/adapters/mongodb.service';
+import { CommentEntityType } from './types/comment.types';
 
 class CommentRepository {
   async findById(id: string) {
@@ -13,7 +13,7 @@ class CommentRepository {
     return await commentsCollection.findOne({ _id: new ObjectId(id), 'commentatorInfo.userId': userId });
   }
 
-  async createByData(data: CommentCreateModel) {
+  async createByData(data: CommentEntityType) {
     return await commentsCollection.insertOne(data);
   };
 

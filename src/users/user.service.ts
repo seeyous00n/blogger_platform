@@ -1,6 +1,5 @@
 import { UserCreateModel } from './models/userCreate.model';
-import { ObjectId } from 'mongodb';
-import { UserType } from './types/user.types';
+import { UserEntityType } from './types/user.types';
 import { userRepository } from './users.repository';
 import { NotFoundError, ValidationError } from '../common/errorHandler';
 import { ERROR_MESSAGE } from '../common/types/types';
@@ -11,10 +10,9 @@ class UserService {
     await this.isUniqueEmailAndLogin(data);
     const hash = await generatePasswordHash(data.password);
 
-    const newUser: UserType = {
+    const newUser: UserEntityType = {
       ...data,
       passwordHash: hash,
-      _id: new ObjectId(),
       createdAt: new Date().toISOString(),
     };
 

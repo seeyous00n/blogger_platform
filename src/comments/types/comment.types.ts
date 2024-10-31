@@ -1,7 +1,10 @@
 import { ObjectId } from 'mongodb';
 
-export type CommentTypes = {
+export type CommentViewType = CommentEntityType & {
   _id: ObjectId,
+}
+
+export type CommentEntityType = {
   postId: string,
   content: string,
   commentatorInfo: {

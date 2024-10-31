@@ -13,10 +13,10 @@ export const authBaseGuard = (req: Request, res: Response, next: NextFunction) =
     return;
   }
 
-  const authorization = authHeader.split(' ');
+  const [type, hash] = authHeader.split(' ');
   const auth = convertToBase64();
 
-  if (auth !== authorization[1] || authorization[0] !== BASIC) {
+  if (type !== BASIC || auth !== hash) {
     res.status(HTTP_STATUS_CODE.UNAUTHORIZED_401).json(HTTP_MESSAGE.UNAUTHORIZED);
     return;
   }

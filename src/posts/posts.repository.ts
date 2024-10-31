@@ -1,4 +1,4 @@
-import { PostType } from './types/post.types';
+import { PostEntityType } from './types/post.types';
 import { PostUpdateModal } from './models/postUpdate.modal';
 import { postsCollection } from '../db';
 import { ObjectId } from 'mongodb';
@@ -10,7 +10,7 @@ class PostsRepository {
     return await postsCollection.findOne({ _id: new ObjectId(id) });
   }
 
-  async createByData(data: PostType) {
+  async createByData(data: PostEntityType) {
     return await postsCollection.insertOne(data);
   }
 

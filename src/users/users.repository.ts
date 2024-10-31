@@ -1,11 +1,11 @@
 import { usersCollection } from '../db';
-import { UserType } from './types/user.types';
+import { UserEntityType } from './types/user.types';
 import { ObjectId } from 'mongodb';
 import { UserCreateModel } from './models/userCreate.model';
 import { isObjectId } from '../common/adapters/mongodb.service';
 
 class UserRepository {
-  async create(data: UserType) {
+  async create(data: UserEntityType) {
     return await usersCollection.insertOne(data);
   };
 

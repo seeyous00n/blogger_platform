@@ -1,4 +1,4 @@
-import { UserType } from '../types/user.types';
+import { UserViewType } from '../types/user.types';
 
 export class UserViewDto {
   id;
@@ -6,7 +6,7 @@ export class UserViewDto {
   email;
   createdAt;
 
-  constructor(model: UserType) {
+  constructor(model: UserViewType) {
     this.id = model._id.toString();
     this.login = model.login;
     this.email = model.email;

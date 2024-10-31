@@ -1,11 +1,10 @@
-import { ObjectId } from 'mongodb';
 import { postsRepository } from '../posts/posts.repository';
 import { ForbiddenError, NotFoundError } from '../common/errorHandler';
 import { ERROR_MESSAGE } from '../common/types/types';
 import { commentRepository } from './comment.repository';
-import { CommentCreateModel } from './models/CommentCreate.model';
 import { CommentUpdateModel } from './models/CommentUpdate.model';
 import { CommentCreateInputModel } from './models/CommentCreateInput.model';
+import { CommentEntityType } from './types/comment.types';
 
 class CommentService {
   async createComment(data: CommentCreateInputModel) {
@@ -14,8 +13,7 @@ class CommentService {
       throw new NotFoundError(ERROR_MESSAGE.NOT_FOUND);
     }
 
-    const newComment: CommentCreateModel = {
-      _id: new ObjectId(),
+    const newComment: CommentEntityType = {
       postId: data.postId,
       content: data.comment,
       commentatorInfo: {
