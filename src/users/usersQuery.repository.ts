@@ -5,6 +5,7 @@ import { ERROR_MESSAGE, userQueryStringType } from '../common/types/types';
 import { BaseQueryFieldsUtil } from '../common/utils/baseQueryFields.util';
 import { ObjectId } from 'mongodb';
 import { NotFoundError } from '../common/errorHandler';
+import { isObjectId } from '../common/adapters/mongodb.service';
 
 class UsersQueryRepository {
   async findUsers(queryString: userQueryStringType) {
@@ -33,6 +34,7 @@ class UsersQueryRepository {
   }
 
   async findById(id: string, type: boolean = false) {
+    await isObjectId(id);
     const result = await usersCollection.findOne({ _id: new ObjectId(id) });
     if (!result) {
       throw new NotFoundError(ERROR_MESSAGE.NOT_FOUND);
