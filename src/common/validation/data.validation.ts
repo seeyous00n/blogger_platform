@@ -26,7 +26,6 @@ const passwordValidator = body('password').isString().trim().isLength({ min: 6, 
 const loginOrEmailValidator = body('loginOrEmail').isString().trim().notEmpty();
 
 export const confirmationCodeValidator = body('code').isString().trim().notEmpty();
-
 export const commentContentValidator = body('content').isString().trim().isLength({ min: 20, max: 300 });
 
 export const blogDataValidation = [
@@ -63,4 +62,9 @@ export const authDataValidation = [
   passwordValidator,
 ];
 
-export const registrationDataValidation = userDataValidation;
+export const registrationDataValidation = [
+  loginValidator,
+  emailValidator,
+  passwordValidator,
+  inputValidation,
+];

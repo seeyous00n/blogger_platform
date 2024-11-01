@@ -1,4 +1,4 @@
-import { postsCollection, usersCollection } from '../db';
+import { usersCollection } from '../db';
 import { UserEntityType } from './types/user.types';
 import { ObjectId } from 'mongodb';
 import { UserCreateModel } from './models/userCreate.model';
@@ -46,7 +46,6 @@ class UserRepository {
       { $set: { 'emailConfirmation.confirmationCode': newCode } },
     );
   }
-
 }
 
 export const userRepository = new UserRepository();
