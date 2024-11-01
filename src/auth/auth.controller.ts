@@ -34,7 +34,7 @@ class AuthController {
     try {
       const result = await userService.createUser(req.body, false);
       const user = await userService.isExistsUser(result.insertedId.toString());
-      authService.registration(req.body.email, user.emailConfirmation.confirmationCode);
+      await authService.registration(req.body.email, user.emailConfirmation.confirmationCode);
       res.status(HTTP_STATUS_CODE.NO_CONTENT_204).json();
     } catch (e) {
       sendError(e, res);

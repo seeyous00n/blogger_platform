@@ -23,9 +23,9 @@ class AuthService {
     return { userId: result._id.toString() };
   }
 
-  registration(email: string, code: string) {
+  async registration(email: string, code: string) {
     const link = `${SETTINGS.API_URL}?code=${code}`;
-    nodemailerService.sendEmail(email, link).catch((e) => console.log(e.error));
+    await nodemailerService.sendEmail(email, link);
   }
 
   async confirmation(code: string) {
