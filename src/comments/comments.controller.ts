@@ -35,7 +35,6 @@ class CommentsController {
       sendError(e, res);
     }
   };
-
 }
 
 export const commentsController = new CommentsController();

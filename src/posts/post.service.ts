@@ -1,7 +1,7 @@
 import { postsRepository } from './posts.repository';
 import { PostCreateModel } from './models/postCreate.model';
 import { PostUpdateModal } from './models/postUpdate.modal';
-import { CustomError, NotFoundError, TYPE_ERROR } from '../common/errorHandler';
+import { CustomError, TYPE_ERROR } from '../common/errorHandler';
 import { ERROR_MESSAGE } from '../common/types/types';
 import { PostEntityType } from './types/post.types';
 import { blogsRepository } from '../blogs/blogs.repository';
@@ -15,7 +15,6 @@ class PostService {
   async createPost(post: PostCreateModel) {
     const dataBlog = await blogsRepository.findById(post.blogId.toString());
     if (!dataBlog) {
-      //throw new NotFoundError(ERROR_MESSAGE.NOT_FOUND);
       throw new CustomError(TYPE_ERROR.NOT_FOUND, ERROR_MESSAGE.NOT_FOUND, []);
     }
 
@@ -42,7 +41,6 @@ class PostService {
   async isExistsPos(id: string) {
     const result = await postsRepository.findById(id);
     if (!result) {
-      //throw new NotFoundError(ERROR_MESSAGE.NOT_FOUND);
       throw new CustomError(TYPE_ERROR.NOT_FOUND, ERROR_MESSAGE.NOT_FOUND, []);
     }
 

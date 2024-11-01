@@ -4,7 +4,7 @@ import { UserViewAuthDto } from './dto/userViewAuth.dto';
 import { ERROR_MESSAGE, userQueryStringType } from '../common/types/types';
 import { BaseQueryFieldsUtil } from '../common/utils/baseQueryFields.util';
 import { ObjectId } from 'mongodb';
-import { CustomError, NotFoundError, TYPE_ERROR } from '../common/errorHandler';
+import { CustomError, TYPE_ERROR } from '../common/errorHandler';
 import { isObjectId } from '../common/adapters/mongodb.service';
 
 class UsersQueryRepository {
@@ -37,7 +37,6 @@ class UsersQueryRepository {
     await isObjectId(id);
     const result = await usersCollection.findOne({ _id: new ObjectId(id) });
     if (!result) {
-      //throw new NotFoundError(ERROR_MESSAGE.NOT_FOUND);
       throw new CustomError(TYPE_ERROR.NOT_FOUND, ERROR_MESSAGE.NOT_FOUND, []);
     }
 

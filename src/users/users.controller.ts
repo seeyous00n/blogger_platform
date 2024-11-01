@@ -1,6 +1,5 @@
 import { Request, Response } from 'express';
 import { RequestWithBody, RequestWithQuery, userQueryStringType } from '../common/types/types';
-import { UserCreateModel } from './models/userCreate.model';
 import { userService } from './user.service';
 import { HTTP_STATUS_CODE } from '../common/settings';
 import { sendError } from '../common/errorHandler';

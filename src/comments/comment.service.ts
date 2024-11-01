@@ -1,5 +1,5 @@
 import { postsRepository } from '../posts/posts.repository';
-import { CustomError, ForbiddenError, NotFoundError, TYPE_ERROR } from '../common/errorHandler';
+import { CustomError, TYPE_ERROR } from '../common/errorHandler';
 import { ERROR_MESSAGE } from '../common/types/types';
 import { commentRepository } from './comment.repository';
 import { CommentUpdateModel } from './models/CommentUpdate.model';
@@ -10,7 +10,6 @@ class CommentService {
   async createComment(data: CommentCreateInputModel) {
     const post = await postsRepository.findById(data.postId);
     if (!post) {
-      //throw new NotFoundError(ERROR_MESSAGE.NOT_FOUND);
       throw new CustomError(TYPE_ERROR.NOT_FOUND, ERROR_MESSAGE.NOT_FOUND, []);
     }
 
@@ -40,13 +39,11 @@ class CommentService {
   async isOwnerComment(commentId: string, userId: string) {
     const comment = await commentRepository.findById(commentId);
     if (!comment) {
-      //throw new NotFoundError(ERROR_MESSAGE.NOT_FOUND);
       throw new CustomError(TYPE_ERROR.NOT_FOUND, ERROR_MESSAGE.NOT_FOUND, []);
     }
 
     const result = await commentRepository.findByIdAndUserId(commentId, userId);
     if (!result) {
-      //throw new ForbiddenError(ERROR_MESSAGE.FORBIDDEN);
       throw new CustomError(TYPE_ERROR.FORBIDDEN_ERROR, ERROR_MESSAGE.FORBIDDEN, []);
     }
   }

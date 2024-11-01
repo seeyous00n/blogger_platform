@@ -1,5 +1,5 @@
 import { blogsCollection } from '../db';
-import { CustomError, NotFoundError, TYPE_ERROR } from '../common/errorHandler';
+import { CustomError, TYPE_ERROR } from '../common/errorHandler';
 import { BlogsViewDto } from './dto/blogsView.dto';
 import { ERROR_MESSAGE, queryStringType } from '../common/types/types';
 import { ObjectId } from 'mongodb';
@@ -34,7 +34,6 @@ class BlogsQueryRepository {
     await isObjectId(id);
     const result = await blogsCollection.findOne({ _id: new ObjectId(id) });
     if (!result) {
-      //throw new NotFoundError(ERROR_MESSAGE.NOT_FOUND);
       throw new CustomError(TYPE_ERROR.NOT_FOUND, ERROR_MESSAGE.NOT_FOUND, []);
     }
 

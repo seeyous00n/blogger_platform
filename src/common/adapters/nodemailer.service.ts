@@ -5,6 +5,7 @@ import { SETTINGS } from '../settings';
 const smtpConfig: SMTPTransport.Options = {
   host: 'smtp.gmail.com',
   port: 587,
+  secure: false,
   auth: {
     user: SETTINGS.SMTP_EMAIL,
     pass: SETTINGS.SMTP_PASSWORD,
