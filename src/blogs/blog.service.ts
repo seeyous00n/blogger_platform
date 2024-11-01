@@ -1,7 +1,7 @@
 import { blogsRepository } from './blogs.repository';
 import { BlogCreateModel } from './models/blogCreate.model';
 import { BlogUpdateModal } from './models/blogUpdate.modal';
-import { NotFoundError } from '../common/errorHandler';
+import { CustomError, NotFoundError, TYPE_ERROR } from '../common/errorHandler';
 import { InsertOneResult } from 'mongodb';
 import { ERROR_MESSAGE } from '../common/types/types';
 import { BlogEntityType } from './types/blog.types';
@@ -34,7 +34,8 @@ class BlogService {
   async isExistsBlog(id: string) {
     const result = await blogsRepository.findById(id);
     if (!result) {
-      throw new NotFoundError(ERROR_MESSAGE.NOT_FOUND);
+      //throw new NotFoundError(ERROR_MESSAGE.NOT_FOUND);
+      throw new CustomError(TYPE_ERROR.NOT_FOUND, ERROR_MESSAGE.NOT_FOUND, []);
     }
 
     return result;

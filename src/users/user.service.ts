@@ -1,7 +1,7 @@
 import { UserCreateModel } from './models/userCreate.model';
 import { UserEntityType } from './types/user.types';
 import { userRepository } from './users.repository';
-import { NotFoundError, ValidationError } from '../common/errorHandler';
+import { CustomError, NotFoundError, TYPE_ERROR, ValidationError } from '../common/errorHandler';
 import { ERROR_MESSAGE } from '../common/types/types';
 import { generatePasswordHash } from '../common/adapters/bcrypt.service';
 import { v4 as uuidv4 } from 'uuid';
@@ -36,7 +36,8 @@ class UserService {
   async isExistsUser(id: string) {
     const result = await userRepository.findById(id);
     if (!result) {
-      throw new NotFoundError(ERROR_MESSAGE.NOT_FOUND);
+      //throw new NotFoundError(ERROR_MESSAGE.NOT_FOUND);
+      throw new CustomError(TYPE_ERROR.NOT_FOUND, ERROR_MESSAGE.NOT_FOUND, []);
     }
 
     return result;
@@ -45,10 +46,14 @@ class UserService {
   async isUniqueEmailAndLogin(data: UserCreateModel) {
     const userData = await userRepository.getUserByEmailOrLogin(data);
     if (userData.email) {
-      throw new ValidationError('email and login should be unique', 'email');
+      //throw new ValidationError('email and login should be unique', 'email');
+      const errorMessage = 'email and login should be unique'
+      throw new CustomError(TYPE_ERROR.VALIDATION_ERROR, errorMessage, [{message: errorMessage, field: 'email'}]);
     }
     if (userData.login) {
-      throw new ValidationError('login and login should be unique', 'login');
+      //throw new ValidationError('login and login should be unique', 'login');
+      const errorMessage = 'login and login should be unique'
+      throw new CustomError(TYPE_ERROR.VALIDATION_ERROR, errorMessage, [{message: errorMessage, field: 'login'}]);
     }
   }
 }
