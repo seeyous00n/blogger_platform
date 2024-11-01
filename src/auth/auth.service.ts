@@ -30,7 +30,7 @@ class AuthService {
 
   async registration(email: string, code: string) {
     const link = `${SETTINGS.API_URL}?code=${code}`;
-    nodemailerService.sendEmail(email, link).catch((error) => {});
+    await nodemailerService.sendEmail(email, link);
   }
 
   async confirmation(code: string) {
