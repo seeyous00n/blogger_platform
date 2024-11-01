@@ -1,11 +1,10 @@
 import { AuthType } from './types/auth.type';
 import { authRepository } from './auth.repository';
-import { AuthError, NotFoundError, ValidationError } from '../common/errorHandler';
+import { AuthError, ValidationError } from '../common/errorHandler';
 import bcrypt from 'bcrypt';
 import { sendEmail } from '../common/adapters/nodemailer.service';
 import { SETTINGS } from '../common/settings';
 import { userRepository } from '../users/users.repository';
-import { ERROR_MESSAGE } from '../common/types/types';
 import { v4 as uuidv4 } from 'uuid';
 
 const ERROR_LOGIN_MESSAGE = 'Error email/login';
@@ -32,8 +31,8 @@ class AuthService {
   async confirmation(code: string) {
     const userData = await userRepository.findByConfirmationCode(code);
 
-    if (!userData) throw new NotFoundError(ERROR_MESSAGE.NOT_FOUND);
-    if (userData.emailConfirmation.isConfirmed) throw new ValidationError('email is confirmed/incorrect', 'email');
+    if (!userData) throw new ValidationError('incorrect code', 'code');
+    if (userData.emailConfirmation.isConfirmed) throw new ValidationError('email is confirmed/incorrect', 'code');
     if (userData.emailConfirmation.expirationDate < new Date()) {
       throw new ValidationError('expiration code', 'code');
     }
@@ -43,8 +42,8 @@ class AuthService {
 
   async resending(email: string) {
     const userData = await userRepository.findByEmail(email);
-    if (!userData) throw new NotFoundError(ERROR_MESSAGE.NOT_FOUND);
-    if (userData.emailConfirmation.isConfirmed) throw new ValidationError('email is confirmed/incorrect', 'email');
+    if (!userData) throw new ValidationError('email not found', 'email');
+    if (userData.emailConfirmation.isConfirmed) throw new ValidationError('email is confirmed/incorrect', 'code');
 
     const newCode = uuidv4();
     await userRepository.updateConfirmationCode(userData.emailConfirmation.confirmationCode, newCode);

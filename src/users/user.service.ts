@@ -46,7 +46,7 @@ class UserService {
     const userData = await userRepository.getUserByEmailOrLogin(data);
 
     if (userData.email || userData.login) {
-      throw new ValidationError('email and login should be unique', 'email or login');
+      throw new ValidationError('email and login should be unique', 'email');
     }
   }
 }

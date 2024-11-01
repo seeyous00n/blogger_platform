@@ -37,7 +37,7 @@ export const sendError = (error: any, res: Response) => {
     res.status(HTTP_STATUS_CODE.NOT_FOUND_404).json(error.message);
     return;
   } else if (error instanceof ValidationError) {
-    res.status(HTTP_STATUS_CODE.BAD_REQUEST_400).json({ message: error.message, field: error.field });
+    res.status(HTTP_STATUS_CODE.BAD_REQUEST_400).json({errorsMessages: [{ message: error.message, field: error.field }]});
     return;
   } else if (error instanceof AuthError) {
     res.status(HTTP_STATUS_CODE.UNAUTHORIZED_401).json(error.message);
