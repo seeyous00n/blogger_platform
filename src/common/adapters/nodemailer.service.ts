@@ -15,7 +15,6 @@ class NodemailerService {
   sendEmail = async (to: string, link: string) => {
     const registrationHtmlTemplate = `<h1>Hi!</h1><div><a href="${link}">Confirm</a></div>`;
     const transporter = nodemailer.createTransport(smtpConfig);
-
     await transporter.sendMail({
       from: SETTINGS.SMTP_EMAIL,
       to: to,
