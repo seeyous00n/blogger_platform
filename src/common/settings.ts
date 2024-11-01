@@ -11,6 +11,9 @@ export const SETTINGS = {
     password: process.env.PASS || 'qwerty',
   },
   JWT_TOKEN: process.env.JWT_ACCESS_SECRET,
+  SMTP_EMAIL: process.env.SMTP_EMAIL,
+  SMTP_PASSWORD: process.env.SMTP_PASSWORD,
+  API_URL: process.env.API_URL || 'https://blogger-platform-pied.vercel.app/auth/registration-confirmation',
 };
 
 export const ROUTER_PATHS = {

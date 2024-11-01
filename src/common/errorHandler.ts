@@ -14,7 +14,7 @@ export class ValidationError extends Error {
   constructor(message: string, field: string) {
     super();
     this.message = message;
-    this.field = message;
+    this.field = field;
   }
 }
 
@@ -49,4 +49,3 @@ export const sendError = (error: any, res: Response) => {
 
   res.status(HTTP_STATUS_CODE.SERVER_ERROR_500).json(error.message);
 };
-

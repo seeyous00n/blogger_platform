@@ -4,8 +4,27 @@ export type UserEntityType = {
   login: string,
   email: string,
   passwordHash: string,
-  createdAt: string
+  createdAt: string,
+  emailConfirmation: {
+    confirmationCode: string,
+    isConfirmed: boolean,
+    expirationDate: Date
+  }
 }
+
+// export type UserEntityType = {
+//   accountData: {
+//     userName: string,
+//     email: string,
+//     passwordHash: string,
+//     createdAt: string,
+//   },
+//   emailConfirmation: {
+//     confirmationCode: string,
+//     isConfirmed: true,
+//     expirationDate: Date
+//   }
+// }
 
 export type UserViewType = UserEntityType & {
   _id: ObjectId,

@@ -4,16 +4,25 @@ import { userRepository } from './users.repository';
 import { NotFoundError, ValidationError } from '../common/errorHandler';
 import { ERROR_MESSAGE } from '../common/types/types';
 import { generatePasswordHash } from '../common/adapters/bcrypt.service';
+import { v4 as uuidv4 } from 'uuid';
+import { add } from 'date-fns';
+import { UserCreateInputModel } from './models/userCreateInputModel';
 
 class UserService {
-  async createUser(data: UserCreateModel) {
+  async createUser(data: UserCreateInputModel, registration: boolean = true) {
     await this.isUniqueEmailAndLogin(data);
     const hash = await generatePasswordHash(data.password);
 
     const newUser: UserEntityType = {
-      ...data,
+      login: data.login,
+      email: data.email,
       passwordHash: hash,
       createdAt: new Date().toISOString(),
+      emailConfirmation: {
+        confirmationCode: uuidv4(),
+        isConfirmed: registration,
+        expirationDate: add(new Date(), { hours: 1 }),
+      },
     };
 
     return await userRepository.create(newUser);

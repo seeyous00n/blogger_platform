@@ -6,6 +6,7 @@ import { HTTP_STATUS_CODE } from '../common/settings';
 import { sendError } from '../common/errorHandler';
 import { usersQueryRepository } from './usersQuery.repository';
 import { UriParamsModel } from '../common/models/uriParams.model';
+import { UserCreateInputModel } from './models/userCreateInputModel';
 
 class UsersController {
   getUsers = async (req: RequestWithQuery<UriParamsModel, userQueryStringType>, res: Response) => {
@@ -17,7 +18,7 @@ class UsersController {
     }
   };
 
-  createUser = async (req: RequestWithBody<UserCreateModel>, res: Response) => {
+  createUser = async (req: RequestWithBody<UserCreateInputModel>, res: Response) => {
     try {
       const userId = await userService.createUser(req.body);
       const result = await usersQueryRepository.findById(userId.insertedId.toString())
