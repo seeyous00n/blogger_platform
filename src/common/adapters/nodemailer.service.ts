@@ -14,19 +14,16 @@ const smtpConfig: SMTPTransport.Options = {
 
 class NodemailerService {
   sendEmail = async (to: string, link: string) => {
-    try {
-      const registrationHtmlTemplate = `<h1>Hi!</h1><div><a href="${link}">Confirm</a></div>`;
-      const transporter = nodemailer.createTransport(smtpConfig);
-      await transporter.sendMail({
-        from: SETTINGS.SMTP_EMAIL,
-        to: to,
-        subject: 'Activation link',
-        text: '',
-        html: registrationHtmlTemplate,
-      });
-    } catch (e) {
-      throw e;
-    }
+
+    const registrationHtmlTemplate = `<h1>Hi!</h1><div><a href="${link}">Confirm</a></div>`;
+    const transporter = nodemailer.createTransport(smtpConfig);
+    transporter.sendMail({
+      from: SETTINGS.SMTP_EMAIL,
+      to: to,
+      subject: 'Activation link',
+      text: '',
+      html: registrationHtmlTemplate,
+    });
   };
 }
 
