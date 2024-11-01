@@ -13,7 +13,7 @@ export const SETTINGS = {
   JWT_TOKEN: process.env.JWT_ACCESS_SECRET,
   SMTP_EMAIL: process.env.SMTP_EMAIL,
   SMTP_PASSWORD: process.env.SMTP_PASSWORD,
-  API_URL: process.env.API_URL || 'https://blogger-platform-pied.vercel.app/auth/registration-confirmation',
+  API_URL: process.env.API_URI || process.env.VERCEL_URI || process.env.RENDER_URI,
 };
 
 export const ROUTER_PATHS = {
