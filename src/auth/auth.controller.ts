@@ -43,7 +43,7 @@ class AuthController {
 
   confirmationEmail = async (req: RequestWithBody<{ code: string }>, res: Response) => {
     try {
-      const result = await authService.confirmation(req.body.code);
+      await authService.confirmation(req.body.code);
       res.status(HTTP_STATUS_CODE.NO_CONTENT_204).json();
     } catch (e) {
       sendError(e, res);
@@ -52,7 +52,7 @@ class AuthController {
 
   resendingEmail = async (req: RequestWithBody<{ email: string }>, res: Response) => {
     try {
-      const result = await authService.resending(req.body.email)
+      await authService.resending(req.body.email);
       res.status(HTTP_STATUS_CODE.NO_CONTENT_204).json();
     } catch (e) {
       sendError(e, res);

@@ -2,7 +2,7 @@ import { AuthType } from './types/auth.type';
 import { authRepository } from './auth.repository';
 import { AuthError, ValidationError } from '../common/errorHandler';
 import bcrypt from 'bcrypt';
-import { sendEmail } from '../common/adapters/nodemailer.service';
+import { nodemailerService } from '../common/adapters/nodemailer.service';
 import { SETTINGS } from '../common/settings';
 import { userRepository } from '../users/users.repository';
 import { v4 as uuidv4 } from 'uuid';
@@ -25,7 +25,7 @@ class AuthService {
 
   async registration(email: string, code: string) {
     const link = `${SETTINGS.API_URL}?code=${code}`;
-    await sendEmail(email, link);
+    await nodemailerService.sendEmail(email, link);
   }
 
   async confirmation(code: string) {
