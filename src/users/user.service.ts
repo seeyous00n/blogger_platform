@@ -44,9 +44,11 @@ class UserService {
 
   async isUniqueEmailAndLogin(data: UserCreateModel) {
     const userData = await userRepository.getUserByEmailOrLogin(data);
-
-    if (userData.email || userData.login) {
+    if (userData.email) {
       throw new ValidationError('email and login should be unique', 'email');
+    }
+    if (userData.login) {
+      throw new ValidationError('login and login should be unique', 'login');
     }
   }
 }

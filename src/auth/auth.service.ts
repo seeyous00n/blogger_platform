@@ -43,7 +43,7 @@ class AuthService {
   async resending(email: string) {
     const userData = await userRepository.findByEmail(email);
     if (!userData) throw new ValidationError('email not found', 'email');
-    if (userData.emailConfirmation.isConfirmed) throw new ValidationError('email is confirmed/incorrect', 'code');
+    if (userData.emailConfirmation.isConfirmed) throw new ValidationError('email is confirmed/incorrect', 'email');
 
     const newCode = uuidv4();
     await userRepository.updateConfirmationCode(userData.emailConfirmation.confirmationCode, newCode);
