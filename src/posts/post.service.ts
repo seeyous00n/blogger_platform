@@ -11,7 +11,7 @@ class PostService {
   async findPostById(id: string): Promise<ObjectId> {
     const result = await postsRepository.findById(id);
     if (!result) {
-      throw new CustomError(TYPE_ERROR.NOT_FOUND, ERROR_MESSAGE.NOT_FOUND, []);
+      throw new CustomError(TYPE_ERROR.NOT_FOUND, ERROR_MESSAGE.NOT_FOUND);
     }
 
     return result._id;
@@ -20,7 +20,7 @@ class PostService {
   async createPost(post: PostCreateModel): Promise<InsertOneResult<PostEntityType>> {
     const dataBlog = await blogsRepository.findById(post.blogId.toString());
     if (!dataBlog) {
-      throw new CustomError(TYPE_ERROR.NOT_FOUND, ERROR_MESSAGE.NOT_FOUND, []);
+      throw new CustomError(TYPE_ERROR.NOT_FOUND, ERROR_MESSAGE.NOT_FOUND);
     }
 
     const newPost: PostEntityType = {
@@ -46,7 +46,7 @@ class PostService {
   async existsPosOrError(id: string): Promise<void> {
     const result = await postsRepository.findById(id);
     if (!result) {
-      throw new CustomError(TYPE_ERROR.NOT_FOUND, ERROR_MESSAGE.NOT_FOUND, []);
+      throw new CustomError(TYPE_ERROR.NOT_FOUND, ERROR_MESSAGE.NOT_FOUND);
     }
   }
 }

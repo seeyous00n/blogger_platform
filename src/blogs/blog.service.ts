@@ -10,7 +10,7 @@ class BlogService {
   async findBlogById(id: string): Promise<string> {
     const result = await blogsRepository.findById(id);
     if (!result) {
-      throw new CustomError(TYPE_ERROR.NOT_FOUND, ERROR_MESSAGE.NOT_FOUND, []);
+      throw new CustomError(TYPE_ERROR.NOT_FOUND, ERROR_MESSAGE.NOT_FOUND);
     }
 
     return result._id.toString();
@@ -37,7 +37,7 @@ class BlogService {
   async existsBlogOrError(id: string): Promise<void> {
     const result = await blogsRepository.findById(id);
     if (!result) {
-      throw new CustomError(TYPE_ERROR.NOT_FOUND, ERROR_MESSAGE.NOT_FOUND, []);
+      throw new CustomError(TYPE_ERROR.NOT_FOUND, ERROR_MESSAGE.NOT_FOUND);
     }
   }
 }

@@ -35,7 +35,7 @@ class BlogsQueryRepository {
     isObjectId(id);
     const result = await blogsCollection.findOne({ _id: new ObjectId(id) });
     if (!result) {
-      throw new CustomError(TYPE_ERROR.NOT_FOUND, ERROR_MESSAGE.NOT_FOUND, []);
+      throw new CustomError(TYPE_ERROR.NOT_FOUND, ERROR_MESSAGE.NOT_FOUND);
     }
 
     return new BlogsViewDto(result);

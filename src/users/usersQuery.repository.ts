@@ -38,7 +38,7 @@ class UsersQueryRepository {
     isObjectId(id);
     const result = await usersCollection.findOne({ _id: new ObjectId(id) });
     if (!result) {
-      throw new CustomError(TYPE_ERROR.NOT_FOUND, ERROR_MESSAGE.NOT_FOUND, []);
+      throw new CustomError(TYPE_ERROR.NOT_FOUND, ERROR_MESSAGE.NOT_FOUND);
     }
 
     if (type) {

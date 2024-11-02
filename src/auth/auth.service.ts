@@ -11,11 +11,11 @@ class AuthService {
     //TODO это норм кандидат для чека в middleware??
     const result = await userRepository.findByLoginOrEmail(data);
 
-    if (!result) throw new CustomError(TYPE_ERROR.AUTH_ERROR, ERROR.MESSAGE.LOGIN, []);
+    if (!result) throw new CustomError(TYPE_ERROR.AUTH_ERROR, ERROR.MESSAGE.LOGIN);
 
     const isAuth = await bcrypt.compare(data.password, result.passwordHash);
     if (!isAuth) {
-      throw new CustomError(TYPE_ERROR.AUTH_ERROR, ERROR.MESSAGE.LOGIN, []);
+      throw new CustomError(TYPE_ERROR.AUTH_ERROR, ERROR.MESSAGE.LOGIN);
     }
 
     return { userId: result._id.toString() };

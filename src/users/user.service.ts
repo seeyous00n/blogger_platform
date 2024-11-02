@@ -13,7 +13,7 @@ class UserService {
   async getUserById(id: string): Promise<WithId<UserEntityType>> {
     const result = await userRepository.findById(id);
     if (!result) {
-      throw new CustomError(TYPE_ERROR.NOT_FOUND, ERROR_MESSAGE.NOT_FOUND, []);
+      throw new CustomError(TYPE_ERROR.NOT_FOUND, ERROR_MESSAGE.NOT_FOUND);
     }
 
     return result;
@@ -46,7 +46,7 @@ class UserService {
   async existsUserOrError(id: string): Promise<void> {
     const result = await userRepository.findById(id);
     if (!result) {
-      throw new CustomError(TYPE_ERROR.NOT_FOUND, ERROR_MESSAGE.NOT_FOUND, []);
+      throw new CustomError(TYPE_ERROR.NOT_FOUND, ERROR_MESSAGE.NOT_FOUND);
     }
   }
 
