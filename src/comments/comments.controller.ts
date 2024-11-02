@@ -13,8 +13,8 @@ class CommentsController {
     try {
       const result = await commentQueryRepository.findCommentById(req.params.id);
       res.status(HTTP_STATUS_CODE.OK_200).json(result);
-    } catch (e: any) {
-      sendError(e, res);
+    } catch (error) {
+      sendError(error, res);
     }
   };
 
@@ -22,8 +22,8 @@ class CommentsController {
     try {
       await commentService.updateCommentById(req.params.id, { content: req.body.content }, req.body.userId);
       res.status(HTTP_STATUS_CODE.NO_CONTENT_204).json();
-    } catch (e: any) {
-      sendError(e, res);
+    } catch (error) {
+      sendError(error, res);
     }
   };
 
@@ -31,8 +31,8 @@ class CommentsController {
     try {
       await commentService.deleteCommentById(req.params.id, req.body.userId);
       res.status(HTTP_STATUS_CODE.NO_CONTENT_204).json();
-    } catch (e: any) {
-      sendError(e, res);
+    } catch (error) {
+      sendError(error, res);
     }
   };
 }

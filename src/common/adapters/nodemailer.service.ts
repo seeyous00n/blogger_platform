@@ -35,8 +35,8 @@ export class NodemailerService {
         text: '',
         html: htmlTemplate,
       });
-    } catch (e) {
-      throw e;
+    } catch (error) {
+      throw error;
     }
   };
 

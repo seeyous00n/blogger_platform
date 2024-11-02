@@ -12,8 +12,8 @@ class UsersController {
     try {
       const result = await usersQueryRepository.findUsers(req.query);
       res.status(HTTP_STATUS_CODE.OK_200).json(result);
-    } catch (e: any) {
-      sendError(e, res);
+    } catch (error) {
+      sendError(error, res);
     }
   };
 
@@ -22,8 +22,8 @@ class UsersController {
       const userId = await userService.createUser(req.body);
       const result = await usersQueryRepository.findById(userId.insertedId.toString())
       res.status(HTTP_STATUS_CODE.CREATED_201).json(result);
-    } catch (e: any) {
-      sendError(e, res);
+    } catch (error) {
+      sendError(error, res);
     }
   };
 
@@ -31,8 +31,8 @@ class UsersController {
     try {
       await userService.deleteUserById(req.params.id);
       res.status(HTTP_STATUS_CODE.NO_CONTENT_204).json();
-    } catch (e: any) {
-      sendError(e, res);
+    } catch (error) {
+      sendError(error, res);
     }
   };
 }

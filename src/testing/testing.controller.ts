@@ -9,7 +9,7 @@ class TestingController {
       await postsCollection.deleteMany({});
       await usersCollection.deleteMany({});
       res.status(HTTP_STATUS_CODE.NO_CONTENT_204).json();
-    } catch (e) {
+    } catch (error) {
       res.status(HTTP_STATUS_CODE.SERVER_ERROR_500).json(HTTP_MESSAGE.SERVER_ERROR);
     }
   }

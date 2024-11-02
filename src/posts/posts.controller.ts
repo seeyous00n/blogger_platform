@@ -23,8 +23,8 @@ class PostsController {
     try {
       const result = await postsQueryRepository.findPosts(req.query);
       res.status(HTTP_STATUS_CODE.OK_200).json(result);
-    } catch (e: any) {
-      sendError(e, res);
+    } catch (error) {
+      sendError(error, res);
     }
   };
 
@@ -32,8 +32,8 @@ class PostsController {
     try {
       const result: PostsViewDto = await postsQueryRepository.findById(req.params.id);
       res.status(HTTP_STATUS_CODE.OK_200).json(result);
-    } catch (e: any) {
-      sendError(e, res);
+    } catch (error) {
+      sendError(error, res);
     }
   };
 
@@ -42,8 +42,8 @@ class PostsController {
       const postId = await postService.createPost(req.body);
       const result = await postsQueryRepository.findById(postId.insertedId.toString());
       res.status(HTTP_STATUS_CODE.CREATED_201).json(result);
-    } catch (e: any) {
-      sendError(e, res);
+    } catch (error) {
+      sendError(error, res);
     }
   };
 
@@ -51,8 +51,8 @@ class PostsController {
     try {
       await postService.updatePostById(req.params.id, req.body);
       res.status(HTTP_STATUS_CODE.NO_CONTENT_204).json();
-    } catch (e: any) {
-      sendError(e, res);
+    } catch (error) {
+      sendError(error, res);
     }
   };
 
@@ -60,8 +60,8 @@ class PostsController {
     try {
       await postService.deletePostById(req.params.id);
       res.status(HTTP_STATUS_CODE.NO_CONTENT_204).json();
-    } catch (e: any) {
-      sendError(e, res);
+    } catch (error) {
+      sendError(error, res);
     }
   };
 
@@ -74,8 +74,8 @@ class PostsController {
       });
       const result = await commentQueryRepository.findCommentById(commentId.insertedId.toString());
       res.status(HTTP_STATUS_CODE.CREATED_201).json(result);
-    } catch (e: any) {
-      sendError(e, res);
+    } catch (error) {
+      sendError(error, res);
     }
   };
 
@@ -84,8 +84,8 @@ class PostsController {
       const postId = await postService.findPostById(req.params.id)
       const result = await commentQueryRepository.findComments(req.query, postId.toString());
       res.status(HTTP_STATUS_CODE.OK_200).json(result);
-    } catch (e: any) {
-      sendError(e, res);
+    } catch (error) {
+      sendError(error, res);
     }
   };
 }

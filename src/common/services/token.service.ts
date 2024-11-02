@@ -12,7 +12,7 @@ class TokenService {
   async validateToken(token: string) {
     try {
       return jwt.verify(token, JWT_SECRET) as { userId: string };
-    } catch (e) {
+    } catch (error) {
       return;
     }
   }

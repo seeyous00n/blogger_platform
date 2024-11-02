@@ -16,8 +16,8 @@ class AuthController {
       const token = await tokenService.generateToken(userId);
 
       res.status(HTTP_STATUS_CODE.OK_200).json({ 'accessToken': token });
-    } catch (e: any) {
-      sendError(e, res);
+    } catch (error) {
+      sendError(error, res);
     }
   };
 
@@ -25,8 +25,8 @@ class AuthController {
     try {
       const result = await usersQueryRepository.findById(req.body.userId, true);
       res.status(HTTP_STATUS_CODE.OK_200).json(result);
-    } catch (e) {
-      sendError(e, res);
+    } catch (error) {
+      sendError(error, res);
     }
   };
 
@@ -36,8 +36,8 @@ class AuthController {
       const user = await userService.getUserById(result.insertedId.toString());
       await authService.registration(req.body.email, user.emailConfirmation.confirmationCode);
       res.status(HTTP_STATUS_CODE.NO_CONTENT_204).json();
-    } catch (e) {
-      sendError(e, res);
+    } catch (error) {
+      sendError(error, res);
     }
   };
 
@@ -45,8 +45,8 @@ class AuthController {
     try {
       await authService.confirmation(req.body.code);
       res.status(HTTP_STATUS_CODE.NO_CONTENT_204).json();
-    } catch (e) {
-      sendError(e, res);
+    } catch (error) {
+      sendError(error, res);
     }
   };
 
@@ -54,8 +54,8 @@ class AuthController {
     try {
       await authService.resending(req.body.email)
       res.status(HTTP_STATUS_CODE.NO_CONTENT_204).json();
-    } catch (e) {
-      sendError(e, res);
+    } catch (error) {
+      sendError(error, res);
     }
   };
 }

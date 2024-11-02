@@ -24,8 +24,8 @@ class BlogsController {
     try {
       const result = await blogsQueryRepository.findBlogs(req.query);
       res.status(HTTP_STATUS_CODE.OK_200).json(result);
-    } catch (e: any) {
-      sendError(e, res);
+    } catch (error) {
+      sendError(error, res);
     }
   };
 
@@ -33,8 +33,8 @@ class BlogsController {
     try {
       const result = await blogsQueryRepository.findById(req.params.id);
       res.status(HTTP_STATUS_CODE.OK_200).json(result);
-    } catch (e: any) {
-      sendError(e, res);
+    } catch (error) {
+      sendError(error, res);
     }
   };
 
@@ -43,8 +43,8 @@ class BlogsController {
       const blogId = await blogService.createBlog(req.body);
       const result = await blogsQueryRepository.findById(blogId.insertedId.toString());
       res.status(HTTP_STATUS_CODE.CREATED_201).json(result);
-    } catch (e: any) {
-      sendError(e, res);
+    } catch (error) {
+      sendError(error, res);
     }
   };
 
@@ -52,8 +52,8 @@ class BlogsController {
     try {
       await blogService.updateBlogById(req.params.id, req.body);
       res.status(HTTP_STATUS_CODE.NO_CONTENT_204).json();
-    } catch (e: any) {
-      sendError(e, res);
+    } catch (error) {
+      sendError(error, res);
     }
   };
 
@@ -61,8 +61,8 @@ class BlogsController {
     try {
       await blogService.deleteBlogById(req.params.id);
       res.status(HTTP_STATUS_CODE.NO_CONTENT_204).json();
-    } catch (e: any) {
-      sendError(e, res);
+    } catch (error) {
+      sendError(error, res);
     }
   };
 
@@ -72,8 +72,8 @@ class BlogsController {
       const postId = await postService.createPost(req.body);
       const result = await postsQueryRepository.findById(postId.insertedId.toString());
       res.status(HTTP_STATUS_CODE.CREATED_201).json(result);
-    } catch (e: any) {
-      sendError(e, res);
+    } catch (error) {
+      sendError(error, res);
     }
   };
 
@@ -82,8 +82,8 @@ class BlogsController {
       const blogId = await blogService.findBlogById(req.params.id);
       const result = await postsQueryRepository.findPosts(req.query, blogId);
       res.status(HTTP_STATUS_CODE.OK_200).json(result);
-    } catch (e: any) {
-      sendError(e, res);
+    } catch (error) {
+      sendError(error, res);
     }
   };
 }

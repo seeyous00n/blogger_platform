@@ -23,8 +23,8 @@ export const runDB = async () => {
     await client.connect();
     await client.db(SETTINGS.DB_NAME).command({ ping: 1 });
     console.log('Connected successfully to server..');
-  } catch (e) {
-    console.error('console.error', e);
+  } catch (error) {
+    console.error('console.error', error);
     await client.close();
   }
 };
