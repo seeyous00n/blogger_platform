@@ -1,8 +1,7 @@
-import { AuthType, ERROR } from './types/auth.type';
-import { authRepository } from './auth.repository';
+import { AuthType, ERROR, TYPE_EMAIL } from './types/auth.type';
 import { CustomError, TYPE_ERROR } from '../common/errorHandler';
 import bcrypt from 'bcrypt';
-import { nodemailerService } from '../common/adapters/nodemailer.service';
+import { NodemailerService } from '../common/adapters/nodemailer.service';
 import { SETTINGS } from '../common/settings';
 import { userRepository } from '../users/users.repository';
 import { v4 as uuidv4 } from 'uuid';
@@ -10,7 +9,7 @@ import { v4 as uuidv4 } from 'uuid';
 class AuthService {
   async checkCredentials(data: AuthType) {
     //TODO это норм кандидат для чека в middleware??
-    const result = await authRepository.findByLoginOrEmail(data);
+    const result = await userRepository.findByLoginOrEmail(data);
 
     if (!result) throw new CustomError(TYPE_ERROR.AUTH_ERROR, ERROR.MESSAGE.LOGIN, []);
 
@@ -24,7 +23,8 @@ class AuthService {
 
   async registration(email: string, code: string) {
     const link = `${SETTINGS.API_URL}?code=${code}`;
-    await nodemailerService.sendEmail(email, link);
+    const nodemailerService = new NodemailerService(email, link);
+    await nodemailerService.sendEmail();
     // nodemailerService.sendEmail(email, link).catch((error) => {});
   }
 
@@ -62,7 +62,9 @@ class AuthService {
 
     const newCode = uuidv4();
     await userRepository.updateConfirmationCode(userData.emailConfirmation.confirmationCode, newCode);
-    await this.registration(email, newCode);
+    const link = `${SETTINGS.API_URL}?code=${newCode}`;
+    const nodemailerService = new NodemailerService(email, link, TYPE_EMAIL.RESEND_CODE);
+    await nodemailerService.sendEmail();
   }
 }
 

@@ -21,3 +21,8 @@ export const ERROR = {
     EMAIL: 'email',
   },
 };
+
+export const TYPE_EMAIL = {
+  REGISTRATION: 'registration',
+  RESEND_CODE: 'resendCode',
+};

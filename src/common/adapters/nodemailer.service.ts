@@ -1,6 +1,7 @@
 import SMTPTransport from 'nodemailer/lib/smtp-transport';
 import nodemailer from 'nodemailer';
 import { SETTINGS } from '../settings';
+import { TYPE_EMAIL } from '../../auth/types/auth.type';
 
 const smtpConfig: SMTPTransport.Options = {
   host: 'smtp.gmail.com',
@@ -12,22 +13,46 @@ const smtpConfig: SMTPTransport.Options = {
   },
 };
 
-class NodemailerService {
-  sendEmail = async (to: string, link: string) => {
+export class NodemailerService {
+  private to;
+  private link;
+  private type;
+
+  constructor(to: string, link: string, type: string = TYPE_EMAIL.REGISTRATION) {
+    this.to = to;
+    this.link = link;
+    this.type = type;
+  }
+
+  sendEmail = async () => {
     try {
-      const registrationHtmlTemplate = `<h1>Hi!</h1><div><a href="${link}">Confirm</a></div>`;
+      const htmlTemplate = this.getTemplate();
       const transporter = nodemailer.createTransport(smtpConfig);
       await transporter.sendMail({
         from: SETTINGS.SMTP_EMAIL,
-        to: to,
+        to: this.to,
         subject: 'Activation link',
         text: '',
-        html: registrationHtmlTemplate,
+        html: htmlTemplate,
       });
     } catch (e) {
       throw e;
     }
   };
-}
 
-export const nodemailerService = new NodemailerService();
+  getTemplate = () => {
+    let registrationHtmlTemplate = '';
+    switch (this.type) {
+      case TYPE_EMAIL.REGISTRATION :
+        registrationHtmlTemplate = `<h1>Hi! Registration</h1><div><a href="${this.link}">Confirm</a></div>`;
+        break;
+      case TYPE_EMAIL.RESEND_CODE :
+        registrationHtmlTemplate = `<h1>Hi! Resend CODE</h1><div><a href="${this.link}">Confirm</a></div>`;
+        break;
+      default:
+        registrationHtmlTemplate = '<h1>Ups... </div>';
+    }
+
+    return registrationHtmlTemplate;
+  };
+}

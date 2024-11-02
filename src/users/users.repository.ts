@@ -3,6 +3,7 @@ import { UserEntityType } from './types/user.types';
 import { ObjectId } from 'mongodb';
 import { UserCreateModel } from './models/userCreate.model';
 import { isObjectId } from '../common/adapters/mongodb.service';
+import { AuthType } from '../auth/types/auth.type';
 
 class UserRepository {
   async create(data: UserEntityType) {
@@ -45,6 +46,10 @@ class UserRepository {
       { 'emailConfirmation.confirmationCode': code },
       { $set: { 'emailConfirmation.confirmationCode': newCode } },
     );
+  }
+
+  async findByLoginOrEmail(data: AuthType) {
+    return await usersCollection.findOne({ $or: [{ email: data.loginOrEmail }, { login: data.loginOrEmail }] });
   }
 }
 
