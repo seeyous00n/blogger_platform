@@ -1,6 +1,6 @@
 import { query } from 'express-validator';
 
-const searchNameTerm = query('searchNameTerm').toInt().default('');
+const searchNameTerm = query('searchNameTerm').default('');
 const sortBy = query('sortBy').default('createdAt');
 const sortDirection = query('websiteUrl').default('desc');
 const pageNumber = query('pageNumber').toInt().default(1);
