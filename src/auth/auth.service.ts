@@ -7,7 +7,7 @@ import { userRepository } from '../users/users.repository';
 import { v4 as uuidv4 } from 'uuid';
 
 class AuthService {
-  async checkCredentials(data: AuthType) {
+  async checkCredentials(data: AuthType): Promise<{ userId: string }> {
     //TODO это норм кандидат для чека в middleware??
     const result = await userRepository.findByLoginOrEmail(data);
 
@@ -21,14 +21,14 @@ class AuthService {
     return { userId: result._id.toString() };
   }
 
-  async registration(email: string, code: string) {
+  async registration(email: string, code: string): Promise<void> {
     const link = `${SETTINGS.API_URL}?code=${code}`;
     const nodemailerService = new NodemailerService(email, link);
     await nodemailerService.sendEmail();
     // nodemailerService.sendEmail(email, link).catch((error) => {});
   }
 
-  async confirmation(code: string) {
+  async confirmation(code: string): Promise<void> {
     const userData = await userRepository.findByConfirmationCode(code);
 
     if (!userData) throw new CustomError(TYPE_ERROR.VALIDATION_ERROR, ERROR.MESSAGE.INCORRECT_CODE, [{
@@ -49,7 +49,7 @@ class AuthService {
     await userRepository.updateIsConfirmed(userData.emailConfirmation.confirmationCode);
   }
 
-  async resending(email: string) {
+  async resending(email: string): Promise<void> {
     const userData = await userRepository.findByEmail(email);
     if (!userData) throw new CustomError(TYPE_ERROR.VALIDATION_ERROR, ERROR.MESSAGE.EMAIL_NOT_FOUND, [{
       message: ERROR.MESSAGE.EMAIL_NOT_FOUND,

@@ -52,7 +52,7 @@ class AuthController {
 
   resendingEmail = async (req: RequestWithBody<{ email: string }>, res: Response) => {
     try {
-      await authService.resending(req.body.email)
+      await authService.resending(req.body.email);
       res.status(HTTP_STATUS_CODE.NO_CONTENT_204).json();
     } catch (error) {
       sendError(error, res);

@@ -24,7 +24,7 @@ export class NodemailerService {
     this.type = type;
   }
 
-  sendEmail = async () => {
+  sendEmail = async (): Promise<void> => {
     try {
       const htmlTemplate = this.getTemplate();
       const transporter = nodemailer.createTransport(smtpConfig);
@@ -40,7 +40,7 @@ export class NodemailerService {
     }
   };
 
-  getTemplate = () => {
+  getTemplate = (): string => {
     let registrationHtmlTemplate = '';
     switch (this.type) {
       case TYPE_EMAIL.REGISTRATION :

@@ -6,10 +6,11 @@ import { ERROR_MESSAGE } from '../common/types/types';
 import { generatePasswordHash } from '../common/adapters/bcrypt.service';
 import { v4 as uuidv4 } from 'uuid';
 import { add } from 'date-fns';
-import { UserCreateInputModel } from './models/userCreateInputModel';
+import { UserCreateInputModel } from './models/userCreateInput.model';
+import { InsertOneResult, WithId } from 'mongodb';
 
 class UserService {
-  async getUserById(id: string) {
+  async getUserById(id: string): Promise<WithId<UserEntityType>> {
     const result = await userRepository.findById(id);
     if (!result) {
       throw new CustomError(TYPE_ERROR.NOT_FOUND, ERROR_MESSAGE.NOT_FOUND, []);
@@ -18,7 +19,7 @@ class UserService {
     return result;
   }
 
-  async createUser(data: UserCreateInputModel, confirmed: boolean = true) {
+  async createUser(data: UserCreateInputModel, confirmed: boolean = true): Promise<InsertOneResult<UserEntityType>> {
     await this.uniqueEmailAndLoginOrError(data);
     const hash = await generatePasswordHash(data.password);
 
@@ -37,19 +38,19 @@ class UserService {
     return await userRepository.create(newUser);
   }
 
-  async deleteUserById(id: string) {
+  async deleteUserById(id: string): Promise<void> {
     await this.existsUserOrError(id);
     await userRepository.deleteById(id);
   }
 
-  async existsUserOrError(id: string) {
+  async existsUserOrError(id: string): Promise<void> {
     const result = await userRepository.findById(id);
     if (!result) {
       throw new CustomError(TYPE_ERROR.NOT_FOUND, ERROR_MESSAGE.NOT_FOUND, []);
     }
   }
 
-  async uniqueEmailAndLoginOrError(data: UserCreateModel) {
+  async uniqueEmailAndLoginOrError(data: UserCreateModel): Promise<void> {
     const userData = await userRepository.getUserByEmailOrLogin(data);
     if (userData.email) {
       const errorMessage = 'email and login should be unique';

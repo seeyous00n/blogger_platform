@@ -6,7 +6,7 @@ export const BASIC = 'Basic';
 const auth = `${SETTINGS.auth.name}:${SETTINGS.auth.password}`;
 export const convertToBase64 = () => Buffer.from(auth).toString('base64');
 
-export const authBaseGuard = (req: Request, res: Response, next: NextFunction) => {
+export const authBaseGuard = (req: Request, res: Response, next: NextFunction): void => {
   const authHeader = req.headers.authorization;
   if (!authHeader) {
     res.status(HTTP_STATUS_CODE.UNAUTHORIZED_401).json(HTTP_MESSAGE.UNAUTHORIZED);

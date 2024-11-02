@@ -7,7 +7,7 @@ import { ERROR_MESSAGE } from '../common/types/types';
 import { BlogEntityType } from './types/blog.types';
 
 class BlogService {
-  async findBlogById(id: string) {
+  async findBlogById(id: string): Promise<string> {
     const result = await blogsRepository.findById(id);
     if (!result) {
       throw new CustomError(TYPE_ERROR.NOT_FOUND, ERROR_MESSAGE.NOT_FOUND, []);
@@ -34,7 +34,7 @@ class BlogService {
     await blogsRepository.deleteById(id);
   }
 
-  async existsBlogOrError(id: string) {
+  async existsBlogOrError(id: string): Promise<void> {
     const result = await blogsRepository.findById(id);
     if (!result) {
       throw new CustomError(TYPE_ERROR.NOT_FOUND, ERROR_MESSAGE.NOT_FOUND, []);

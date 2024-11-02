@@ -3,7 +3,7 @@ import { HTTP_MESSAGE, HTTP_STATUS_CODE } from '../common/settings';
 import { blogsCollection, postsCollection, usersCollection } from '../db';
 
 class TestingController {
-  async clearAllData(req: Request, res: Response) {
+  async clearAllData(req: Request, res: Response): Promise<void> {
     try {
       await blogsCollection.deleteMany({});
       await postsCollection.deleteMany({});

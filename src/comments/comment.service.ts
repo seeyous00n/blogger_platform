@@ -5,9 +5,10 @@ import { commentRepository } from './comment.repository';
 import { CommentUpdateModel } from './models/CommentUpdate.model';
 import { CommentCreateInputModel } from './models/CommentCreateInput.model';
 import { CommentEntityType } from './types/comment.types';
+import { InsertOneResult } from 'mongodb';
 
 class CommentService {
-  async createComment(data: CommentCreateInputModel) {
+  async createComment(data: CommentCreateInputModel): Promise<InsertOneResult<CommentEntityType>> {
     const post = await postsRepository.findById(data.postId);
     if (!post) {
       throw new CustomError(TYPE_ERROR.NOT_FOUND, ERROR_MESSAGE.NOT_FOUND, []);
@@ -26,17 +27,17 @@ class CommentService {
     return await commentRepository.createByData(newComment);
   }
 
-  async updateCommentById(id: string, data: CommentUpdateModel, userId: string) {
+  async updateCommentById(id: string, data: CommentUpdateModel, userId: string): Promise<void> {
     await this.ownerCommentOrError(id, userId);
     await commentRepository.updateById(id, data);
   }
 
-  async deleteCommentById(id: string, userId: string) {
+  async deleteCommentById(id: string, userId: string): Promise<void> {
     await this.ownerCommentOrError(id, userId);
     await commentRepository.deleteById(id);
   }
 
-  async ownerCommentOrError(commentId: string, userId: string) {
+  async ownerCommentOrError(commentId: string, userId: string): Promise<void> {
     const comment = await commentRepository.findById(commentId);
     if (!comment) {
       throw new CustomError(TYPE_ERROR.NOT_FOUND, ERROR_MESSAGE.NOT_FOUND, []);

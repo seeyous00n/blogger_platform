@@ -4,7 +4,7 @@ import { tokenService } from '../../services/token.service';
 
 export const BEARER = 'Bearer';
 
-export const authJwtGuard = async (req: Request, res: Response, next: NextFunction) => {
+export const authJwtGuard = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
   const authHeader = req.headers.authorization;
   if (!authHeader) {
     res.status(HTTP_STATUS_CODE.UNAUTHORIZED_401).json(HTTP_MESSAGE.UNAUTHORIZED);

@@ -18,24 +18,24 @@ enum STATUSES {
 type ArrayErrors = { message: string, field: string }
 
 export class CustomError extends Error {
-  status: string
-  arrayErrors: ArrayErrors[]
+  status: string;
+  arrayErrors: ArrayErrors[];
 
   constructor(status: string, message: string, arrayErrors: ArrayErrors[]) {
     super();
-    this.status = status
+    this.status = status;
     this.message = message;
     this.arrayErrors = arrayErrors;
   }
 }
 
-export const sendError = (error: any, res: Response) => {
-  if(error instanceof CustomError) {
+export const sendError = (error: any, res: Response): void => {
+  if (error instanceof CustomError) {
     const status = STATUSES[error.status as keyof typeof STATUSES];
     res.status(status).json(error.arrayErrors.length
-      ? {errorsMessages: [...error.arrayErrors] }
+      ? { errorsMessages: [...error.arrayErrors] }
       : error.message);
-    return
+    return;
   }
 
   res.status(HTTP_STATUS_CODE.SERVER_ERROR_500).json(error.message);

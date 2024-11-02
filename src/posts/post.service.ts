@@ -5,9 +5,10 @@ import { CustomError, TYPE_ERROR } from '../common/errorHandler';
 import { ERROR_MESSAGE } from '../common/types/types';
 import { PostEntityType } from './types/post.types';
 import { blogsRepository } from '../blogs/blogs.repository';
+import { InsertOneResult, ObjectId } from 'mongodb';
 
 class PostService {
-  async findPostById(id: string) {
+  async findPostById(id: string): Promise<ObjectId> {
     const result = await postsRepository.findById(id);
     if (!result) {
       throw new CustomError(TYPE_ERROR.NOT_FOUND, ERROR_MESSAGE.NOT_FOUND, []);
@@ -16,7 +17,7 @@ class PostService {
     return result._id;
   }
 
-  async createPost(post: PostCreateModel) {
+  async createPost(post: PostCreateModel): Promise<InsertOneResult<PostEntityType>> {
     const dataBlog = await blogsRepository.findById(post.blogId.toString());
     if (!dataBlog) {
       throw new CustomError(TYPE_ERROR.NOT_FOUND, ERROR_MESSAGE.NOT_FOUND, []);
@@ -42,7 +43,7 @@ class PostService {
     await postsRepository.deleteById(id);
   }
 
-  async existsPosOrError(id: string) {
+  async existsPosOrError(id: string): Promise<void> {
     const result = await postsRepository.findById(id);
     if (!result) {
       throw new CustomError(TYPE_ERROR.NOT_FOUND, ERROR_MESSAGE.NOT_FOUND, []);
