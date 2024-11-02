@@ -9,8 +9,17 @@ import { add } from 'date-fns';
 import { UserCreateInputModel } from './models/userCreateInputModel';
 
 class UserService {
-  async createUser(data: UserCreateInputModel, registration: boolean = true) {
-    await this.isUniqueEmailAndLogin(data);
+  async getUserById(id: string) {
+    const result = await userRepository.findById(id);
+    if (!result) {
+      throw new CustomError(TYPE_ERROR.NOT_FOUND, ERROR_MESSAGE.NOT_FOUND, []);
+    }
+
+    return result;
+  }
+
+  async createUser(data: UserCreateInputModel, confirmed: boolean = true) {
+    await this.uniqueEmailAndLoginOrError(data);
     const hash = await generatePasswordHash(data.password);
 
     const newUser: UserEntityType = {
@@ -20,7 +29,7 @@ class UserService {
       createdAt: new Date().toISOString(),
       emailConfirmation: {
         confirmationCode: uuidv4(),
-        isConfirmed: registration,
+        isConfirmed: confirmed,
         expirationDate: add(new Date(), { hours: 1 }),
       },
     };
@@ -29,28 +38,26 @@ class UserService {
   }
 
   async deleteUserById(id: string) {
-    await this.isExistsUser(id);
+    await this.existsUserOrError(id);
     await userRepository.deleteById(id);
   }
 
-  async isExistsUser(id: string) {
+  async existsUserOrError(id: string) {
     const result = await userRepository.findById(id);
     if (!result) {
       throw new CustomError(TYPE_ERROR.NOT_FOUND, ERROR_MESSAGE.NOT_FOUND, []);
     }
-
-    return result;
   }
 
-  async isUniqueEmailAndLogin(data: UserCreateModel) {
+  async uniqueEmailAndLoginOrError(data: UserCreateModel) {
     const userData = await userRepository.getUserByEmailOrLogin(data);
     if (userData.email) {
-      const errorMessage = 'email and login should be unique'
-      throw new CustomError(TYPE_ERROR.VALIDATION_ERROR, errorMessage, [{message: errorMessage, field: 'email'}]);
+      const errorMessage = 'email and login should be unique';
+      throw new CustomError(TYPE_ERROR.VALIDATION_ERROR, errorMessage, [{ message: errorMessage, field: 'email' }]);
     }
     if (userData.login) {
-      const errorMessage = 'login and login should be unique'
-      throw new CustomError(TYPE_ERROR.VALIDATION_ERROR, errorMessage, [{message: errorMessage, field: 'login'}]);
+      const errorMessage = 'login and login should be unique';
+      throw new CustomError(TYPE_ERROR.VALIDATION_ERROR, errorMessage, [{ message: errorMessage, field: 'login' }]);
     }
   }
 }

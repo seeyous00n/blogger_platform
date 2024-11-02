@@ -1,28 +1,22 @@
-import { AuthType } from './types/auth.type';
+import { AuthType, ERROR } from './types/auth.type';
 import { authRepository } from './auth.repository';
-import {CustomError, TYPE_ERROR } from '../common/errorHandler';
+import { CustomError, TYPE_ERROR } from '../common/errorHandler';
 import bcrypt from 'bcrypt';
 import { nodemailerService } from '../common/adapters/nodemailer.service';
 import { SETTINGS } from '../common/settings';
 import { userRepository } from '../users/users.repository';
 import { v4 as uuidv4 } from 'uuid';
 
-const ERROR_LOGIN_MESSAGE = 'Error email/login';
-const ERROR_IS_CONFIRMED = 'code confirmed';
-const ERROR_EXPIRATION_CODE = 'exp code';
-const ERROR_EMAIL_NOT_FOUND = 'email not found';
-const ERROR_EMAIL_CONFIRMED = 'email is confirmed';
-const ERROR_INCORRECT_CODE = 'incorrect code';
-
 class AuthService {
   async checkCredentials(data: AuthType) {
+    //TODO это норм кандидат для чека в middleware??
     const result = await authRepository.findByLoginOrEmail(data);
 
-    if (!result) throw new CustomError(TYPE_ERROR.AUTH_ERROR, ERROR_LOGIN_MESSAGE, []);
+    if (!result) throw new CustomError(TYPE_ERROR.AUTH_ERROR, ERROR.MESSAGE.LOGIN, []);
 
     const isAuth = await bcrypt.compare(data.password, result.passwordHash);
     if (!isAuth) {
-      throw new CustomError(TYPE_ERROR.AUTH_ERROR, ERROR_LOGIN_MESSAGE, []);
+      throw new CustomError(TYPE_ERROR.AUTH_ERROR, ERROR.MESSAGE.LOGIN, []);
     }
 
     return { userId: result._id.toString() };
@@ -37,10 +31,19 @@ class AuthService {
   async confirmation(code: string) {
     const userData = await userRepository.findByConfirmationCode(code);
 
-    if (!userData) throw new CustomError(TYPE_ERROR.VALIDATION_ERROR, ERROR_INCORRECT_CODE, [{ message: ERROR_INCORRECT_CODE, field: 'code' }]);
-    if (userData.emailConfirmation.isConfirmed) throw new CustomError(TYPE_ERROR.VALIDATION_ERROR, ERROR_IS_CONFIRMED, [{ message: ERROR_IS_CONFIRMED, field: 'code' }]);
+    if (!userData) throw new CustomError(TYPE_ERROR.VALIDATION_ERROR, ERROR.MESSAGE.INCORRECT_CODE, [{
+      message: ERROR.MESSAGE.INCORRECT_CODE,
+      field: ERROR.FIELD.CODE,
+    }]);
+    if (userData.emailConfirmation.isConfirmed) throw new CustomError(TYPE_ERROR.VALIDATION_ERROR, ERROR.MESSAGE.IS_CONFIRMED, [{
+      message: ERROR.MESSAGE.IS_CONFIRMED,
+      field: ERROR.FIELD.CODE,
+    }]);
     if (userData.emailConfirmation.expirationDate < new Date()) {
-      throw new CustomError(TYPE_ERROR.VALIDATION_ERROR, ERROR_EXPIRATION_CODE, [{ message: ERROR_EXPIRATION_CODE, field: 'code' }]);
+      throw new CustomError(TYPE_ERROR.VALIDATION_ERROR, ERROR.MESSAGE.EXPIRATION_CODE, [{
+        message: ERROR.MESSAGE.EXPIRATION_CODE,
+        field: ERROR.FIELD.EMAIL,
+      }]);
     }
 
     await userRepository.updateIsConfirmed(userData.emailConfirmation.confirmationCode);
@@ -48,13 +51,13 @@ class AuthService {
 
   async resending(email: string) {
     const userData = await userRepository.findByEmail(email);
-    if (!userData) throw new CustomError(TYPE_ERROR.VALIDATION_ERROR, ERROR_EMAIL_NOT_FOUND, [{
-      message: ERROR_EMAIL_NOT_FOUND,
-      field: 'email',
+    if (!userData) throw new CustomError(TYPE_ERROR.VALIDATION_ERROR, ERROR.MESSAGE.EMAIL_NOT_FOUND, [{
+      message: ERROR.MESSAGE.EMAIL_NOT_FOUND,
+      field: ERROR.FIELD.EMAIL,
     }]);
-    if (userData.emailConfirmation.isConfirmed) throw new CustomError(TYPE_ERROR.VALIDATION_ERROR, ERROR_EMAIL_CONFIRMED, [{
-      message: ERROR_EMAIL_CONFIRMED,
-      field: 'email',
+    if (userData.emailConfirmation.isConfirmed) throw new CustomError(TYPE_ERROR.VALIDATION_ERROR, ERROR.MESSAGE.EMAIL_CONFIRMED, [{
+      message: ERROR.MESSAGE.EMAIL_CONFIRMED,
+      field: ERROR.FIELD.EMAIL,
     }]);
 
     const newCode = uuidv4();

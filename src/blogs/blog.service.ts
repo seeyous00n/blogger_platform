@@ -8,7 +8,10 @@ import { BlogEntityType } from './types/blog.types';
 
 class BlogService {
   async findBlogById(id: string) {
-    const result = await this.isExistsBlog(id);
+    const result = await blogsRepository.findById(id);
+    if (!result) {
+      throw new CustomError(TYPE_ERROR.NOT_FOUND, ERROR_MESSAGE.NOT_FOUND, []);
+    }
 
     return result._id.toString();
   }
@@ -22,22 +25,20 @@ class BlogService {
   }
 
   async updateBlogById(id: string, data: BlogUpdateModal): Promise<void> {
-    await this.isExistsBlog(id);
+    await this.existsBlogOrError(id);
     await blogsRepository.updateById(id, data);
   }
 
   async deleteBlogById(id: string): Promise<void> {
-    await this.isExistsBlog(id);
+    await this.existsBlogOrError(id);
     await blogsRepository.deleteById(id);
   }
 
-  async isExistsBlog(id: string) {
+  async existsBlogOrError(id: string) {
     const result = await blogsRepository.findById(id);
     if (!result) {
       throw new CustomError(TYPE_ERROR.NOT_FOUND, ERROR_MESSAGE.NOT_FOUND, []);
     }
-
-    return result;
   }
 }
 

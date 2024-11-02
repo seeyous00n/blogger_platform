@@ -8,7 +8,11 @@ import { blogsRepository } from '../blogs/blogs.repository';
 
 class PostService {
   async findPostById(id: string) {
-    const result = await this.isExistsPos(id);
+    const result = await postsRepository.findById(id);
+    if (!result) {
+      throw new CustomError(TYPE_ERROR.NOT_FOUND, ERROR_MESSAGE.NOT_FOUND, []);
+    }
+
     return result._id;
   }
 
@@ -29,22 +33,20 @@ class PostService {
   }
 
   async updatePostById(id: string, data: PostUpdateModal): Promise<void> {
-    await this.isExistsPos(id);
+    await this.existsPosOrError(id);
     await postsRepository.updateById(id, data);
   }
 
   async deletePostById(id: string): Promise<void> {
-    await this.isExistsPos(id);
+    await this.existsPosOrError(id);
     await postsRepository.deleteById(id);
   }
 
-  async isExistsPos(id: string) {
+  async existsPosOrError(id: string) {
     const result = await postsRepository.findById(id);
     if (!result) {
       throw new CustomError(TYPE_ERROR.NOT_FOUND, ERROR_MESSAGE.NOT_FOUND, []);
     }
-
-    return result;
   }
 }
 
