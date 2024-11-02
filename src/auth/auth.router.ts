@@ -10,8 +10,8 @@ import {
 
 const authRouter = Router();
 
-authRouter.post('/login', authController.authLoginUser);
-authRouter.get('/me', authJwtGuard, authDataValidation, authController.getMe);
+authRouter.post('/login', authDataValidation, authController.authLoginUser);
+authRouter.get('/me', authJwtGuard, authController.getMe);
 authRouter.post('/registration', registrationDataValidation, authController.registration);
 authRouter.post('/registration-confirmation', confirmationCodeValidator, authController.confirmationEmail);
 authRouter.post('/registration-email-resending', emailValidator, authController.resendingEmail);
