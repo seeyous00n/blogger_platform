@@ -1,13 +1,6 @@
 import { Response } from 'express';
 import { HTTP_STATUS_CODE } from './settings';
 
-export class NotFoundError extends Error {
-  constructor(message: string) {
-    super();
-    this.message = message;
-  }
-}
-
 export const TYPE_ERROR = {
   'NOT_FOUND': 'NOT_FOUND',
   'VALIDATION_ERROR': 'VALIDATION_ERROR',
