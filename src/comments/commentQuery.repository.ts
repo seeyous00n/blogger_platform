@@ -23,9 +23,9 @@ class CommentQueryRepository {
     const comments = result.map((item) => new CommentViewDto(item));
 
     return {
-      'pagesCount': Math.ceil(commentsCount / Number(queryHelper.pageSize)),
-      'page': Number(queryHelper.pageNumber),
-      'pageSize': Number(queryHelper.pageSize),
+      'pagesCount': Math.ceil(commentsCount / queryHelper.pageSize),
+      'page': queryHelper.pageNumber,
+      'pageSize': queryHelper.pageSize,
       'totalCount': commentsCount,
       'items': comments,
     };

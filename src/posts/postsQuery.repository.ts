@@ -22,9 +22,9 @@ class PostsQueryRepository {
     const posts = result.map((item) => new PostsViewDto(item));
 
     return {
-      'pagesCount': Math.ceil(postsCount / Number(queryHelper.pageSize)),
-      'page': Number(queryHelper.pageNumber),
-      'pageSize': Number(queryHelper.pageSize),
+      'pagesCount': Math.ceil(postsCount / queryHelper.pageSize),
+      'page': queryHelper.pageNumber,
+      'pageSize': queryHelper.pageSize,
       'totalCount': postsCount,
       'items': posts,
     };

@@ -25,9 +25,9 @@ class UsersQueryRepository {
     const resultData = result.map((item) => new UserViewDto(item));
 
     return {
-      'pagesCount': Math.ceil(blogsCount / Number(queryHelper.pageSize)),
-      'page': Number(queryHelper.pageNumber),
-      'pageSize': Number(queryHelper.pageSize),
+      'pagesCount': Math.ceil(blogsCount / queryHelper.pageSize),
+      'page': queryHelper.pageNumber,
+      'pageSize': queryHelper.pageSize,
       'totalCount': blogsCount,
       'items': resultData,
     };
