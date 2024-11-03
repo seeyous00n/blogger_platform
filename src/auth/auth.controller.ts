@@ -32,6 +32,7 @@ class AuthController {
 
   registration = async (req: RequestWithBody<UserCreateModel>, res: Response) => {
     try {
+      //TODO это норм практика? передавать флаг
       const result = await userService.createUser(req.body, false);
       const user = await userService.getUserById(result.insertedId.toString());
       await authService.registration(req.body.email, user.emailConfirmation.confirmationCode);

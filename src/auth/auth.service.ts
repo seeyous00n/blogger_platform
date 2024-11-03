@@ -8,7 +8,7 @@ import { v4 as uuidv4 } from 'uuid';
 
 class AuthService {
   async checkCredentials(data: AuthType): Promise<{ userId: string }> {
-    //TODO это норм кандидат для чека в middleware??
+    //TODO это норм кандидат для чека в middleware???
     const result = await userRepository.findByLoginOrEmail(data);
 
     if (!result) throw new CustomError(TYPE_ERROR.AUTH_ERROR, ERROR.MESSAGE.LOGIN);
