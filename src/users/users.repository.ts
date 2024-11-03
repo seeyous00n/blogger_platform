@@ -1,6 +1,6 @@
 import { usersCollection } from '../db';
 import { UserEntityType } from './types/user.types';
-import { InsertOneResult, ObjectId, UpdateResult, WithId } from 'mongodb';
+import { InsertOneResult, ObjectId, WithId } from 'mongodb';
 import { UserCreateModel } from './models/userCreate.model';
 import { isObjectId } from '../common/adapters/mongodb.service';
 import { AuthType } from '../auth/types/auth.type';

@@ -34,16 +34,16 @@ class PostService {
   }
 
   async updatePostById(id: string, data: PostUpdateModal): Promise<void> {
-    await this.existsPosOrError(id);
+    await this.existsPostOrError(id);
     await postsRepository.updateById(id, data);
   }
 
   async deletePostById(id: string): Promise<void> {
-    await this.existsPosOrError(id);
+    await this.existsPostOrError(id);
     await postsRepository.deleteById(id);
   }
 
-  async existsPosOrError(id: string): Promise<void> {
+  async existsPostOrError(id: string): Promise<void> {
     const result = await postsRepository.findById(id);
     if (!result) {
       throw new CustomError(TYPE_ERROR.NOT_FOUND, ERROR_MESSAGE.NOT_FOUND);
