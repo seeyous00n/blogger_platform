@@ -1,7 +1,7 @@
 import { AuthType, ERROR, TYPE_EMAIL } from './types/auth.type';
 import { CustomError, TYPE_ERROR } from '../common/errorHandler';
 import bcrypt from 'bcrypt';
-import { NodemailerService } from '../common/adapters/nodemailer.service';
+import { nodemailerService } from '../common/adapters/nodemailer.service';
 import { SETTINGS } from '../common/settings';
 import { userRepository } from '../users/users.repository';
 import { v4 as uuidv4 } from 'uuid';
@@ -23,8 +23,7 @@ class AuthService {
 
   async registration(email: string, code: string): Promise<void> {
     const link = `${SETTINGS.API_URL}?code=${code}`;
-    const nodemailerService = new NodemailerService(email, link);
-    await nodemailerService.sendEmail();
+    await nodemailerService.sendEmail(email, link);
     // nodemailerService.sendEmail(email, link).catch((error) => {});
   }
 
@@ -63,8 +62,7 @@ class AuthService {
     const newCode = uuidv4();
     await userRepository.updateConfirmationCode(userData.emailConfirmation.confirmationCode, newCode);
     const link = `${SETTINGS.API_URL}?code=${newCode}`;
-    const nodemailerService = new NodemailerService(email, link, TYPE_EMAIL.RESEND_CODE);
-    await nodemailerService.sendEmail();
+    await nodemailerService.sendEmail(email, link, TYPE_EMAIL.RESEND_CODE);
   }
 }
 

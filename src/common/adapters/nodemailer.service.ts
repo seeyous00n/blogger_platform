@@ -13,24 +13,14 @@ const smtpConfig: SMTPTransport.Options = {
   },
 };
 
-export class NodemailerService {
-  private to;
-  private link;
-  private type;
-
-  constructor(to: string, link: string, type: string = TYPE_EMAIL.REGISTRATION) {
-    this.to = to;
-    this.link = link;
-    this.type = type;
-  }
-
-  sendEmail = async (): Promise<void> => {
+class NodemailerService {
+  sendEmail = async (to: string, link: string, type: string = TYPE_EMAIL.REGISTRATION): Promise<void> => {
     try {
-      const htmlTemplate = this.getTemplate();
+      const htmlTemplate = this.getTemplate(link, type);
       const transporter = nodemailer.createTransport(smtpConfig);
       await transporter.sendMail({
         from: SETTINGS.SMTP_EMAIL,
-        to: this.to,
+        to: to,
         subject: 'Activation link',
         text: '',
         html: htmlTemplate,
@@ -40,14 +30,14 @@ export class NodemailerService {
     }
   };
 
-  getTemplate = (): string => {
+  getTemplate = (link: string, type: string): string => {
     let registrationHtmlTemplate = '';
-    switch (this.type) {
+    switch (type) {
       case TYPE_EMAIL.REGISTRATION :
-        registrationHtmlTemplate = `<h1>Hi! Registration</h1><div><a href="${this.link}">Confirm</a></div>`;
+        registrationHtmlTemplate = `<h1>Hi! Registration</h1><div><a href="${link}">Confirm</a></div>`;
         break;
       case TYPE_EMAIL.RESEND_CODE :
-        registrationHtmlTemplate = `<h1>Hi! Resend CODE</h1><div><a href="${this.link}">Confirm</a></div>`;
+        registrationHtmlTemplate = `<h1>Hi! Resend CODE</h1><div><a href="${link}">Confirm</a></div>`;
         break;
       default:
         registrationHtmlTemplate = '<h1>Ups... </div>';
@@ -56,3 +46,5 @@ export class NodemailerService {
     return registrationHtmlTemplate;
   };
 }
+
+export const nodemailerService = new NodemailerService();
