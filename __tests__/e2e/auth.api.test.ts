@@ -1,13 +1,17 @@
-import { req } from '../utils/test-helpers';
+import { authorized, req } from '../utils/test-helpers';
 import { describe } from 'node:test';
 import { HTTP_STATUS_CODE, ROUTER_PATHS } from '../../src/common/settings';
 import { client, runDB } from '../../src/db';
 import { UserCreateModel } from '../../src/users/models/userCreate.model';
 import { nodemailerService } from '../../src/common/adapters/nodemailer.service';
 
+const data: UserCreateModel = { login: 'login11', password: 'login11111', email: 'borovikov.live@gmail.com' };
+
 describe('/auth', async () => {
   beforeAll(async () => {
     await runDB();
+
+    nodemailerService.sendEmail = jest.fn().mockImplementationOnce((): Promise<void> => Promise.resolve());
   });
 
   beforeEach(async () => {
@@ -18,10 +22,7 @@ describe('/auth', async () => {
     await client.close();
   });
 
-  it('/registration, /login', async () => {
-    const data: UserCreateModel = { login: 'login11', password: 'login11111', email: 'borovikov.live@gmail.com' };
-    nodemailerService.sendEmail = jest.fn().mockImplementationOnce((): Promise<void> => Promise.resolve());
-
+  it('/registration, /login, /me, /delete (user)', async () => {
     await req
       .post(`${ROUTER_PATHS.AUTH}/registration`)
       .send(data)
@@ -30,6 +31,8 @@ describe('/auth', async () => {
     const user = await req
       .get(`${ROUTER_PATHS.USERS}/`)
       .expect(HTTP_STATUS_CODE.OK_200);
+
+    const userItem = user.body.items[0];
 
     expect(user.body.items).toEqual([
       {
@@ -51,5 +54,30 @@ describe('/auth', async () => {
     expect(loginUser.body).toEqual({
       "accessToken": loginUser.body.accessToken,
     })
+
+    await req
+      .get(`${ROUTER_PATHS.AUTH}/me`)
+      .set({ 'Authorization': `Bearer ${loginUser.body.accessToken}` })
+      .expect(HTTP_STATUS_CODE.OK_200, {
+        "email": userItem.email,
+        "login": userItem.login,
+        "userId": userItem.id
+      });
+
+    await req
+      .delete(`${ROUTER_PATHS.USERS}/${userItem.id}`)
+      .set(authorized)
+      .expect(HTTP_STATUS_CODE.NO_CONTENT_204)
+
+    await req
+      .get(`${ROUTER_PATHS.USERS}/`)
+      .set(authorized)
+      .expect(HTTP_STATUS_CODE.OK_200, {
+        pagesCount: 0,
+        page: 1,
+        pageSize: 10,
+        totalCount: 0,
+        items: [],
+      })
   });
 });

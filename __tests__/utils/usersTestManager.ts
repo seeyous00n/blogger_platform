@@ -1,6 +1,5 @@
-import { authorized, mokDataCreateBlog, req } from './test-helpers';
+import { mokDataCreateBlog, req } from './test-helpers';
 import { HTTP_STATUS_CODE, ROUTER_PATHS } from '../../src/common/settings';
-import { BlogCreateModel } from '../../src/blogs/models/blogCreate.model';
 import { UserCreateModel } from '../../src/users/models/userCreate.model';
 
 export class usersTestManager {
@@ -11,14 +10,13 @@ export class usersTestManager {
       .send(data)
       .expect(httpStatusCode);
 
-    console.log('createdUser !!!!', createdUser)
-    // if (httpStatusCode === HTTP_STATUS_CODE.CREATED_201) {
-    //   const createdEntity = createdBlog.body;
-    //   expect(createdEntity).toEqual({
-    //     ...mokDataCreateBlog,
-    //     id: createdEntity.id,
-    //   });
-    // }
+    if (httpStatusCode === HTTP_STATUS_CODE.CREATED_201) {
+      const createdEntity = createdUser.body;
+      expect(createdEntity).toEqual({
+        ...mokDataCreateBlog,
+        id: createdEntity.id,
+      });
+    }
 
     return createdUser;
   }

@@ -1,9 +1,7 @@
 import { req, mokDataCreateBlog, authorized, mokDataCreatePost, mokDataUpdatePost } from '../utils/test-helpers';
 import { describe } from 'node:test';
 import { HTTP_STATUS_CODE, ROUTER_PATHS } from '../../src/common/settings';
-import { blogsTestManager } from '../utils/blogsTestManager';
 import { client, runDB } from '../../src/db';
-import { BlogsViewDto } from '../../src/blogs/dto/blogsView.dto';
 
 describe('/posts', async () => {
   beforeAll(async () => {
