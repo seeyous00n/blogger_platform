@@ -5,14 +5,14 @@ import { JWTPayloadType } from '../types/jwt.types';
 const JWT_SECRET = <jwt.Secret>SETTINGS.JWT_TOKEN;
 
 class TokenService {
-  async generateToken(payload: JWTPayloadType) {
+  async generateToken(payload: JWTPayloadType): Promise<string> {
     return jwt.sign(payload, JWT_SECRET, { expiresIn: '50min' });
   }
 
-  async validateToken(token: string) {
+  async validateToken(token: string): Promise<JWTPayloadType | undefined> {
     try {
-      return jwt.verify(token, JWT_SECRET) as { userId: string };
-    } catch (e) {
+      return jwt.verify(token, JWT_SECRET) as JWTPayloadType;
+    } catch (error) {
       return;
     }
   }

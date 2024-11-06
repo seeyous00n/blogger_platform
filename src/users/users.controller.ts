@@ -1,29 +1,29 @@
 import { Request, Response } from 'express';
 import { RequestWithBody, RequestWithQuery, userQueryStringType } from '../common/types/types';
-import { UserCreateModel } from './models/userCreate.model';
 import { userService } from './user.service';
 import { HTTP_STATUS_CODE } from '../common/settings';
 import { sendError } from '../common/errorHandler';
 import { usersQueryRepository } from './usersQuery.repository';
 import { UriParamsModel } from '../common/models/uriParams.model';
+import { UserCreateInputModel } from './models/userCreateInput.model';
 
 class UsersController {
   getUsers = async (req: RequestWithQuery<UriParamsModel, userQueryStringType>, res: Response) => {
     try {
       const result = await usersQueryRepository.findUsers(req.query);
       res.status(HTTP_STATUS_CODE.OK_200).json(result);
-    } catch (e: any) {
-      sendError(e, res);
+    } catch (error) {
+      sendError(error, res);
     }
   };
 
-  createUser = async (req: RequestWithBody<UserCreateModel>, res: Response) => {
+  createUser = async (req: RequestWithBody<UserCreateInputModel>, res: Response) => {
     try {
       const userId = await userService.createUser(req.body);
       const result = await usersQueryRepository.findById(userId.insertedId.toString())
       res.status(HTTP_STATUS_CODE.CREATED_201).json(result);
-    } catch (e: any) {
-      sendError(e, res);
+    } catch (error) {
+      sendError(error, res);
     }
   };
 
@@ -31,8 +31,8 @@ class UsersController {
     try {
       await userService.deleteUserById(req.params.id);
       res.status(HTTP_STATUS_CODE.NO_CONTENT_204).json();
-    } catch (e: any) {
-      sendError(e, res);
+    } catch (error) {
+      sendError(error, res);
     }
   };
 }

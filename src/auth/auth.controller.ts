@@ -6,16 +6,18 @@ import { sendError } from '../common/errorHandler';
 import { HTTP_STATUS_CODE } from '../common/settings';
 import { tokenService } from '../common/services/token.service';
 import { usersQueryRepository } from '../users/usersQuery.repository';
+import { userService } from '../users/user.service';
+import { UserCreateModel } from '../users/models/userCreate.model';
 
 class AuthController {
-  authUser = async (req: RequestWithBody<AuthType>, res: Response) => {
+  authLoginUser = async (req: RequestWithBody<AuthType>, res: Response) => {
     try {
       const userId = await authService.checkCredentials(req.body);
       const token = await tokenService.generateToken(userId);
 
       res.status(HTTP_STATUS_CODE.OK_200).json({ 'accessToken': token });
-    } catch (e: any) {
-      sendError(e, res);
+    } catch (error) {
+      sendError(error, res);
     }
   };
 
@@ -23,8 +25,38 @@ class AuthController {
     try {
       const result = await usersQueryRepository.findById(req.body.userId, true);
       res.status(HTTP_STATUS_CODE.OK_200).json(result);
-    } catch (e) {
-      res.status(500).json();
+    } catch (error) {
+      sendError(error, res);
+    }
+  };
+
+  registration = async (req: RequestWithBody<UserCreateModel>, res: Response) => {
+    try {
+      //TODO это норм практика? передавать флаг
+      const result = await userService.createUser(req.body, false);
+      const user = await userService.getUserById(result.insertedId.toString());
+      await authService.registration(req.body.email, user.emailConfirmation.confirmationCode);
+      res.status(HTTP_STATUS_CODE.NO_CONTENT_204).json();
+    } catch (error) {
+      sendError(error, res);
+    }
+  };
+
+  confirmationEmail = async (req: RequestWithBody<{ code: string }>, res: Response) => {
+    try {
+      await authService.confirmation(req.body.code);
+      res.status(HTTP_STATUS_CODE.NO_CONTENT_204).json();
+    } catch (error) {
+      sendError(error, res);
+    }
+  };
+
+  resendingEmail = async (req: RequestWithBody<{ email: string }>, res: Response) => {
+    try {
+      await authService.resending(req.body.email);
+      res.status(HTTP_STATUS_CODE.NO_CONTENT_204).json();
+    } catch (error) {
+      sendError(error, res);
     }
   };
 }

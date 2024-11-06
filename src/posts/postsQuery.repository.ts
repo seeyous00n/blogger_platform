@@ -1,13 +1,14 @@
 import { postsCollection } from '../db';
 import { PostsViewDto } from './dto/postsView.dto';
-import { NotFoundError } from '../common/errorHandler';
+import { CustomError, TYPE_ERROR } from '../common/errorHandler';
 import { ERROR_MESSAGE, queryStringType } from '../common/types/types';
 import { ObjectId } from 'mongodb';
 import { BaseQueryFieldsUtil } from '../common/utils/baseQueryFields.util';
 import { isObjectId } from '../common/adapters/mongodb.service';
+import { CommentsViewModel } from './models/postsView.model';
 
 class PostsQueryRepository {
-  async findPosts(queryString: queryStringType, id?: string) {
+  async findPosts(queryString: queryStringType, id?: string): Promise<CommentsViewModel> {
     const searchString = id ? { blogId: id } : queryString.searchNameTerm ? { name: { $regex: queryString.searchNameTerm, $options: 'i', }, } : {};
     const queryHelper = new BaseQueryFieldsUtil(queryString, searchString);
 
@@ -22,19 +23,19 @@ class PostsQueryRepository {
     const posts = result.map((item) => new PostsViewDto(item));
 
     return {
-      'pagesCount': Math.ceil(postsCount / Number(queryHelper.pageSize)),
-      'page': Number(queryHelper.pageNumber),
-      'pageSize': Number(queryHelper.pageSize),
+      'pagesCount': Math.ceil(postsCount / queryHelper.pageSize),
+      'page': queryHelper.pageNumber,
+      'pageSize': queryHelper.pageSize,
       'totalCount': postsCount,
       'items': posts,
     };
   }
 
-  async findById(id: string) {
-    await isObjectId(id);
+  async findById(id: string): Promise<PostsViewDto> {
+    isObjectId(id);
     const result = await postsCollection.findOne({ _id: new ObjectId(id) });
     if (!result) {
-      throw new NotFoundError(ERROR_MESSAGE.NOT_FOUND);
+      throw new CustomError(TYPE_ERROR.NOT_FOUND, ERROR_MESSAGE.NOT_FOUND);
     }
 
     return new PostsViewDto(result);

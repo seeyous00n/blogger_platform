@@ -4,7 +4,7 @@ import { blogsRepository } from '../../blogs/blogs.repository';
 
 const BLOG_ID_ERROR_MESSAGE = 'Blog ID not found';
 
-const blogIdValidator = async (value: string) => {
+const blogIdValidator = async (value: string): Promise<void> => {
   const blog = await blogsRepository.findById(value);
   if (!blog) {
     throw new Error(BLOG_ID_ERROR_MESSAGE);
@@ -21,10 +21,11 @@ const contentValidator = body('content').isString().trim().notEmpty().escape().i
 const isBlogId = body('blogId').custom(blogIdValidator);
 
 const loginValidator = body('login').isString().trim().isLength({ min: 3, max: 10 }).matches(/^[a-zA-Z0-9_-]*$/);
-const emailValidator = body('email').isString().trim().matches(/^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/);
+export const emailValidator = body('email').isString().trim().matches(/^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/);
 const passwordValidator = body('password').isString().trim().isLength({ min: 6, max: 20 });
 const loginOrEmailValidator = body('loginOrEmail').isString().trim().notEmpty();
 
+export const confirmationCodeValidator = body('code').isString().trim().notEmpty();
 export const commentContentValidator = body('content').isString().trim().isLength({ min: 20, max: 300 });
 
 export const blogDataValidation = [
@@ -59,4 +60,11 @@ export const userDataValidation = [
 export const authDataValidation = [
   loginOrEmailValidator,
   passwordValidator,
+];
+
+export const registrationDataValidation = [
+  loginValidator,
+  emailValidator,
+  passwordValidator,
+  inputValidation,
 ];

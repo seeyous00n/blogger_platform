@@ -4,13 +4,16 @@ config();
 
 export const SETTINGS = {
   PORT: process.env.PORT || 3003,
-  MONGO_URI: process.env.MONGO_URL || 'mongodb://localhost:27017',
+  MONGO_URI: process.env.MONGO_URI || 'mongodb://localhost:27017',
   DB_NAME: 'blogger_platform',
   auth: {
     name: process.env.LOG || 'admin',
     password: process.env.PASS || 'qwerty',
   },
   JWT_TOKEN: process.env.JWT_ACCESS_SECRET,
+  SMTP_EMAIL: process.env.SMTP_EMAIL,
+  SMTP_PASSWORD: process.env.SMTP_PASSWORD,
+  API_URL: process.env.API_URL || process.env.VERCEL_URI || process.env.RENDER_URI,
 };
 
 export const ROUTER_PATHS = {

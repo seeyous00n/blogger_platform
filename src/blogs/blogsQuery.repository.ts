@@ -1,13 +1,14 @@
 import { blogsCollection } from '../db';
-import { NotFoundError } from '../common/errorHandler';
+import { CustomError, TYPE_ERROR } from '../common/errorHandler';
 import { BlogsViewDto } from './dto/blogsView.dto';
 import { ERROR_MESSAGE, queryStringType } from '../common/types/types';
 import { ObjectId } from 'mongodb';
 import { BaseQueryFieldsUtil } from '../common/utils/baseQueryFields.util';
 import { isObjectId } from '../common/adapters/mongodb.service';
+import { BlogsViewModel } from './models/blogsView.model';
 
 class BlogsQueryRepository {
-  async findBlogs(queryString: queryStringType) {
+  async findBlogs(queryString: queryStringType): Promise<BlogsViewModel> {
     const searchString = queryString.searchNameTerm ? { name: { $regex: queryString.searchNameTerm, $options: 'i', }, } : {};
     const queryHelper = new BaseQueryFieldsUtil(queryString, searchString);
 
@@ -22,19 +23,19 @@ class BlogsQueryRepository {
     const blogs = result.map((item) => new BlogsViewDto(item));
 
     return {
-      'pagesCount': Math.ceil(blogsCount / Number(queryHelper.pageSize)),
-      'page': Number(queryHelper.pageNumber),
-      'pageSize': Number(queryHelper.pageSize),
+      'pagesCount': Math.ceil(blogsCount / queryHelper.pageSize),
+      'page': queryHelper.pageNumber,
+      'pageSize': queryHelper.pageSize,
       'totalCount': blogsCount,
       'items': blogs,
     };
   }
 
-  async findById(id: string) {
-    await isObjectId(id);
+  async findById(id: string): Promise<BlogsViewDto> {
+    isObjectId(id);
     const result = await blogsCollection.findOne({ _id: new ObjectId(id) });
     if (!result) {
-      throw new NotFoundError(ERROR_MESSAGE.NOT_FOUND);
+      throw new CustomError(TYPE_ERROR.NOT_FOUND, ERROR_MESSAGE.NOT_FOUND);
     }
 
     return new BlogsViewDto(result);

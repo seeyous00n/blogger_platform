@@ -3,7 +3,7 @@ import { Result, validationResult } from 'express-validator';
 import { resultErrorsType } from '../types/types';
 import { HTTP_STATUS_CODE } from '../settings';
 
-export const inputValidation = (req: Request, res: Response, next: NextFunction) => {
+export const inputValidation = (req: Request, res: Response, next: NextFunction): void => {
   const errors: Result = validationResult(req);
   if (!errors.isEmpty()) {
     const resultErrors: resultErrorsType = {
