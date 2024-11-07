@@ -11,7 +11,8 @@ export const authJwtRefreshGuard = async (req: Request, res: Response, next: Nex
   }
 
   const token = tokenService.validateRefreshToken(refreshToken);
-  if(!token) {
+
+  if (!token) {
     res.status(HTTP_STATUS_CODE.UNAUTHORIZED_401).json(HTTP_MESSAGE.UNAUTHORIZED);
     return;
   }

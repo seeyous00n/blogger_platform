@@ -62,6 +62,7 @@ class CreateEntity {
     this.comments = [];
     this.userToken = '';
   }
+
 // const blog = {} as BlogViewType;
   // blog._id = data._id ?? new ObjectId();
   // blog.createdAt = data.createdAt && new Date().toISOString();

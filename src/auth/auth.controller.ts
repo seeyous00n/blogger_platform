@@ -8,14 +8,15 @@ import { usersQueryRepository } from '../users/usersQuery.repository';
 import { userService } from '../users/user.service';
 import { UserCreateModel } from '../users/models/userCreate.model';
 import { TOKENS_NAME } from "./types/token.type";
+import { tokenService } from "../common/services/token.service";
 
 class AuthController {
   authLoginUser = async (req: RequestWithBody<AuthType>, res: Response) => {
     try {
       const userId = await authService.checkCredentials(req.body);
-      const { accessToken, refreshToken } = await authService.createTokens(userId)
+      const { accessToken, refreshToken } = await authService.createTokens(userId);
 
-      res.cookie(TOKENS_NAME.REFRESH_TOKEN, refreshToken, { httpOnly: true, secure: true, maxAge: 1000 * 60 * 60 * 24 })
+      res.cookie(TOKENS_NAME.REFRESH_TOKEN, refreshToken, { httpOnly: true, secure: true, maxAge: 1000 * 60 * 60 * 24 });
       res.status(HTTP_STATUS_CODE.OK_200).json({ [TOKENS_NAME.ACCESS_TOKEN]: accessToken });
     } catch (error) {
       sendError(error, res);
@@ -65,8 +66,9 @@ class AuthController {
     try {
       const token: string = req.cookies.refreshToken;
       const userId = req.body.userId;
-      const { accessToken, refreshToken } = await authService.refreshTokens({ userId: userId }, token)
-      res.cookie(TOKENS_NAME.REFRESH_TOKEN, refreshToken, { httpOnly: true, secure: true, maxAge: 1000 * 60 * 60 * 24 })
+      const { accessToken, refreshToken } = await authService.getAccessAndRefreshTokens({ userId: userId }, token);
+
+      res.cookie(TOKENS_NAME.REFRESH_TOKEN, refreshToken, { httpOnly: true, secure: true, maxAge: 1000 * 60 * 60 * 24 });
       res.status(HTTP_STATUS_CODE.OK_200).json({ [TOKENS_NAME.ACCESS_TOKEN]: accessToken });
     } catch (error) {
       sendError(error, res);
@@ -76,8 +78,9 @@ class AuthController {
   logout = async (req: Request, res: Response) => {
     try {
       const token: string = req.cookies.refreshToken;
+      const oldTokenIat = tokenService.getIatToken(token);
       res.clearCookie(TOKENS_NAME.REFRESH_TOKEN);
-      await authService.deleteToken(token)
+      await authService.deleteToken(oldTokenIat);
       res.status(HTTP_STATUS_CODE.NO_CONTENT_204).json();
     } catch (error) {
       sendError(error, res);

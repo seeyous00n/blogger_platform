@@ -1,6 +1,7 @@
 import jwt from 'jsonwebtoken';
 import { SETTINGS } from '../settings';
 import { JWTPayloadType } from '../types/jwt.types';
+import { CustomError, TYPE_ERROR } from "../errorHandler";
 
 const JWT_SECRET = <jwt.Secret>SETTINGS.JWT_ACCESS_SECRET;
 const JWT_REFRESH_SECRET = <jwt.Secret>SETTINGS.JWT_REFRESH_SECRET;
@@ -9,7 +10,8 @@ class TokenService {
   generateTokens(payload: JWTPayloadType) {
     const accessToken = jwt.sign(payload, JWT_SECRET, { expiresIn: '10sec' });
     const refreshToken = jwt.sign(payload, JWT_REFRESH_SECRET, { expiresIn: '20sec' });
-    return { accessToken, refreshToken }
+    const refreshTokenIat = this.getIatToken(refreshToken);
+    return { accessToken, refreshToken, refreshTokenIat }
   }
 
   validateAccessToken(token: string): JWTPayloadType | undefined {
@@ -26,6 +28,12 @@ class TokenService {
     } catch (error) {
       return;
     }
+  }
+
+  getIatToken(token: string) {
+    const result = jwt.decode(token) as { iat: number }
+    if (!result) throw new CustomError(TYPE_ERROR.AUTH_ERROR, '');
+    return result.iat
   }
 }
 
