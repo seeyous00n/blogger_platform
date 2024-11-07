@@ -4,6 +4,7 @@ import { BlogEntityType } from './blogs/types/blog.types';
 import { PostEntityType } from './posts/types/post.types';
 import { UserEntityType } from './users/types/user.types';
 import { CommentEntityType } from './comments/types/comment.types';
+import { TokenEntityType } from "./auth/types/token.type";
 
 const COLLECTION_BLOGS = 'blogs';
 const COLLECTION_POSTS = 'posts';
@@ -17,6 +18,7 @@ export const blogsCollection = client.db(SETTINGS.DB_NAME).collection<BlogEntity
 export const postsCollection = client.db(SETTINGS.DB_NAME).collection<PostEntityType>(COLLECTION_POSTS);
 export const usersCollection = client.db(SETTINGS.DB_NAME).collection<UserEntityType>(COLLECTION_USERS);
 export const commentsCollection = client.db(SETTINGS.DB_NAME).collection<CommentEntityType>(COLLECTION_COMMENTS);
+export const tokensCollection = client.db(SETTINGS.DB_NAME).collection<TokenEntityType>(COLLECTION_COMMENTS);
 
 export const runDB = async () => {
   try {

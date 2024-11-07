@@ -7,6 +7,7 @@ import {
   emailValidator,
   registrationDataValidation,
 } from '../common/validation/data.validation';
+import { authJwtRefreshGuard } from "../common/middlewares/guards/authJwtRefresh.guard";
 
 const authRouter = Router();
 
@@ -15,5 +16,7 @@ authRouter.get('/me', authJwtGuard, authController.getMe);
 authRouter.post('/registration', registrationDataValidation, authController.registration);
 authRouter.post('/registration-confirmation', confirmationCodeValidator, authController.confirmationEmail);
 authRouter.post('/registration-email-resending', emailValidator, authController.resendingEmail);
+authRouter.post('/refresh-token', authJwtRefreshGuard, authController.refreshToken);
+authRouter.post('/logout', authJwtRefreshGuard, authController.logout);
 
 export { authRouter };

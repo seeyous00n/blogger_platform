@@ -106,7 +106,6 @@ class CreateEntity {
     }
   }
 
-
   async createPost(i: number, data?: any) {
     const post = {} as PostCreateModel;
     if (data) {

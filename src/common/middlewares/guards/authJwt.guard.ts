@@ -18,7 +18,7 @@ export const authJwtGuard = async (req: Request, res: Response, next: NextFuncti
     return;
   }
 
-  const payload = await tokenService.validateToken(token);
+  const payload = tokenService.validateAccessToken(token);
 
   if (!payload) {
     res.status(HTTP_STATUS_CODE.UNAUTHORIZED_401).json(HTTP_MESSAGE.UNAUTHORIZED);

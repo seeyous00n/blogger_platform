@@ -5,6 +5,11 @@ import { nodemailerService } from '../common/adapters/nodemailer.service';
 import { SETTINGS } from '../common/settings';
 import { userRepository } from '../users/users.repository';
 import { v4 as uuidv4 } from 'uuid';
+import { tokenService } from "../common/services/token.service";
+import { JWTPayloadType } from "../common/types/jwt.types";
+import { authRepository } from "./auth.repository";
+import { WithId } from "mongodb";
+import { PairTokensType, TokenEntityType } from "./types/token.type";
 
 class AuthService {
   async checkCredentials(data: AuthType): Promise<{ userId: string }> {
@@ -45,7 +50,7 @@ class AuthService {
       }]);
     }
 
-    await userRepository.updateIsConfirmed(userData.emailConfirmation.confirmationCode);
+    await userRepository.updateIsConfirmed(userData._id);
   }
 
   async resending(email: string): Promise<void> {
@@ -60,9 +65,39 @@ class AuthService {
     }]);
 
     const newCode = uuidv4();
-    await userRepository.updateConfirmationCode(userData.emailConfirmation.confirmationCode, newCode);
+    await userRepository.updateConfirmationCode(userData._id, newCode);
     const link = `${SETTINGS.API_URL}?code=${newCode}`;
     await nodemailerService.sendEmail(email, link, TYPE_EMAIL.RESEND_CODE);
+  }
+
+  async createTokens(payload: JWTPayloadType): Promise<PairTokensType> {
+    const tokens = tokenService.generateTokens(payload)
+    const tokenData = { refreshToken: tokens.refreshToken, userId: payload.userId }
+    await authRepository.createByData(tokenData);
+
+    return tokens
+  }
+
+  async refreshTokens(payload: JWTPayloadType, token: string): Promise<PairTokensType> {
+    const result = await this.findTokenByToken(token)
+    const tokens = tokenService.generateTokens(payload)
+    await authRepository.updateTokenById(result._id, tokens.refreshToken);
+
+    return tokens
+  }
+
+  async deleteToken(token: string): Promise<void> {
+    const result = await this.findTokenByToken(token)
+    await authRepository.deleteById(result._id)
+  }
+
+  async findTokenByToken(token: string): Promise<WithId<TokenEntityType>> {
+    const result = await authRepository.findByToken(token)
+    if (!result) {
+      throw new CustomError(TYPE_ERROR.AUTH_ERROR, '');
+    }
+
+    return result
   }
 }
 
