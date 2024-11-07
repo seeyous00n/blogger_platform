@@ -15,13 +15,10 @@ class AuthService {
   async checkCredentials(data: AuthType): Promise<{ userId: string }> {
     //TODO это норм кандидат для чека в middleware???
     const result = await userRepository.findByLoginOrEmail(data);
-
-    if (!result) throw new CustomError(TYPE_ERROR.AUTH_ERROR, ERROR.MESSAGE.LOGIN);
+    if (!result) throw new CustomError(TYPE_ERROR.AUTH_ERROR);
 
     const isAuth = await bcrypt.compare(data.password, result.passwordHash);
-    if (!isAuth) {
-      throw new CustomError(TYPE_ERROR.AUTH_ERROR, ERROR.MESSAGE.LOGIN);
-    }
+    if (!isAuth) throw new CustomError(TYPE_ERROR.AUTH_ERROR);
 
     return { userId: result._id.toString() };
   }
@@ -35,16 +32,22 @@ class AuthService {
   async confirmation(code: string): Promise<void> {
     const userData = await userRepository.findByConfirmationCode(code);
 
-    if (!userData) throw new CustomError(TYPE_ERROR.VALIDATION_ERROR, ERROR.MESSAGE.INCORRECT_CODE, [{
-      message: ERROR.MESSAGE.INCORRECT_CODE,
-      field: ERROR.FIELD.CODE,
-    }]);
-    if (userData.emailConfirmation.isConfirmed) throw new CustomError(TYPE_ERROR.VALIDATION_ERROR, ERROR.MESSAGE.IS_CONFIRMED, [{
-      message: ERROR.MESSAGE.IS_CONFIRMED,
-      field: ERROR.FIELD.CODE,
-    }]);
+    if (!userData) {
+      throw new CustomError(TYPE_ERROR.VALIDATION_ERROR, [{
+        message: ERROR.MESSAGE.INCORRECT_CODE,
+        field: ERROR.FIELD.CODE
+      }]);
+    }
+
+    if (userData.emailConfirmation.isConfirmed) {
+      throw new CustomError(TYPE_ERROR.VALIDATION_ERROR, [{
+        message: ERROR.MESSAGE.IS_CONFIRMED,
+        field: ERROR.FIELD.CODE
+      }]);
+    }
+
     if (userData.emailConfirmation.expirationDate < new Date()) {
-      throw new CustomError(TYPE_ERROR.VALIDATION_ERROR, ERROR.MESSAGE.EXPIRATION_CODE, [{
+      throw new CustomError(TYPE_ERROR.VALIDATION_ERROR, [{
         message: ERROR.MESSAGE.EXPIRATION_CODE,
         field: ERROR.FIELD.EMAIL,
       }]);
@@ -55,14 +58,19 @@ class AuthService {
 
   async resending(email: string): Promise<void> {
     const userData = await userRepository.findByEmail(email);
-    if (!userData) throw new CustomError(TYPE_ERROR.VALIDATION_ERROR, ERROR.MESSAGE.EMAIL_NOT_FOUND, [{
-      message: ERROR.MESSAGE.EMAIL_NOT_FOUND,
-      field: ERROR.FIELD.EMAIL,
-    }]);
-    if (userData.emailConfirmation.isConfirmed) throw new CustomError(TYPE_ERROR.VALIDATION_ERROR, ERROR.MESSAGE.EMAIL_CONFIRMED, [{
-      message: ERROR.MESSAGE.EMAIL_CONFIRMED,
-      field: ERROR.FIELD.EMAIL,
-    }]);
+    if (!userData) {
+      throw new CustomError(TYPE_ERROR.VALIDATION_ERROR, [{
+        message: ERROR.MESSAGE.EMAIL_NOT_FOUND,
+        field: ERROR.FIELD.EMAIL,
+      }]);
+    }
+
+    if (userData.emailConfirmation.isConfirmed) {
+      throw new CustomError(TYPE_ERROR.VALIDATION_ERROR, [{
+        message: ERROR.MESSAGE.EMAIL_CONFIRMED,
+        field: ERROR.FIELD.EMAIL,
+      }]);
+    }
 
     const newCode = uuidv4();
     await userRepository.updateConfirmationCode(userData._id, newCode);
@@ -95,7 +103,7 @@ class AuthService {
   async findTokenByIat(token: number): Promise<WithId<TokenEntityType>> {
     const result = await authRepository.findByIat(token);
     if (!result) {
-      throw new CustomError(TYPE_ERROR.AUTH_ERROR, '');
+      throw new CustomError(TYPE_ERROR.AUTH_ERROR);
     }
 
     return result;

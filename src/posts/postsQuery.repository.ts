@@ -1,7 +1,7 @@
 import { postsCollection } from '../db';
 import { PostsViewDto } from './dto/postsView.dto';
 import { CustomError, TYPE_ERROR } from '../common/errorHandler';
-import { ERROR_MESSAGE, queryStringType } from '../common/types/types';
+import { queryStringType } from '../common/types/types';
 import { ObjectId } from 'mongodb';
 import { BaseQueryFieldsUtil } from '../common/utils/baseQueryFields.util';
 import { isObjectId } from '../common/adapters/mongodb.service';
@@ -35,7 +35,7 @@ class PostsQueryRepository {
     isObjectId(id);
     const result = await postsCollection.findOne({ _id: new ObjectId(id) });
     if (!result) {
-      throw new CustomError(TYPE_ERROR.NOT_FOUND, ERROR_MESSAGE.NOT_FOUND);
+      throw new CustomError(TYPE_ERROR.NOT_FOUND);
     }
 
     return new PostsViewDto(result);

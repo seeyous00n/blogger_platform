@@ -18,12 +18,10 @@ enum STATUSES {
 type ArrayErrors = { message: string, field: string }
 
 export class CustomError extends Error {
-  status: string;
   arrayErrors?: ArrayErrors[] | undefined;
 
-  constructor(status: string, message: string, arrayErrors?: ArrayErrors[] | undefined) {
-    super();
-    this.status = status;
+  constructor(message: string, arrayErrors?: ArrayErrors[] | undefined) {
+    super(message);
     this.message = message;
     this.arrayErrors = arrayErrors;
   }
@@ -31,7 +29,7 @@ export class CustomError extends Error {
 
 export const sendError = (error: any, res: Response): void => {
   if (error instanceof CustomError) {
-    const status = STATUSES[error.status as keyof typeof STATUSES];
+    const status = STATUSES[error.message as keyof typeof STATUSES];
     const isArrayErrors = !!(error.arrayErrors && error.arrayErrors.length);
 
     res.status(status).json(isArrayErrors ? { errorsMessages: [...error.arrayErrors!] } : error.message);

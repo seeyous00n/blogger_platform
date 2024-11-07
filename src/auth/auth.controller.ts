@@ -79,8 +79,8 @@ class AuthController {
     try {
       const token: string = req.cookies.refreshToken;
       const oldTokenIat = tokenService.getIatToken(token);
-      res.clearCookie(TOKENS_NAME.REFRESH_TOKEN);
       await authService.deleteToken(oldTokenIat);
+      res.clearCookie(TOKENS_NAME.REFRESH_TOKEN);
       res.status(HTTP_STATUS_CODE.NO_CONTENT_204).json();
     } catch (error) {
       sendError(error, res);

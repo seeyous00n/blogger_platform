@@ -1,6 +1,6 @@
 import { commentsCollection } from '../db';
 import { CustomError, TYPE_ERROR } from '../common/errorHandler';
-import { ERROR_MESSAGE, queryStringType } from '../common/types/types';
+import { queryStringType } from '../common/types/types';
 import { ObjectId } from 'mongodb';
 import { BaseQueryFieldsUtil } from '../common/utils/baseQueryFields.util';
 import { CommentViewDto } from './dto/commentView.dto';
@@ -36,7 +36,7 @@ class CommentQueryRepository {
     isObjectId(id);
     const result = await commentsCollection.findOne({ _id: new ObjectId(id) });
     if (!result) {
-      throw new CustomError(TYPE_ERROR.NOT_FOUND, ERROR_MESSAGE.NOT_FOUND);
+      throw new CustomError(TYPE_ERROR.NOT_FOUND);
     }
 
     return new CommentViewDto(result);

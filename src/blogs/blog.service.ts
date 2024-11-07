@@ -3,14 +3,13 @@ import { BlogCreateModel } from './models/blogCreate.model';
 import { BlogUpdateModal } from './models/blogUpdate.modal';
 import { CustomError, TYPE_ERROR } from '../common/errorHandler';
 import { InsertOneResult } from 'mongodb';
-import { ERROR_MESSAGE } from '../common/types/types';
 import { BlogEntityType } from './types/blog.types';
 
 class BlogService {
   async findBlogById(id: string): Promise<string> {
     const result = await blogsRepository.findById(id);
     if (!result) {
-      throw new CustomError(TYPE_ERROR.NOT_FOUND, ERROR_MESSAGE.NOT_FOUND);
+      throw new CustomError(TYPE_ERROR.NOT_FOUND);
     }
 
     return result._id.toString();
@@ -37,7 +36,7 @@ class BlogService {
   async existsBlogOrError(id: string): Promise<void> {
     const result = await blogsRepository.findById(id);
     if (!result) {
-      throw new CustomError(TYPE_ERROR.NOT_FOUND, ERROR_MESSAGE.NOT_FOUND);
+      throw new CustomError(TYPE_ERROR.NOT_FOUND);
     }
   }
 }

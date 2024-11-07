@@ -32,7 +32,7 @@ class TokenService {
 
   getIatToken(token: string) {
     const result = jwt.decode(token) as { iat: number }
-    if (!result) throw new CustomError(TYPE_ERROR.AUTH_ERROR, '');
+    if (!result) throw new CustomError(TYPE_ERROR.AUTH_ERROR);
     return result.iat
   }
 }
