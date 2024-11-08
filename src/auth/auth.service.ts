@@ -80,28 +80,28 @@ class AuthService {
 
   async createTokens(payload: JWTPayloadType): Promise<PairTokensType> {
     const tokens = tokenService.generateTokens(payload);
-    const tokenData = { tokenIat: tokens.refreshTokenIat, userId: payload.userId };
+    const tokenData = { tokenIat: tokens.iat, userId: payload.userId };
     await authRepository.createByData(tokenData);
 
     return tokens;
   }
 
-  async getAccessAndRefreshTokens(payload: JWTPayloadType, token: string): Promise<PairTokensType> {
-    const oldTokenIat = tokenService.getIatToken(token);
-    const result = await this.findTokenByIat(oldTokenIat);
-    const tokens = tokenService.generateTokens(payload);
-    await authRepository.updateTokenById(result._id, result.tokenIat, tokens.refreshTokenIat);
+  async getNewPairOfTokens(token: string): Promise<PairTokensType> {
+    const { userId, iat } = tokenService.getDataToken(token);
+    const result = await this.findTokenByIat(iat, userId);
+    const tokens = tokenService.generateTokens({ userId });
+    await authRepository.updateTokenById(result._id, tokens.iat);
 
     return tokens;
   }
 
-  async deleteToken(token: number): Promise<void> {
-    const result = await this.findTokenByIat(token);
+  async deleteToken(token: number, userId: string): Promise<void> {
+    const result = await this.findTokenByIat(token, userId);
     await authRepository.deleteById(result._id);
   }
 
-  async findTokenByIat(token: number): Promise<WithId<TokenEntityType>> {
-    const result = await authRepository.findByIat(token);
+  async findTokenByIat(token: number, userId: string): Promise<WithId<TokenEntityType>> {
+    const result = await authRepository.findByIat(token, userId);
     if (!result) {
       throw new CustomError(TYPE_ERROR.AUTH_ERROR);
     }

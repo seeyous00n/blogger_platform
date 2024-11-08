@@ -7,14 +7,9 @@ class AuthRepository {
     return await tokensCollection.insertOne(data);
   };
 
-  async updateTokenById(id: object, oldIat: number, tokenIat: number): Promise<void> {
+  async updateTokenById(id: object, tokenIat: number): Promise<void> {
     await tokensCollection.updateOne(
-      {
-        $and: [
-          { _id: id },
-          { tokenIat: oldIat }
-        ]
-      },
+      { _id: id },
       { $set: { tokenIat: tokenIat } },
     );
   }
@@ -23,8 +18,13 @@ class AuthRepository {
     await tokensCollection.deleteOne({ _id: id });
   }
 
-  async findByIat(iat: number): Promise<WithId<TokenEntityType> | null> {
-    return await tokensCollection.findOne({ tokenIat: iat });
+  async findByIat(iat: number, userId: string): Promise<WithId<TokenEntityType> | null> {
+    return await tokensCollection.findOne({
+      $and: [
+        { userId: userId },
+        { tokenIat: iat }
+      ]
+    });
   }
 }
 

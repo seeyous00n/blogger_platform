@@ -9,6 +9,7 @@ import { userService } from '../users/user.service';
 import { UserCreateModel } from '../users/models/userCreate.model';
 import { TOKENS_NAME } from "./types/token.type";
 import { tokenService } from "../common/services/token.service";
+import { cookieOptions } from "../common/utils/cookieOptions.util";
 
 class AuthController {
   authLoginUser = async (req: RequestWithBody<AuthType>, res: Response) => {
@@ -16,7 +17,7 @@ class AuthController {
       const userId = await authService.checkCredentials(req.body);
       const { accessToken, refreshToken } = await authService.createTokens(userId);
 
-      res.cookie(TOKENS_NAME.REFRESH_TOKEN, refreshToken, { httpOnly: true, secure: true, maxAge: 1000 * 60 * 60 * 24 });
+      res.cookie(TOKENS_NAME.REFRESH_TOKEN, refreshToken, cookieOptions.getOptionsForRefreshToken());
       res.status(HTTP_STATUS_CODE.OK_200).json({ [TOKENS_NAME.ACCESS_TOKEN]: accessToken });
     } catch (error) {
       sendError(error, res);
@@ -38,6 +39,7 @@ class AuthController {
       const result = await userService.createUser(req.body, false);
       const user = await userService.getUserById(result.insertedId.toString());
       await authService.registration(req.body.email, user.emailConfirmation.confirmationCode);
+
       res.status(HTTP_STATUS_CODE.NO_CONTENT_204).json();
     } catch (error) {
       sendError(error, res);
@@ -65,10 +67,9 @@ class AuthController {
   refreshToken = async (req: RequestWithBody<DataInTokenType>, res: Response) => {
     try {
       const token: string = req.cookies.refreshToken;
-      const userId = req.body.userId;
-      const { accessToken, refreshToken } = await authService.getAccessAndRefreshTokens({ userId: userId }, token);
+      const { accessToken, refreshToken } = await authService.getNewPairOfTokens(token);
 
-      res.cookie(TOKENS_NAME.REFRESH_TOKEN, refreshToken, { httpOnly: true, secure: true, maxAge: 1000 * 60 * 60 * 24 });
+      res.cookie(TOKENS_NAME.REFRESH_TOKEN, refreshToken, cookieOptions.getOptionsForRefreshToken());
       res.status(HTTP_STATUS_CODE.OK_200).json({ [TOKENS_NAME.ACCESS_TOKEN]: accessToken });
     } catch (error) {
       sendError(error, res);
@@ -78,8 +79,9 @@ class AuthController {
   logout = async (req: Request, res: Response) => {
     try {
       const token: string = req.cookies.refreshToken;
-      const oldTokenIat = tokenService.getIatToken(token);
-      await authService.deleteToken(oldTokenIat);
+      const { userId, iat } = tokenService.getDataToken(token);
+      await authService.deleteToken(iat, userId);
+
       res.clearCookie(TOKENS_NAME.REFRESH_TOKEN);
       res.status(HTTP_STATUS_CODE.NO_CONTENT_204).json();
     } catch (error) {

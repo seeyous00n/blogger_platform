@@ -11,5 +11,5 @@ export const TOKENS_NAME = {
 export type PairTokensType = {
   accessToken: string,
   refreshToken: string,
-  refreshTokenIat: number
+  iat: number
 }

@@ -17,7 +17,5 @@ export const authJwtRefreshGuard = async (req: Request, res: Response, next: Nex
     return;
   }
 
-  req.body.userId = token.userId;
-
   next();
 };
