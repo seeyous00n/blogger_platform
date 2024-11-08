@@ -32,11 +32,11 @@ class CommentQueryRepository {
     };
   }
 
-  async findCommentById(id: string): Promise<CommentViewDto> {
+  async findCommentById(id: string): Promise<CommentViewDto | null> {
     isObjectId(id);
     const result = await commentsCollection.findOne({ _id: new ObjectId(id) });
     if (!result) {
-      throw new CustomError(TYPE_ERROR.NOT_FOUND);
+      return null;
     }
 
     return new CommentViewDto(result);

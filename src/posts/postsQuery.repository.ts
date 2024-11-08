@@ -9,7 +9,12 @@ import { CommentsViewModel } from './models/postsView.model';
 
 class PostsQueryRepository {
   async findPosts(queryString: queryStringType, id?: string): Promise<CommentsViewModel> {
-    const searchString = id ? { blogId: id } : queryString.searchNameTerm ? { name: { $regex: queryString.searchNameTerm, $options: 'i', }, } : {};
+    const searchString = id ? { blogId: id } : queryString.searchNameTerm ? {
+      name: {
+        $regex: queryString.searchNameTerm,
+        $options: 'i',
+      },
+    } : {};
     const queryHelper = new BaseQueryFieldsUtil(queryString, searchString);
 
     const result = await postsCollection
@@ -31,11 +36,11 @@ class PostsQueryRepository {
     };
   }
 
-  async findById(id: string): Promise<PostsViewDto> {
+  async findById(id: string): Promise<PostsViewDto | null> {
     isObjectId(id);
     const result = await postsCollection.findOne({ _id: new ObjectId(id) });
     if (!result) {
-      throw new CustomError(TYPE_ERROR.NOT_FOUND);
+      return null;
     }
 
     return new PostsViewDto(result);

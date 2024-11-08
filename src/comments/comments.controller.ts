@@ -12,6 +12,11 @@ class CommentsController {
   getComment = async (req: RequestWithParams<UriParamsModel>, res: Response) => {
     try {
       const result = await commentQueryRepository.findCommentById(req.params.id);
+      if (!result) {
+        res.status(HTTP_STATUS_CODE.NOT_FOUND_404).json();
+        return;
+      }
+
       res.status(HTTP_STATUS_CODE.OK_200).json(result);
     } catch (error) {
       sendError(error, res);
