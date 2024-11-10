@@ -1,6 +1,5 @@
 import { postsCollection } from '../db';
 import { PostsViewDto } from './dto/postsView.dto';
-import { CustomError, TYPE_ERROR } from '../common/errorHandler';
 import { queryStringType } from '../common/types/types';
 import { ObjectId } from 'mongodb';
 import { BaseQueryFieldsUtil } from '../common/utils/baseQueryFields.util';

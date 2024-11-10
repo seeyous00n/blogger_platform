@@ -1,10 +1,9 @@
 import { usersCollection } from '../db';
 import { UserViewDto } from './dto/usersView.dto';
 import { UserViewAuthDto } from './dto/userViewAuth.dto';
-import { ERROR_MESSAGE, userQueryStringType } from '../common/types/types';
+import { userQueryStringType } from '../common/types/types';
 import { BaseQueryFieldsUtil } from '../common/utils/baseQueryFields.util';
 import { ObjectId } from 'mongodb';
-import { CustomError, TYPE_ERROR } from '../common/errorHandler';
 import { isObjectId } from '../common/adapters/mongodb.service';
 import { UsersViewModel } from './models/usersView.model';
 
@@ -44,18 +43,24 @@ class UsersQueryRepository {
     };
   }
 
-  async findById(id: string, type: boolean = false): Promise<UserViewDto | UserViewAuthDto | null> {
+  async findUserById(id: string): Promise<UserViewDto | null> {
     isObjectId(id);
     const result = await usersCollection.findOne({ _id: new ObjectId(id) });
     if (!result) {
       return null;
     }
 
-    if (type) {
-      return new UserViewAuthDto(result);
+    return new UserViewDto(result);
+  }
+
+  async findAuthUserById(id: string): Promise<UserViewAuthDto | null> {
+    isObjectId(id);
+    const result = await usersCollection.findOne({ _id: new ObjectId(id) });
+    if (!result) {
+      return null;
     }
 
-    return new UserViewDto(result);
+    return new UserViewAuthDto(result);
   }
 }
 

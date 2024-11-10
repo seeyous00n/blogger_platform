@@ -1,5 +1,4 @@
 import { commentsCollection } from '../db';
-import { CustomError, TYPE_ERROR } from '../common/errorHandler';
 import { queryStringType } from '../common/types/types';
 import { ObjectId } from 'mongodb';
 import { BaseQueryFieldsUtil } from '../common/utils/baseQueryFields.util';

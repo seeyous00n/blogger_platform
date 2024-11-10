@@ -5,11 +5,13 @@ import { CustomError, TYPE_ERROR } from "../errorHandler";
 
 const JWT_SECRET = <jwt.Secret>SETTINGS.JWT_ACCESS_SECRET;
 const JWT_REFRESH_SECRET = <jwt.Secret>SETTINGS.JWT_REFRESH_SECRET;
+const ACCESS_EXP = '10sec';
+const REFRESH_EXP = '20sec';
 
 class TokenService {
   generateTokens(payload: JWTPayloadType) {
-    const accessToken = jwt.sign(payload, JWT_SECRET, { expiresIn: '10sec' });
-    const refreshToken = jwt.sign(payload, JWT_REFRESH_SECRET, { expiresIn: '20sec' });
+    const accessToken = jwt.sign(payload, JWT_SECRET, { expiresIn: ACCESS_EXP });
+    const refreshToken = jwt.sign(payload, JWT_REFRESH_SECRET, { expiresIn: REFRESH_EXP });
     const { iat } = this.getDataToken(refreshToken);
     return { accessToken, refreshToken, iat };
   }

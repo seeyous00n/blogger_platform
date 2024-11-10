@@ -26,7 +26,7 @@ class AuthController {
 
   getMe = async (req: RequestWithBody<DataInTokenType>, res: Response) => {
     try {
-      const result = await usersQueryRepository.findById(req.body.userId, true);
+      const result = await usersQueryRepository.findAuthUserById(req.body.userId);
       res.status(HTTP_STATUS_CODE.OK_200).json(result);
     } catch (error) {
       sendError(error, res);

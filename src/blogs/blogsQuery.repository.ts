@@ -1,5 +1,4 @@
 import { blogsCollection } from '../db';
-import { CustomError, TYPE_ERROR } from '../common/errorHandler';
 import { BlogsViewDto } from './dto/blogsView.dto';
 import { queryStringType } from '../common/types/types';
 import { ObjectId } from 'mongodb';

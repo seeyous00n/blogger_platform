@@ -21,7 +21,7 @@ class UsersController {
     try {
       const userId = await userService.createUser(req.body);
       await userService.updateIsConfirmed(userId.insertedId);
-      const result = await usersQueryRepository.findById(userId.insertedId.toString());
+      const result = await usersQueryRepository.findUserById(userId.insertedId.toString());
       if (!result) {
         res.status(HTTP_STATUS_CODE.NOT_FOUND_404).json();
         return;
