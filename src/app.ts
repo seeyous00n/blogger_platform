@@ -11,7 +11,8 @@ import cookieParser from "cookie-parser";
 export const app = express();
 
 app.use(express.json());
-app.use(cookieParser())
+app.set('trust proxy', true);
+app.use(cookieParser());
 app.use(ROUTER_PATHS.BLOGS, blogsRouter);
 app.use(ROUTER_PATHS.POSTS, postsRouter);
 app.use(ROUTER_PATHS.USERS, usersRouter);
