@@ -2,7 +2,6 @@ import { postsRepository } from './posts.repository';
 import { PostCreateModel } from './models/postCreate.model';
 import { PostUpdateModal } from './models/postUpdate.modal';
 import { CustomError, TYPE_ERROR } from '../common/errorHandler';
-import { ERROR_MESSAGE } from '../common/types/types';
 import { PostEntityType } from './types/post.types';
 import { blogsRepository } from '../blogs/blogs.repository';
 import { InsertOneResult, ObjectId } from 'mongodb';
@@ -11,7 +10,7 @@ class PostService {
   async findPostById(id: string): Promise<ObjectId> {
     const result = await postsRepository.findById(id);
     if (!result) {
-      throw new CustomError(TYPE_ERROR.NOT_FOUND, ERROR_MESSAGE.NOT_FOUND);
+      throw new CustomError(TYPE_ERROR.NOT_FOUND);
     }
 
     return result._id;
@@ -20,7 +19,7 @@ class PostService {
   async createPost(post: PostCreateModel): Promise<InsertOneResult<PostEntityType>> {
     const dataBlog = await blogsRepository.findById(post.blogId.toString());
     if (!dataBlog) {
-      throw new CustomError(TYPE_ERROR.NOT_FOUND, ERROR_MESSAGE.NOT_FOUND);
+      throw new CustomError(TYPE_ERROR.NOT_FOUND);
     }
 
     const newPost: PostEntityType = {
@@ -46,7 +45,7 @@ class PostService {
   async existsPostOrError(id: string): Promise<void> {
     const result = await postsRepository.findById(id);
     if (!result) {
-      throw new CustomError(TYPE_ERROR.NOT_FOUND, ERROR_MESSAGE.NOT_FOUND);
+      throw new CustomError(TYPE_ERROR.NOT_FOUND);
     }
   }
 }

@@ -1,6 +1,5 @@
 import { postsRepository } from '../posts/posts.repository';
 import { CustomError, TYPE_ERROR } from '../common/errorHandler';
-import { ERROR_MESSAGE } from '../common/types/types';
 import { commentRepository } from './comment.repository';
 import { CommentUpdateModel } from './models/CommentUpdate.model';
 import { CommentCreateInputModel } from './models/CommentCreateInput.model';
@@ -11,7 +10,7 @@ class CommentService {
   async createComment(data: CommentCreateInputModel): Promise<InsertOneResult<CommentEntityType>> {
     const post = await postsRepository.findById(data.postId);
     if (!post) {
-      throw new CustomError(TYPE_ERROR.NOT_FOUND, ERROR_MESSAGE.NOT_FOUND);
+      throw new CustomError(TYPE_ERROR.NOT_FOUND);
     }
 
     const newComment: CommentEntityType = {
@@ -40,12 +39,12 @@ class CommentService {
   async ownerCommentOrError(commentId: string, userId: string): Promise<void> {
     const comment = await commentRepository.findById(commentId);
     if (!comment) {
-      throw new CustomError(TYPE_ERROR.NOT_FOUND, ERROR_MESSAGE.NOT_FOUND);
+      throw new CustomError(TYPE_ERROR.NOT_FOUND);
     }
 
     const result = await commentRepository.findByIdAndUserId(commentId, userId);
     if (!result) {
-      throw new CustomError(TYPE_ERROR.FORBIDDEN_ERROR, ERROR_MESSAGE.FORBIDDEN);
+      throw new CustomError(TYPE_ERROR.FORBIDDEN_ERROR);
     }
   }
 }

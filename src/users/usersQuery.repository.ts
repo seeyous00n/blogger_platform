@@ -1,17 +1,26 @@
 import { usersCollection } from '../db';
 import { UserViewDto } from './dto/usersView.dto';
 import { UserViewAuthDto } from './dto/userViewAuth.dto';
-import { ERROR_MESSAGE, userQueryStringType } from '../common/types/types';
+import { userQueryStringType } from '../common/types/types';
 import { BaseQueryFieldsUtil } from '../common/utils/baseQueryFields.util';
 import { ObjectId } from 'mongodb';
-import { CustomError, TYPE_ERROR } from '../common/errorHandler';
 import { isObjectId } from '../common/adapters/mongodb.service';
 import { UsersViewModel } from './models/usersView.model';
 
 class UsersQueryRepository {
   async findUsers(queryString: userQueryStringType): Promise<UsersViewModel> {
-    const loginFilter = queryString.searchLoginTerm ? { login: { $regex: queryString.searchLoginTerm, $options: 'i', }, } : {};
-    const emailFilter = queryString.searchEmailTerm ? { email: { $regex: queryString.searchEmailTerm, $options: 'i', }, } : {};
+    const loginFilter = queryString.searchLoginTerm ? {
+      login: {
+        $regex: queryString.searchLoginTerm,
+        $options: 'i',
+      },
+    } : {};
+    const emailFilter = queryString.searchEmailTerm ? {
+      email: {
+        $regex: queryString.searchEmailTerm,
+        $options: 'i',
+      },
+    } : {};
     const searchString = { $or: [loginFilter, emailFilter] };
     const queryHelper = new BaseQueryFieldsUtil(queryString, searchString);
 
@@ -34,18 +43,24 @@ class UsersQueryRepository {
     };
   }
 
-  async findById(id: string, type: boolean = false): Promise<UserViewDto | UserViewAuthDto> {
+  async findUserById(id: string): Promise<UserViewDto | null> {
     isObjectId(id);
     const result = await usersCollection.findOne({ _id: new ObjectId(id) });
     if (!result) {
-      throw new CustomError(TYPE_ERROR.NOT_FOUND, ERROR_MESSAGE.NOT_FOUND);
-    }
-
-    if (type) {
-      return new UserViewAuthDto(result);
+      return null;
     }
 
     return new UserViewDto(result);
+  }
+
+  async findAuthUserById(id: string): Promise<UserViewAuthDto | null> {
+    isObjectId(id);
+    const result = await usersCollection.findOne({ _id: new ObjectId(id) });
+    if (!result) {
+      return null;
+    }
+
+    return new UserViewAuthDto(result);
   }
 }
 

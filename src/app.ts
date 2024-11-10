@@ -6,10 +6,12 @@ import { testingController } from './testing/testing.controller';
 import { usersRouter } from './users/users.router';
 import { authRouter } from './auth/auth.router';
 import { commentsRouter } from './comments/comments.router';
+import cookieParser from "cookie-parser";
 
 export const app = express();
 
 app.use(express.json());
+app.use(cookieParser())
 app.use(ROUTER_PATHS.BLOGS, blogsRouter);
 app.use(ROUTER_PATHS.POSTS, postsRouter);
 app.use(ROUTER_PATHS.USERS, usersRouter);

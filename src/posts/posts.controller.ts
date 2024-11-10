@@ -30,7 +30,12 @@ class PostsController {
 
   getPost = async (req: RequestWithParams<UriParamsModel>, res: Response<PostsViewDto>) => {
     try {
-      const result: PostsViewDto = await postsQueryRepository.findById(req.params.id);
+      const result = await postsQueryRepository.findById(req.params.id);
+      if (!result) {
+        res.status(HTTP_STATUS_CODE.NOT_FOUND_404).json();
+        return;
+      }
+
       res.status(HTTP_STATUS_CODE.OK_200).json(result);
     } catch (error) {
       sendError(error, res);
@@ -40,7 +45,7 @@ class PostsController {
   creatPost = async (req: RequestWithBody<PostCreateModel>, res: Response<PostsViewDto>) => {
     try {
       const postId = await postService.createPost(req.body);
-      const result = await postsQueryRepository.findById(postId.insertedId.toString());
+      const result = await postsQueryRepository.findById(postId.insertedId.toString()) as PostsViewDto;
       res.status(HTTP_STATUS_CODE.CREATED_201).json(result);
     } catch (error) {
       sendError(error, res);
@@ -81,7 +86,7 @@ class PostsController {
 
   getCommentsByPost = async (req: RequestWithQuery<UriParamsModel, queryStringType>, res: Response) => {
     try {
-      const postId = await postService.findPostById(req.params.id)
+      const postId = await postService.findPostById(req.params.id);
       const result = await commentQueryRepository.findComments(req.query, postId.toString());
       res.status(HTTP_STATUS_CODE.OK_200).json(result);
     } catch (error) {

@@ -1,7 +1,6 @@
 import { blogsCollection } from '../db';
-import { CustomError, TYPE_ERROR } from '../common/errorHandler';
 import { BlogsViewDto } from './dto/blogsView.dto';
-import { ERROR_MESSAGE, queryStringType } from '../common/types/types';
+import { queryStringType } from '../common/types/types';
 import { ObjectId } from 'mongodb';
 import { BaseQueryFieldsUtil } from '../common/utils/baseQueryFields.util';
 import { isObjectId } from '../common/adapters/mongodb.service';
@@ -9,7 +8,12 @@ import { BlogsViewModel } from './models/blogsView.model';
 
 class BlogsQueryRepository {
   async findBlogs(queryString: queryStringType): Promise<BlogsViewModel> {
-    const searchString = queryString.searchNameTerm ? { name: { $regex: queryString.searchNameTerm, $options: 'i', }, } : {};
+    const searchString = queryString.searchNameTerm ? {
+      name: {
+        $regex: queryString.searchNameTerm,
+        $options: 'i',
+      },
+    } : {};
     const queryHelper = new BaseQueryFieldsUtil(queryString, searchString);
 
     const result = await blogsCollection
@@ -31,11 +35,11 @@ class BlogsQueryRepository {
     };
   }
 
-  async findById(id: string): Promise<BlogsViewDto> {
+  async findById(id: string): Promise<BlogsViewDto | null> {
     isObjectId(id);
     const result = await blogsCollection.findOne({ _id: new ObjectId(id) });
     if (!result) {
-      throw new CustomError(TYPE_ERROR.NOT_FOUND, ERROR_MESSAGE.NOT_FOUND);
+      return null;
     }
 
     return new BlogsViewDto(result);

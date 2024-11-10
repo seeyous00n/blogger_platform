@@ -62,22 +62,6 @@ class CreateEntity {
     this.comments = [];
     this.userToken = '';
   }
-// const blog = {} as BlogViewType;
-  // blog._id = data._id ?? new ObjectId();
-  // blog.createdAt = data.createdAt && new Date().toISOString();
-  // blog.isMembership = data.isMembership && false;
-  //
-  // if (data) {
-  //   blog.name = data.name && 'blog';
-  //   blog.description = data.description && 'blog description';
-  //   blog.websiteUrl = data.websiteUrl && `https://websiteurl.com`;
-  //   return blog;
-  // }
-  //
-  // blog.name = data.name && 'blog ' + i;
-  // blog.description = data.description && 'blog description ' + i;
-  // blog.websiteUrl = data.websiteUrl && `https://websiteurl${i}.com`;
-
 
   async createBlog(i: number, data?: any) {
     const blog = {} as BlogCreateModel;
@@ -105,7 +89,6 @@ class CreateEntity {
       this.blogs.push(createdBlog.body);
     }
   }
-
 
   async createPost(i: number, data?: any) {
     const post = {} as PostCreateModel;

@@ -35,16 +35,16 @@ class UserRepository {
     return await usersCollection.findOne({ email: email });
   }
 
-  async updateIsConfirmed(code: string): Promise<void> {
+  async updateIsConfirmed(id: ObjectId): Promise<void> {
     await usersCollection.updateOne(
-      { 'emailConfirmation.confirmationCode': code },
+      { _id: id },
       { $set: { 'emailConfirmation.isConfirmed': true } },
     );
   }
 
-  async updateConfirmationCode(code: string, newCode: string): Promise<void> {
+  async updateConfirmationCode(id: ObjectId, newCode: string): Promise<void> {
     await usersCollection.updateOne(
-      { 'emailConfirmation.confirmationCode': code },
+      { _id: id },
       { $set: { 'emailConfirmation.confirmationCode': newCode } },
     );
   }
@@ -52,6 +52,8 @@ class UserRepository {
   async findByLoginOrEmail(data: AuthType): Promise<WithId<UserEntityType> | null> {
     return await usersCollection.findOne({ $or: [{ email: data.loginOrEmail }, { login: data.loginOrEmail }] });
   }
+
+
 }
 
 export const userRepository = new UserRepository();

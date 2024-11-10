@@ -3,7 +3,7 @@ export type AuthType = {
   password: string,
 }
 
-export type TokenType = {
+export type DataInTokenType = {
   userId: string
 }
 
@@ -15,10 +15,12 @@ export const ERROR = {
     EMAIL_NOT_FOUND: 'email not found',
     EMAIL_CONFIRMED: 'email is confirmed',
     INCORRECT_CODE: 'incorrect code',
+    UNIQUE_EMAIL_AND_LOGIN: 'email and login should be unique',
   },
   FIELD: {
     CODE: 'code',
     EMAIL: 'email',
+    LOGIN: 'login',
   },
 };
 

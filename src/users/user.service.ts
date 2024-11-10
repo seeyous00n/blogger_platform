@@ -2,24 +2,24 @@ import { UserCreateModel } from './models/userCreate.model';
 import { UserEntityType } from './types/user.types';
 import { userRepository } from './users.repository';
 import { CustomError, TYPE_ERROR } from '../common/errorHandler';
-import { ERROR_MESSAGE } from '../common/types/types';
 import { generatePasswordHash } from '../common/adapters/bcrypt.service';
 import { v4 as uuidv4 } from 'uuid';
 import { add } from 'date-fns';
 import { UserCreateInputModel } from './models/userCreateInput.model';
-import { InsertOneResult, WithId } from 'mongodb';
+import { InsertOneResult, ObjectId, WithId } from 'mongodb';
+import { ERROR } from "../auth/types/auth.type";
 
 class UserService {
   async getUserById(id: string): Promise<WithId<UserEntityType>> {
     const result = await userRepository.findById(id);
     if (!result) {
-      throw new CustomError(TYPE_ERROR.NOT_FOUND, ERROR_MESSAGE.NOT_FOUND);
+      throw new CustomError(TYPE_ERROR.NOT_FOUND);
     }
 
     return result;
   }
 
-  async createUser(data: UserCreateInputModel, confirmed: boolean = true): Promise<InsertOneResult<UserEntityType>> {
+  async createUser(data: UserCreateInputModel): Promise<InsertOneResult<UserEntityType>> {
     await this.uniqueEmailAndLoginOrError(data);
     const hash = await generatePasswordHash(data.password);
 
@@ -30,7 +30,7 @@ class UserService {
       createdAt: new Date().toISOString(),
       emailConfirmation: {
         confirmationCode: uuidv4(),
-        isConfirmed: confirmed,
+        isConfirmed: false,
         expirationDate: add(new Date(), { hours: 1 }),
       },
     };
@@ -46,19 +46,27 @@ class UserService {
   async existsUserOrError(id: string): Promise<void> {
     const result = await userRepository.findById(id);
     if (!result) {
-      throw new CustomError(TYPE_ERROR.NOT_FOUND, ERROR_MESSAGE.NOT_FOUND);
+      throw new CustomError(TYPE_ERROR.NOT_FOUND);
     }
+  }
+
+  async updateIsConfirmed(id: ObjectId): Promise<void> {
+    await userRepository.updateIsConfirmed(id);
   }
 
   async uniqueEmailAndLoginOrError(data: UserCreateModel): Promise<void> {
     const userData = await userRepository.getUserByEmailOrLogin(data);
     if (userData.email) {
-      const errorMessage = 'email and login should be unique';
-      throw new CustomError(TYPE_ERROR.VALIDATION_ERROR, errorMessage, [{ message: errorMessage, field: 'email' }]);
+      throw new CustomError(TYPE_ERROR.VALIDATION_ERROR, [{
+        message: ERROR.MESSAGE.UNIQUE_EMAIL_AND_LOGIN,
+        field: ERROR.FIELD.EMAIL
+      }]);
     }
     if (userData.login) {
-      const errorMessage = 'login and login should be unique';
-      throw new CustomError(TYPE_ERROR.VALIDATION_ERROR, errorMessage, [{ message: errorMessage, field: 'login' }]);
+      throw new CustomError(TYPE_ERROR.VALIDATION_ERROR, [{
+        message: ERROR.MESSAGE.UNIQUE_EMAIL_AND_LOGIN,
+        field: ERROR.FIELD.LOGIN
+      }]);
     }
   }
 }
