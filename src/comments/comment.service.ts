@@ -27,16 +27,16 @@ class CommentService {
   }
 
   async updateCommentById(id: string, data: CommentUpdateModel, userId: string): Promise<void> {
-    await this.ownerCommentOrError(id, userId);
+    await this.checkOwnerComment(id, userId);
     await commentRepository.updateById(id, data);
   }
 
   async deleteCommentById(id: string, userId: string): Promise<void> {
-    await this.ownerCommentOrError(id, userId);
+    await this.checkOwnerComment(id, userId);
     await commentRepository.deleteById(id);
   }
 
-  async ownerCommentOrError(commentId: string, userId: string): Promise<void> {
+  async checkOwnerComment(commentId: string, userId: string): Promise<void> {
     const comment = await commentRepository.findById(commentId);
     if (!comment) {
       throw new CustomError(TYPE_ERROR.NOT_FOUND);

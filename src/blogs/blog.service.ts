@@ -24,16 +24,16 @@ class BlogService {
   }
 
   async updateBlogById(id: string, data: BlogUpdateModal): Promise<void> {
-    await this.existsBlogOrError(id);
+    await this.checkExistsBlog(id);
     await blogsRepository.updateById(id, data);
   }
 
   async deleteBlogById(id: string): Promise<void> {
-    await this.existsBlogOrError(id);
+    await this.checkExistsBlog(id);
     await blogsRepository.deleteById(id);
   }
 
-  async existsBlogOrError(id: string): Promise<void> {
+  async checkExistsBlog(id: string): Promise<void> {
     const result = await blogsRepository.findById(id);
     if (!result) {
       throw new CustomError(TYPE_ERROR.NOT_FOUND);

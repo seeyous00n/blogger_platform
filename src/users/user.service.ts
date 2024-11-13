@@ -20,7 +20,7 @@ class UserService {
   }
 
   async createUser(data: UserCreateInputModel): Promise<InsertOneResult<UserEntityType>> {
-    await this.uniqueEmailAndLoginOrError(data);
+    await this.checkUniqueEmailAndLogin(data);
     const hash = await generatePasswordHash(data.password);
 
     const newUser: UserEntityType = {
@@ -54,7 +54,7 @@ class UserService {
     await userRepository.updateIsConfirmed(id);
   }
 
-  async uniqueEmailAndLoginOrError(data: UserCreateModel): Promise<void> {
+  async checkUniqueEmailAndLogin(data: UserCreateModel): Promise<void> {
     const userData = await userRepository.getUserByEmailOrLogin(data);
     if (userData.email) {
       throw new CustomError(TYPE_ERROR.VALIDATION_ERROR, [{
