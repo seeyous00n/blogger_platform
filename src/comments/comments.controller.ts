@@ -25,7 +25,7 @@ class CommentsController {
 
   updateComment = async (req: RequestWithParamsAndBody<UriParamsModel, CommentInputUpdateModel>, res: Response) => {
     try {
-      await commentService.updateCommentById(req.params.id, { content: req.body.content }, req.body.userId);
+      await commentService.updateCommentById(req.params.id, { content: req.body.content }, req.user.userId);
       res.status(HTTP_STATUS_CODE.NO_CONTENT_204).json();
     } catch (error) {
       sendError(error, res);
@@ -34,7 +34,7 @@ class CommentsController {
 
   deleteComment = async (req: RequestWithParamsAndBody<UriParamsModel, DataInTokenType>, res: Response) => {
     try {
-      await commentService.deleteCommentById(req.params.id, req.body.userId);
+      await commentService.deleteCommentById(req.params.id, req.user.userId);
       res.status(HTTP_STATUS_CODE.NO_CONTENT_204).json();
     } catch (error) {
       sendError(error, res);

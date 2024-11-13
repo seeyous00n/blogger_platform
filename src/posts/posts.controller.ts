@@ -74,7 +74,7 @@ class PostsController {
     try {
       const commentId = await commentService.createComment({
         postId: req.params.id,
-        userId: req.body.userId,
+        userId: req.user.userId,
         comment: req.body.content
       });
       const result = await commentQueryRepository.findCommentById(commentId.insertedId.toString());
