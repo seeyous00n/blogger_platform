@@ -23,6 +23,7 @@ export const ROUTER_PATHS = {
   AUTH: '/auth',
   USERS: '/users',
   COMMENTS: '/comments',
+  SECURITY: '/security',
   TESTING: '/testing/all-data',
 };
 

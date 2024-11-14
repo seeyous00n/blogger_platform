@@ -5,12 +5,14 @@ import { PostEntityType } from './posts/types/post.types';
 import { UserEntityType } from './users/types/user.types';
 import { CommentEntityType } from './comments/types/comment.types';
 import { TokenEntityType } from "./auth/types/token.type";
+import { SessionType } from "./common/middlewares/session/types";
 
 const COLLECTION_BLOGS = 'blogs';
 const COLLECTION_POSTS = 'posts';
 const COLLECTION_USERS = 'users';
 const COLLECTION_COMMENTS = 'comments';
 const COLLECTION_TOKENS = 'tokens';
+const COLLECTION_SESSION = 'session';
 
 const mongoURI = SETTINGS.MONGO_URI;
 export const client = new MongoClient(mongoURI);
@@ -20,6 +22,7 @@ export const postsCollection = client.db(SETTINGS.DB_NAME).collection<PostEntity
 export const usersCollection = client.db(SETTINGS.DB_NAME).collection<UserEntityType>(COLLECTION_USERS);
 export const commentsCollection = client.db(SETTINGS.DB_NAME).collection<CommentEntityType>(COLLECTION_COMMENTS);
 export const tokensCollection = client.db(SETTINGS.DB_NAME).collection<TokenEntityType>(COLLECTION_TOKENS);
+export const sessionCollection = client.db(SETTINGS.DB_NAME).collection<SessionType>(COLLECTION_SESSION);
 
 export const runDB = async () => {
   try {
