@@ -15,7 +15,8 @@ class AuthController {
   authLoginUser = async (req: RequestWithBody<AuthType>, res: Response) => {
     try {
       const userId = await authService.checkCredentials(req.body);
-      const { accessToken, refreshToken } = await authService.createTokens(userId, req);
+      const data = { userId, ip: req.ip || '', title: req.headers['user-agent'] || '' }; // Попытаться избавиться от ||
+      const { accessToken, refreshToken } = await authService.createTokens(data);
 
       res.cookie(TOKENS_NAME.REFRESH_TOKEN, refreshToken, cookieOptions.getOptionsForRefreshToken());
       res.status(HTTP_STATUS_CODE.OK_200).json({ [TOKENS_NAME.ACCESS_TOKEN]: accessToken });

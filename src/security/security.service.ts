@@ -1,7 +1,9 @@
 import { tokenService } from "../common/services/token.service";
 import { CustomError, TYPE_ERROR } from "../common/errorHandler";
 import { securityRepository } from "./security.repository";
-import { DeviceAndTokenType, DeviceAndUserType } from "./types/security.types";
+import { DeviceAndUserType } from "./types/security.types";
+import { TokenEntityType } from "../auth/types/token.type";
+import { WithId } from "mongodb";
 
 class SecurityService {
   async deleteDevice(token: string, deviceId: string): Promise<void> {
@@ -11,12 +13,12 @@ class SecurityService {
     await securityRepository.deleteById(device._id.toString());
   }
 
-  async deleteDevices(token: string) {
+  async deleteDevices(token: string): Promise<void> {
     const { userId, deviceId } = tokenService.getDataToken(token);
     await securityRepository.deleteAllExceptCurrent({ deviceId, userId });
   }
 
-  async checkOwnerDevice(data: DeviceAndUserType) {
+  async checkOwnerDevice(data: DeviceAndUserType): Promise<{device: WithId<TokenEntityType>}> {
     const isDevice = await securityRepository.findByIat(data.deviceId);
     if (!isDevice) {
       throw new CustomError(TYPE_ERROR.NOT_FOUND);

@@ -8,17 +8,17 @@ import { v4 as uuidv4 } from 'uuid';
 import { tokenService } from "../common/services/token.service";
 import { authRepository } from "./auth.repository";
 import { WithId } from "mongodb";
-import { PairTokensType, TokenEntityType } from "./types/token.type";
+import { CreateTokensType, PairTokensType, TokenEntityType } from "./types/token.type";
 
 class AuthService {
-  async checkCredentials(data: AuthType): Promise<{ userId: string }> {
+  async checkCredentials(data: AuthType): Promise<string> {
     const result = await userRepository.findByLoginOrEmail(data);
     if (!result) throw new CustomError(TYPE_ERROR.AUTH_ERROR);
 
     const isAuth = await bcrypt.compare(data.password, result.passwordHash);
     if (!isAuth) throw new CustomError(TYPE_ERROR.AUTH_ERROR);
 
-    return { userId: result._id.toString() };
+    return result._id.toString();
   }
 
   async registration(email: string, code: string): Promise<void> {
@@ -76,10 +76,10 @@ class AuthService {
     await nodemailerService.sendEmail(email, link, TYPE_EMAIL.RESEND_CODE);
   }
 
-  async createTokens(data: { userId: string }, req: any): Promise<PairTokensType> {
+  async createTokens(data: CreateTokensType): Promise<PairTokensType> {
     const newData = {
-      ip: req.ip,
-      title: req.headers['user-agent'],
+      ip: data.ip,
+      title: data.title,
       deviceId: uuidv4(),
       userId: data.userId,
     };

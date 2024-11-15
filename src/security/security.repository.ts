@@ -1,7 +1,7 @@
 import { tokensCollection } from "../db";
 import { ObjectId, WithId } from "mongodb";
 import { TokenEntityType } from "../auth/types/token.type";
-import { DeviceAndTokenType, DeviceAndUserType } from "./types/security.types";
+import { DeviceAndUserType } from "./types/security.types";
 
 class SecurityRepository {
   async findByDeviceIdAndTokenIat(data: DeviceAndUserType): Promise<WithId<TokenEntityType> | null> {
