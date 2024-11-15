@@ -1,6 +1,13 @@
 import { Request, Response } from 'express';
 import { HTTP_MESSAGE, HTTP_STATUS_CODE } from '../common/settings';
-import { blogsCollection, postsCollection, sessionCollection, tokensCollection, usersCollection } from '../db';
+import {
+  blogsCollection,
+  commentsCollection,
+  postsCollection,
+  sessionCollection,
+  tokensCollection,
+  usersCollection
+} from '../db';
 
 class TestingController {
   async clearAllData(req: Request, res: Response): Promise<void> {
@@ -9,6 +16,7 @@ class TestingController {
       await postsCollection.deleteMany({});
       await usersCollection.deleteMany({});
       await tokensCollection.deleteMany({});
+      await commentsCollection.deleteMany({});
       await sessionCollection.deleteMany({});
       res.status(HTTP_STATUS_CODE.NO_CONTENT_204).json();
     } catch (error) {

@@ -12,8 +12,9 @@ class TokenService {
   generateTokens(payload: JWTPayloadType) {
     const accessToken = jwt.sign(payload, JWT_SECRET, { expiresIn: ACCESS_EXP });
     const refreshToken = jwt.sign(payload, JWT_REFRESH_SECRET, { expiresIn: REFRESH_EXP });
-    const { iat } = this.getDataToken(refreshToken);
-    return { accessToken, refreshToken, iat };
+
+    const { iat, exp } = this.getDataToken(refreshToken);
+    return { accessToken, refreshToken, iat, exp };
   }
 
   validateAccessToken(token: string): JWTPayloadType | undefined {
@@ -33,10 +34,10 @@ class TokenService {
   }
 
   getDataToken(token: string) {
-    const result = jwt.decode(token) as JWTPayloadType & { iat: number };
+    const result = jwt.decode(token) as JWTPayloadType & { iat: number, exp: number };
     if (!result) throw new CustomError(TYPE_ERROR.AUTH_ERROR);
 
-    return { userId: result.userId, iat: result.iat };
+    return { userId: result.userId, deviceId: result.deviceId, iat: result.iat, exp: result.exp };
   }
 }
 

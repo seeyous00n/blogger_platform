@@ -8,9 +8,10 @@ class AuthRepository {
   };
 
   async updateTokenById(id: object, tokenIat: number): Promise<void> {
+    const lastActiveDate = new Date(tokenIat * 1000);
     await tokensCollection.updateOne(
       { _id: id },
-      { $set: { tokenIat: tokenIat } },
+      { $set: { tokenIat: tokenIat, lastActiveDate: lastActiveDate } },
     );
   }
 
@@ -18,12 +19,10 @@ class AuthRepository {
     await tokensCollection.deleteOne({ _id: id });
   }
 
-  async findByIat(iat: number, userId: string): Promise<WithId<TokenEntityType> | null> {
+  async findByIat(iat: number, deviceId: string): Promise<WithId<TokenEntityType> | null> {
     return await tokensCollection.findOne({
-      $and: [
-        { userId: userId },
-        { tokenIat: iat }
-      ]
+      deviceId: deviceId,
+      tokenIat: iat
     });
   }
 }

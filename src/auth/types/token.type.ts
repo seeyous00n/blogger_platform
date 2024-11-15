@@ -1,6 +1,11 @@
 export type TokenEntityType = {
   userId: string,
-  tokenIat: number
+  tokenIat: number,
+  tokenExp: number
+  ip: string,
+  title: string,
+  deviceId: string,
+  lastActiveDate: Date
 }
 
 export const TOKENS_NAME = {

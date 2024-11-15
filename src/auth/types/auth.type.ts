@@ -3,7 +3,7 @@ export type AuthType = {
   password: string,
 }
 
-export type DataInTokenType = {
+export type DataInAccessTokenType = {
   userId: string
 }
 

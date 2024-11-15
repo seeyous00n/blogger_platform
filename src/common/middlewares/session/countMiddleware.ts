@@ -4,19 +4,22 @@ import { sessionCollection } from "../../../db";
 
 export const countMiddleware = async (req: Request, res: Response, next: NextFunction) => {
   try {
-    const insertResult = await sessionCollection.insertOne({
+    const data = {
       IP: String(req.ip),
       URL: req.originalUrl,
+    };
+
+    await sessionCollection.insertOne({
+      IP: data.IP,
+      URL: data.URL,
       date: new Date()
     });
 
     const countsRequest = await sessionCollection.countDocuments({
-      IP: String(req.ip),
-      URL: req.originalUrl,
+      IP: data.IP,
+      URL: data.URL,
       date: { $gte: add(new Date(), { seconds: -10 }) }
     });
-
-    console.log('countsRequest', countsRequest);
 
     if (countsRequest > 5) {
       res.status(429).json('Time out');

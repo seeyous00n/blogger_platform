@@ -7,7 +7,6 @@ import { usersRouter } from './users/users.router';
 import { authRouter } from './auth/auth.router';
 import { commentsRouter } from './comments/comments.router';
 import cookieParser from "cookie-parser";
-import { countMiddleware } from "./common/middlewares/session/countMiddleware";
 import { securityRouter } from "./security/security.router";
 
 export const app = express();
@@ -15,7 +14,6 @@ export const app = express();
 app.use(express.json());
 app.set('trust proxy', true);
 app.use(cookieParser());
-app.use(countMiddleware);
 app.use(ROUTER_PATHS.BLOGS, blogsRouter);
 app.use(ROUTER_PATHS.POSTS, postsRouter);
 app.use(ROUTER_PATHS.USERS, usersRouter);
