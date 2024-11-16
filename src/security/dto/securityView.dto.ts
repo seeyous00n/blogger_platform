@@ -1,4 +1,4 @@
-import { TokenEntityType } from "../../auth/types/token.type";
+import { SessionType } from "../../auth/types/token.type";
 
 export class SecurityViewDto {
   ip: string;
@@ -6,7 +6,7 @@ export class SecurityViewDto {
   lastActiveDate: Date;
   deviceId: string;
 
-  constructor(model: TokenEntityType) {
+  constructor(model: SessionType) {
     this.ip = model.ip;
     this.title = model.title;
     this.lastActiveDate = model.lastActiveDate;

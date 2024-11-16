@@ -4,8 +4,8 @@ import { BlogEntityType } from './blogs/types/blog.types';
 import { PostEntityType } from './posts/types/post.types';
 import { UserEntityType } from './users/types/user.types';
 import { CommentEntityType } from './comments/types/comment.types';
-import { TokenEntityType } from "./auth/types/token.type";
-import { SessionType } from "./common/middlewares/session/types";
+import { SessionType } from "./auth/types/token.type";
+import { RateLimitType } from "./common/middlewares/session/types";
 
 const COLLECTION_BLOGS = 'blogs';
 const COLLECTION_POSTS = 'posts';
@@ -21,8 +21,8 @@ export const blogsCollection = client.db(SETTINGS.DB_NAME).collection<BlogEntity
 export const postsCollection = client.db(SETTINGS.DB_NAME).collection<PostEntityType>(COLLECTION_POSTS);
 export const usersCollection = client.db(SETTINGS.DB_NAME).collection<UserEntityType>(COLLECTION_USERS);
 export const commentsCollection = client.db(SETTINGS.DB_NAME).collection<CommentEntityType>(COLLECTION_COMMENTS);
-export const tokensCollection = client.db(SETTINGS.DB_NAME).collection<TokenEntityType>(COLLECTION_TOKENS);
-export const sessionCollection = client.db(SETTINGS.DB_NAME).collection<SessionType>(COLLECTION_SESSION);
+export const sessionCollection = client.db(SETTINGS.DB_NAME).collection<SessionType>(COLLECTION_TOKENS);
+export const rateLimitCollection = client.db(SETTINGS.DB_NAME).collection<RateLimitType>(COLLECTION_SESSION);
 
 export const runDB = async () => {
   try {

@@ -1,4 +1,4 @@
-export type TokenEntityType = {
+export type SessionType = {
   userId: string,
   tokenIat: number,
   tokenExp: number

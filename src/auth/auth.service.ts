@@ -8,7 +8,7 @@ import { v4 as uuidv4 } from 'uuid';
 import { tokenService } from "../common/services/token.service";
 import { authRepository } from "./auth.repository";
 import { WithId } from "mongodb";
-import { CreateTokensType, PairTokensType, TokenEntityType } from "./types/token.type";
+import { CreateTokensType, PairTokensType, SessionType } from "./types/token.type";
 
 class AuthService {
   async checkCredentials(data: AuthType): Promise<string> {
@@ -111,7 +111,7 @@ class AuthService {
     await authRepository.deleteById(result._id);
   }
 
-  async findTokenByIat(token: number, deviceId: string): Promise<WithId<TokenEntityType>> {
+  async findTokenByIat(token: number, deviceId: string): Promise<WithId<SessionType>> {
     const result = await authRepository.findByIat(token, deviceId);
     if (!result) {
       throw new CustomError(TYPE_ERROR.AUTH_ERROR);

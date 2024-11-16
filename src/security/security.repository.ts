@@ -1,23 +1,23 @@
-import { tokensCollection } from "../db";
+import { sessionCollection } from "../db";
 import { ObjectId, WithId } from "mongodb";
-import { TokenEntityType } from "../auth/types/token.type";
+import { SessionType } from "../auth/types/token.type";
 import { DeviceAndUserType } from "./types/security.types";
 
 class SecurityRepository {
-  async findByDeviceIdAndUserId(data: DeviceAndUserType): Promise<WithId<TokenEntityType> | null> {
-    return await tokensCollection.findOne({ deviceId: data.deviceId, userId: data.userId });
+  async findByDeviceIdAndUserId(data: DeviceAndUserType): Promise<WithId<SessionType> | null> {
+    return await sessionCollection.findOne({ deviceId: data.deviceId, userId: data.userId });
   }
 
-  async findByIat(deviceId: string): Promise<WithId<TokenEntityType> | null> {
-    return await tokensCollection.findOne({ deviceId: deviceId });
+  async findByIat(deviceId: string): Promise<WithId<SessionType> | null> {
+    return await sessionCollection.findOne({ deviceId: deviceId });
   }
 
   async deleteById(id: string): Promise<void> {
-    await tokensCollection.deleteOne({ _id: new ObjectId(id) });
+    await sessionCollection.deleteOne({ _id: new ObjectId(id) });
   }
 
   async deleteAllExceptCurrent(data: { userId: string, deviceId: string }): Promise<void> {
-    await tokensCollection.deleteMany({
+    await sessionCollection.deleteMany({
       userId: data.userId,
       deviceId: { $ne: data.deviceId }
     });

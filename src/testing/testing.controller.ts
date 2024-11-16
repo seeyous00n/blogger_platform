@@ -4,8 +4,8 @@ import {
   blogsCollection,
   commentsCollection,
   postsCollection,
+  rateLimitCollection,
   sessionCollection,
-  tokensCollection,
   usersCollection
 } from '../db';
 
@@ -15,9 +15,9 @@ class TestingController {
       await blogsCollection.deleteMany({});
       await postsCollection.deleteMany({});
       await usersCollection.deleteMany({});
-      await tokensCollection.deleteMany({});
-      await commentsCollection.deleteMany({});
       await sessionCollection.deleteMany({});
+      await commentsCollection.deleteMany({});
+      await rateLimitCollection.deleteMany({});
       res.status(HTTP_STATUS_CODE.NO_CONTENT_204).json();
     } catch (error) {
       res.status(HTTP_STATUS_CODE.SERVER_ERROR_500).json(HTTP_MESSAGE.SERVER_ERROR);

@@ -1,6 +1,6 @@
 import { NextFunction, Request, Response } from 'express';
 import { add } from "date-fns";
-import { sessionCollection } from "../../../db";
+import { rateLimitCollection } from "../../../db";
 
 export const countMiddleware = async (req: Request, res: Response, next: NextFunction) => {
   try {
@@ -9,13 +9,13 @@ export const countMiddleware = async (req: Request, res: Response, next: NextFun
       URL: req.originalUrl,
     };
 
-    await sessionCollection.insertOne({
+    await rateLimitCollection.insertOne({
       IP: data.IP,
       URL: data.URL,
       date: new Date()
     });
 
-    const countsRequest = await sessionCollection.countDocuments({
+    const countsRequest = await rateLimitCollection.countDocuments({
       IP: data.IP,
       URL: data.URL,
       date: { $gte: add(new Date(), { seconds: -10 }) }

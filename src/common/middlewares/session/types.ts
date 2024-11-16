@@ -1,4 +1,4 @@
-export type SessionType = {
+export type RateLimitType = {
   IP: string,
   URL: string,
   date: Date
