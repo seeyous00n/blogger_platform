@@ -14,11 +14,6 @@ export type resultErrorsType = {
   errorsMessages: errorsMessagesType[]
 }
 
-export const enum ERROR_MESSAGE {
-  NOT_FOUND = 'NOT_FOUND',
-  FORBIDDEN = 'FORBIDDEN',
-}
-
 export type queryStringType = {
   searchNameTerm?: string | null,
   sortBy: string,

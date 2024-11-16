@@ -6,7 +6,7 @@ import { queryStringPaginationValidation } from '../common/validation/queryStrin
 
 const usersRouter = Router();
 
-usersRouter.get('/', queryStringPaginationValidation, usersController.getUsers);
+usersRouter.get('/', authBaseGuard, queryStringPaginationValidation, usersController.getUsers);
 usersRouter.post('/', authBaseGuard, userDataValidation, usersController.createUser);
 usersRouter.delete('/:id', authBaseGuard, usersController.deleteUser);
 

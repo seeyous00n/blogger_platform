@@ -6,7 +6,7 @@ import { sendError } from "../common/errorHandler";
 import { tokenService } from "../common/services/token.service";
 
 class SecurityController {
-  getDevices = async (req: Request, res: Response, next: NextFunction) => {
+  getDevices = async (req: Request, res: Response) => {
     try {
       const token: string = req.cookies.refreshToken;
       const { userId } = tokenService.getDataToken(token);
@@ -17,7 +17,7 @@ class SecurityController {
     }
   };
 
-  deleteDevice = async (req: Request, res: Response, next: NextFunction) => {
+  deleteDevice = async (req: Request, res: Response) => {
     try {
       const token: string = req.cookies.refreshToken;
       const deviceId = req.params.id;
@@ -29,7 +29,7 @@ class SecurityController {
     }
   };
 
-  deleteDevices = async (req: Request, res: Response, next: NextFunction) => {
+  deleteDevices = async (req: Request, res: Response) => {
     try {
       const token: string = req.cookies.refreshToken;
       await securityService.deleteDevices(token);

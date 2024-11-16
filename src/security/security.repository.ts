@@ -4,7 +4,7 @@ import { TokenEntityType } from "../auth/types/token.type";
 import { DeviceAndUserType } from "./types/security.types";
 
 class SecurityRepository {
-  async findByDeviceIdAndTokenIat(data: DeviceAndUserType): Promise<WithId<TokenEntityType> | null> {
+  async findByDeviceIdAndUserId(data: DeviceAndUserType): Promise<WithId<TokenEntityType> | null> {
     return await tokensCollection.findOne({ deviceId: data.deviceId, userId: data.userId });
   }
 

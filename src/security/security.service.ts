@@ -24,7 +24,7 @@ class SecurityService {
       throw new CustomError(TYPE_ERROR.NOT_FOUND);
     }
 
-    const device = await securityRepository.findByDeviceIdAndTokenIat(data);
+    const device = await securityRepository.findByDeviceIdAndUserId(data);
     if (!device) {
       throw new CustomError(TYPE_ERROR.FORBIDDEN_ERROR);
     }

@@ -88,9 +88,8 @@ class AuthService {
 
     const tokens = tokenService.generateTokens(payload);
     const tokenData = {
-      ...{
-        tokenIat: tokens.iat, tokenExp: tokens.exp, lastActiveDate: new Date(tokens.iat * 1000),
-      }, ...newData
+      tokenIat: tokens.iat, tokenExp: tokens.exp, lastActiveDate: new Date(tokens.iat * 1000)
+      , ...newData
     };
 
     await authRepository.createByData(tokenData);
