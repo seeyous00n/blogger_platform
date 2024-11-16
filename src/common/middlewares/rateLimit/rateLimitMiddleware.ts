@@ -2,7 +2,7 @@ import { NextFunction, Request, Response } from 'express';
 import { add } from "date-fns";
 import { rateLimitCollection } from "../../../db";
 
-export const countMiddleware = async (req: Request, res: Response, next: NextFunction) => {
+export const rateLimitMiddleware = async (req: Request, res: Response, next: NextFunction) => {
   try {
     const data = {
       IP: String(req.ip),
