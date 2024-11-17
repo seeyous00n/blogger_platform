@@ -1,5 +1,4 @@
-import { rateLimitCollection, sessionCollection } from "../../db";
-import { add } from "date-fns";
+import { sessionCollection } from "../../db";
 
 const oneSecond = 1000;
 
@@ -21,7 +20,7 @@ class CustomCronService {
     }
   }
 
-  public deleteExpiredSessions = async () => {
+  public deleteExpiredSessions = async (): Promise<void> => {
     await this.deleteSessions();
 
     if (Math.trunc(new Date().getTime() / oneSecond) > this.stopCron) {
@@ -29,26 +28,6 @@ class CustomCronService {
     }
 
     setTimeout(this.deleteExpiredSessions, this.repeatTime);
-  };
-
-  private async deleteRateLimit(): Promise<void> {
-    try {
-      await rateLimitCollection.deleteMany({
-        date: { $lt: add(new Date(), { seconds: -20 }) }
-      });
-    } catch (e) {
-      console.log('cron error');
-    }
-  }
-
-  public deleteOldRateLimit = async () => {
-    await this.deleteRateLimit();
-
-    if (Math.trunc(new Date().getTime() / oneSecond) > this.stopCron) {
-      return;
-    }
-
-    setTimeout(this.deleteOldRateLimit, this.repeatTime);
   };
 }
 

@@ -26,8 +26,5 @@ app.use('*', (req: Request, res: Response) => {
   res.status(HTTP_STATUS_CODE.NOT_FOUND_404).send(HTTP_MESSAGE.NOT_FOUND);
 });
 
-const cronSession = new CustomCronService(15);
+const cronSession = new CustomCronService(60);
 cronSession.deleteExpiredSessions().then();
-
-const cronLRateLimit = new CustomCronService(15);
-cronLRateLimit.deleteOldRateLimit().then();
