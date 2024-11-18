@@ -52,8 +52,6 @@ class UserRepository {
   async findByLoginOrEmail(data: AuthType): Promise<WithId<UserEntityType> | null> {
     return await usersCollection.findOne({ $or: [{ email: data.loginOrEmail }, { login: data.loginOrEmail }] });
   }
-
-
 }
 
 export const userRepository = new UserRepository();
