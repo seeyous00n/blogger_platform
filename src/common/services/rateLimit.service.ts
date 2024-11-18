@@ -1,6 +1,8 @@
 import { rateLimitCollection } from "../../db";
-import { GetVisitorsType, RateLimitType } from "../middlewares/rateLimit/types";
+import { GetVisitorsType, RateLimitType } from "../middlewares/rateLimit/rateLimit.types";
 import { add } from "date-fns";
+
+const SECONDS_AGO = -10;
 
 class RateLimitService {
   async addVisitor(data: RateLimitType) {
@@ -15,7 +17,7 @@ class RateLimitService {
     return await rateLimitCollection.countDocuments({
       IP: data.IP,
       URL: data.URL,
-      date: { $gte: add(new Date(), { seconds: -10 }) }
+      date: { $gte: add(new Date(), { seconds: SECONDS_AGO }) }
     });
   }
 }

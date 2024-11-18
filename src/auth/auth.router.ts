@@ -8,7 +8,7 @@ import {
   registrationDataValidation,
 } from '../common/validation/data.validation';
 import { authJwtRefreshGuard } from "../common/middlewares/guards/authJwtRefresh.guard";
-import { rateLimitMiddleware } from "../common/middlewares/rateLimit/rateLimitMiddleware";
+import { rateLimitMiddleware } from "../common/types/rateLimitMiddleware";
 
 const authRouter = Router();
 

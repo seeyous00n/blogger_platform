@@ -1,13 +1,11 @@
 import { sessionCollection } from "../../db";
 
-const oneSecond = 1000;
-
 class CronService {
   private readonly repeatTime: number;
-  private readonly stopCron: number = Math.trunc(new Date().getTime() / oneSecond) + 60 * 5;
+  private readonly stopCron: number = Math.trunc(new Date().getTime() / 1000) + 60 * 5;
 
   constructor(timeInSeconds: number) {
-    this.repeatTime = timeInSeconds * oneSecond;
+    this.repeatTime = timeInSeconds * 1000;
   }
 
   private async deleteSessions(): Promise<void> {
@@ -16,14 +14,14 @@ class CronService {
         tokenExp: { $lt: Math.trunc(new Date().getTime() / 1000) }
       });
     } catch (e) {
-      console.log('cron error');
+      console.error('cron error');
     }
   }
 
   public deleteExpiredSessions = async (): Promise<void> => {
     await this.deleteSessions();
 
-    if (Math.trunc(new Date().getTime() / oneSecond) > this.stopCron) {
+    if (Math.trunc(new Date().getTime() / 1000) > this.stopCron) {
       return;
     }
 
