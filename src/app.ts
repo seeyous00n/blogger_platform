@@ -8,7 +8,7 @@ import { authRouter } from './auth/auth.router';
 import { commentsRouter } from './comments/comments.router';
 import cookieParser from "cookie-parser";
 import { securityRouter } from "./security/security.router";
-import { CustomCronService } from "./common/services/customCron.service";
+import { CronService } from "./common/services/cron.service";
 
 export const app = express();
 
@@ -26,5 +26,5 @@ app.use('*', (req: Request, res: Response) => {
   res.status(HTTP_STATUS_CODE.NOT_FOUND_404).send(HTTP_MESSAGE.NOT_FOUND);
 });
 
-const cronSession = new CustomCronService(60);
+const cronSession = new CronService(60);
 cronSession.deleteExpiredSessions().then();

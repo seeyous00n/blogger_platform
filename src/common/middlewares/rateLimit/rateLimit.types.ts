@@ -3,3 +3,5 @@ export type RateLimitType = {
   URL: string,
   date: Date
 }
+
+export type GetVisitorsType = Omit<RateLimitType, 'date'>

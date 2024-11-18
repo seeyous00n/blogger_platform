@@ -2,7 +2,7 @@ import { sessionCollection } from "../../db";
 
 const oneSecond = 1000;
 
-class CustomCronService {
+class CronService {
   private readonly repeatTime: number;
   private readonly stopCron: number = Math.trunc(new Date().getTime() / oneSecond) + 60 * 5;
 
@@ -31,4 +31,4 @@ class CustomCronService {
   };
 }
 
-export { CustomCronService };
+export { CronService };
