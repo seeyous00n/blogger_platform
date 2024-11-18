@@ -1,17 +1,16 @@
 import { sessionCollection } from "../db";
-import { SessionType } from "./types/token.type";
-import { InsertOneResult, WithId } from "mongodb";
+import { SessionType, UpdateSessionType } from "./types/token.type";
+import { InsertOneResult, ObjectId, WithId } from "mongodb";
 
 class AuthRepository {
   async createByData(data: SessionType): Promise<InsertOneResult<SessionType>> {
     return await sessionCollection.insertOne(data);
   };
 
-  async updateTokenById(id: object, tokenIat: number): Promise<void> {
-    const lastActiveDate = new Date(tokenIat * 1000);
+  async updateSessionById(id: ObjectId, data: UpdateSessionType): Promise<void> {
     await sessionCollection.updateOne(
       { _id: id },
-      { $set: { tokenIat: tokenIat, lastActiveDate: lastActiveDate } },
+      { $set: { tokenIat: data.tokenIat, lastActiveDate: data.lastActiveDate } }
     );
   }
 

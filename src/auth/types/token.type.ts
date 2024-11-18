@@ -20,6 +20,8 @@ export type CreateTokensType = {
   title: string
 }
 
+export type UpdateSessionType = { tokenIat: number, lastActiveDate: Date }
+
 export const TOKENS_NAME = {
   REFRESH_TOKEN: 'refreshToken',
   ACCESS_TOKEN: 'accessToken',

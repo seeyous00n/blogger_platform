@@ -101,7 +101,9 @@ class AuthService {
     const { userId, deviceId, iat } = tokenService.getDataToken(token);
     const result = await this.findTokenByIat(iat, deviceId);
     const tokens = tokenService.generateTokens({ userId, deviceId });
-    await authRepository.updateTokenById(result._id, tokens.iat);
+    
+    const data = { tokenIat: tokens.iat, lastActiveDate: new Date(tokens.iat * 1000) };
+    await authRepository.updateSessionById(result._id, data);
 
     return tokens;
   }
