@@ -38,7 +38,7 @@ class AuthController {
     try {
       const result = await userService.createUser(req.body);
       const user = await userService.getUserById(result.insertedId.toString());
-      // await authService.registration(req.body.email, user.emailConfirmation.confirmationCode);
+      await authService.registration(req.body.email, user.emailConfirmation.confirmationCode);
 
       res.status(HTTP_STATUS_CODE.NO_CONTENT_204).json();
     } catch (error) {
@@ -57,7 +57,7 @@ class AuthController {
 
   resendingEmail = async (req: RequestWithBody<{ email: string }>, res: Response) => {
     try {
-      // await authService.resending(req.body.email);
+      await authService.resending(req.body.email);
       res.status(HTTP_STATUS_CODE.NO_CONTENT_204).json();
     } catch (error) {
       sendError(error, res);
