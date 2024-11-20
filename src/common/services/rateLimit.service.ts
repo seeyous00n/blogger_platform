@@ -1,5 +1,5 @@
 import { rateLimitCollection } from "../../db";
-import { GetVisitorsType, RateLimitType } from "../middlewares/rateLimit/rateLimit.types";
+import { GetVisitorsType, RateLimitType } from "../types/rateLimit.types";
 import { add } from "date-fns";
 
 const SECONDS_AGO = -10;

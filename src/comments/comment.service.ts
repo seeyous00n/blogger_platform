@@ -5,6 +5,7 @@ import { CommentUpdateModel } from './models/CommentUpdate.model';
 import { CommentCreateInputModel } from './models/CommentCreateInput.model';
 import { CommentEntityType } from './types/comment.types';
 import { InsertOneResult } from 'mongodb';
+import { userRepository } from "../users/users.repository";
 
 class CommentService {
   async createComment(data: CommentCreateInputModel): Promise<InsertOneResult<CommentEntityType>> {
@@ -13,12 +14,17 @@ class CommentService {
       throw new CustomError(TYPE_ERROR.NOT_FOUND);
     }
 
+    const user = await userRepository.findById(data.userId);
+    if (!user) {
+      throw new CustomError(TYPE_ERROR.NOT_FOUND);
+    }
+
     const newComment: CommentEntityType = {
       postId: data.postId,
       content: data.comment,
       commentatorInfo: {
         userId: data.userId,
-        userLogin: 'string',
+        userLogin: user.login,
       },
       createdAt: new Date().toISOString(),
     };

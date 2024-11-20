@@ -5,7 +5,7 @@ import { PostEntityType } from './posts/types/post.types';
 import { UserEntityType } from './users/types/user.types';
 import { CommentEntityType } from './comments/types/comment.types';
 import { SessionType } from "./auth/types/token.type";
-import { RateLimitType } from "./common/middlewares/rateLimit/rateLimit.types";
+import { RateLimitType } from "./common/types/rateLimit.types";
 
 const COLLECTION_BLOGS = 'blogs';
 const COLLECTION_POSTS = 'posts';

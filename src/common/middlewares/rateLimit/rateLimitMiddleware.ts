@@ -1,6 +1,6 @@
 import { NextFunction, Request, Response } from 'express';
-import { rateLimitService } from "../services/rateLimit.service";
-import { HTTP_STATUS_CODE } from "../settings";
+import { rateLimitService } from "../../services/rateLimit.service";
+import { HTTP_STATUS_CODE } from "../../settings";
 
 const VISIT_LIMIT = 5;
 
