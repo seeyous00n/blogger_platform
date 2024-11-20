@@ -23,18 +23,19 @@ describe('/auth', async () => {
   });
 
   it('/registration, /login, /me, /delete (user)', async () => {
-    await req
+    const user =  await req
       .post(`${ROUTER_PATHS.AUTH}/registration`)
       .send(data)
       .expect(HTTP_STATUS_CODE.NO_CONTENT_204);
 
-    const user = await req
+    const users = await req
+      .set(authorized)
       .get(`${ROUTER_PATHS.USERS}/`)
       .expect(HTTP_STATUS_CODE.OK_200);
 
-    const userItem = user.body.items[0];
+    const userItem = users.body.items[0];
 
-    expect(user.body.items).toEqual([
+    expect(users.body.items).toEqual([
       {
         id: expect.any(String),
         login: data.login,
