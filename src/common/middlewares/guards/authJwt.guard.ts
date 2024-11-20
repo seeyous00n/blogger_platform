@@ -25,7 +25,7 @@ export const authJwtGuard = async (req: Request, res: Response, next: NextFuncti
     return;
   }
 
-  req.body.userId = payload.userId;
+  req.user = payload;
 
   next();
 };

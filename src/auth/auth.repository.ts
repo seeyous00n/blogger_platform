@@ -1,29 +1,27 @@
-import { tokensCollection } from "../db";
-import { TokenEntityType } from "./types/token.type";
-import { InsertOneResult, WithId } from "mongodb";
+import { sessionCollection } from "../db";
+import { SessionType, UpdateSessionType } from "./types/token.type";
+import { InsertOneResult, ObjectId, WithId } from "mongodb";
 
 class AuthRepository {
-  async createByData(data: TokenEntityType): Promise<InsertOneResult<TokenEntityType>> {
-    return await tokensCollection.insertOne(data);
+  async createByData(data: SessionType): Promise<InsertOneResult<SessionType>> {
+    return await sessionCollection.insertOne(data);
   };
 
-  async updateTokenById(id: object, tokenIat: number): Promise<void> {
-    await tokensCollection.updateOne(
+  async updateSessionById(id: ObjectId, data: UpdateSessionType): Promise<void> {
+    await sessionCollection.updateOne(
       { _id: id },
-      { $set: { tokenIat: tokenIat } },
+      { $set: { tokenIat: data.tokenIat, lastActiveDate: data.lastActiveDate } }
     );
   }
 
   async deleteById(id: Object): Promise<void> {
-    await tokensCollection.deleteOne({ _id: id });
+    await sessionCollection.deleteOne({ _id: id });
   }
 
-  async findByIat(iat: number, userId: string): Promise<WithId<TokenEntityType> | null> {
-    return await tokensCollection.findOne({
-      $and: [
-        { userId: userId },
-        { tokenIat: iat }
-      ]
+  async findByIat(iat: number, deviceId: string): Promise<WithId<SessionType> | null> {
+    return await sessionCollection.findOne({
+      deviceId: deviceId,
+      tokenIat: iat
     });
   }
 }

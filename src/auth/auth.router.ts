@@ -8,14 +8,15 @@ import {
   registrationDataValidation,
 } from '../common/validation/data.validation';
 import { authJwtRefreshGuard } from "../common/middlewares/guards/authJwtRefresh.guard";
+import { rateLimitMiddleware } from "../common/middlewares/rateLimit/rateLimitMiddleware";
 
 const authRouter = Router();
 
-authRouter.post('/login', authDataValidation, authController.authLoginUser);
+authRouter.post('/login', rateLimitMiddleware, authDataValidation, authController.authLoginUser);
 authRouter.get('/me', authJwtGuard, authController.getMe);
-authRouter.post('/registration', registrationDataValidation, authController.registration);
-authRouter.post('/registration-confirmation', confirmationCodeValidator, authController.confirmationEmail);
-authRouter.post('/registration-email-resending', emailValidator, authController.resendingEmail);
+authRouter.post('/registration', rateLimitMiddleware, registrationDataValidation, authController.registration);
+authRouter.post('/registration-confirmation', rateLimitMiddleware, confirmationCodeValidator, authController.confirmationEmail);
+authRouter.post('/registration-email-resending', rateLimitMiddleware, emailValidator, authController.resendingEmail);
 authRouter.post('/refresh-token', authJwtRefreshGuard, authController.refreshToken);
 authRouter.post('/logout', authJwtRefreshGuard, authController.logout);
 

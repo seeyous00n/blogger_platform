@@ -6,7 +6,7 @@ import { RequestWithParams, RequestWithParamsAndBody } from '../common/types/typ
 import { UriParamsModel } from '../common/models/uriParams.model';
 import { commentService } from './comment.service';
 import { CommentInputUpdateModel } from './models/CommentInputUpdate.model';
-import { DataInTokenType } from '../auth/types/auth.type';
+import { DataInAccessTokenType } from '../auth/types/auth.type';
 
 class CommentsController {
   getComment = async (req: RequestWithParams<UriParamsModel>, res: Response) => {
@@ -25,16 +25,16 @@ class CommentsController {
 
   updateComment = async (req: RequestWithParamsAndBody<UriParamsModel, CommentInputUpdateModel>, res: Response) => {
     try {
-      await commentService.updateCommentById(req.params.id, { content: req.body.content }, req.body.userId);
+      await commentService.updateCommentById(req.params.id, { content: req.body.content }, req.user.userId);
       res.status(HTTP_STATUS_CODE.NO_CONTENT_204).json();
     } catch (error) {
       sendError(error, res);
     }
   };
 
-  deleteComment = async (req: RequestWithParamsAndBody<UriParamsModel, DataInTokenType>, res: Response) => {
+  deleteComment = async (req: RequestWithParamsAndBody<UriParamsModel, DataInAccessTokenType>, res: Response) => {
     try {
-      await commentService.deleteCommentById(req.params.id, req.body.userId);
+      await commentService.deleteCommentById(req.params.id, req.user.userId);
       res.status(HTTP_STATUS_CODE.NO_CONTENT_204).json();
     } catch (error) {
       sendError(error, res);

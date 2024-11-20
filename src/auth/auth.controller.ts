@@ -1,7 +1,7 @@
 import { Response, Request } from 'express';
 import { authService } from './auth.service';
 import { RequestWithBody } from '../common/types/types';
-import { AuthType, DataInTokenType } from './types/auth.type';
+import { AuthType, DataInAccessTokenType } from './types/auth.type';
 import { sendError } from '../common/errorHandler';
 import { HTTP_STATUS_CODE } from '../common/settings';
 import { usersQueryRepository } from '../users/usersQuery.repository';
@@ -15,7 +15,8 @@ class AuthController {
   authLoginUser = async (req: RequestWithBody<AuthType>, res: Response) => {
     try {
       const userId = await authService.checkCredentials(req.body);
-      const { accessToken, refreshToken } = await authService.createTokens(userId);
+      const data = { userId, ip: req.ip || '', title: req.headers['user-agent'] || '' };
+      const { accessToken, refreshToken } = await authService.createTokens(data);
 
       res.cookie(TOKENS_NAME.REFRESH_TOKEN, refreshToken, cookieOptions.getOptionsForRefreshToken());
       res.status(HTTP_STATUS_CODE.OK_200).json({ [TOKENS_NAME.ACCESS_TOKEN]: accessToken });
@@ -24,9 +25,9 @@ class AuthController {
     }
   };
 
-  getMe = async (req: RequestWithBody<DataInTokenType>, res: Response) => {
+  getMe = async (req: RequestWithBody<DataInAccessTokenType>, res: Response) => {
     try {
-      const result = await usersQueryRepository.findAuthUserById(req.body.userId);
+      const result = await usersQueryRepository.findAuthUserById(req.user.userId);
       res.status(HTTP_STATUS_CODE.OK_200).json(result);
     } catch (error) {
       sendError(error, res);
@@ -63,7 +64,7 @@ class AuthController {
     }
   };
 
-  refreshToken = async (req: RequestWithBody<DataInTokenType>, res: Response) => {
+  refreshToken = async (req: RequestWithBody<DataInAccessTokenType>, res: Response) => {
     try {
       const token: string = req.cookies.refreshToken;
       const { accessToken, refreshToken } = await authService.getNewPairOfTokens(token);
@@ -78,8 +79,8 @@ class AuthController {
   logout = async (req: Request, res: Response) => {
     try {
       const token: string = req.cookies.refreshToken;
-      const { userId, iat } = tokenService.getDataToken(token);
-      await authService.deleteToken(iat, userId);
+      const { deviceId, iat } = tokenService.getDataToken(token);
+      await authService.deleteToken(iat, deviceId);
 
       res.clearCookie(TOKENS_NAME.REFRESH_TOKEN);
       res.status(HTTP_STATUS_CODE.NO_CONTENT_204).json();

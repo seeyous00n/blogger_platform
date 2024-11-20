@@ -23,6 +23,7 @@ export const ROUTER_PATHS = {
   AUTH: '/auth',
   USERS: '/users',
   COMMENTS: '/comments',
+  SECURITY: '/security',
   TESTING: '/testing/all-data',
 };
 
@@ -35,6 +36,7 @@ export const HTTP_STATUS_CODE = {
   'SERVER_ERROR_500': 500,
   'UNAUTHORIZED_401': 401,
   'FORBIDDEN_403': 403,
+  'TOO_MANY_REQUESTS_429': 429,
 };
 
 export const HTTP_MESSAGE = {

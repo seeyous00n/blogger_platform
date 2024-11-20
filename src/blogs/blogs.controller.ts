@@ -18,6 +18,7 @@ import { PostsViewDto } from '../posts/dto/postsView.dto';
 import { BlogsViewDto } from './dto/blogsView.dto';
 import { sendError } from '../common/errorHandler';
 import { postService } from '../posts/post.service';
+import { query } from "express-validator";
 
 class BlogsController {
   getBlogs = async (req: RequestWithQuery<UriParamsModel, queryStringType>, res: Response) => {
