@@ -8,7 +8,7 @@ import { InsertOneResult } from 'mongodb';
 import { userRepository } from "../users/users.repository";
 
 class CommentService {
-  async createComment(data: CommentCreateInputModel): Promise<InsertOneResult<CommentEntityType>> {
+  async createComment(data: CommentCreateInputModel) {
     const post = await postsRepository.findById(data.postId);
     if (!post) {
       throw new CustomError(TYPE_ERROR.NOT_FOUND);

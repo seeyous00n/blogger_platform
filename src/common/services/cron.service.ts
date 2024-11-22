@@ -1,4 +1,4 @@
-import { sessionCollection } from "../../db";
+import { SessionModel } from "../db/schemes/sessionSchema";
 
 class CronService {
   private readonly repeatTime: number;
@@ -10,7 +10,7 @@ class CronService {
 
   private async deleteSessions(): Promise<void> {
     try {
-      await sessionCollection.deleteMany({
+      await SessionModel.deleteMany({
         tokenExp: { $lt: Math.trunc(new Date().getTime() / 1000) }
       });
     } catch (e) {

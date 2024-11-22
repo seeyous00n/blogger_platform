@@ -45,7 +45,7 @@ class PostsController {
   creatPost = async (req: RequestWithBody<PostCreateModel>, res: Response<PostsViewDto>) => {
     try {
       const postId = await postService.createPost(req.body);
-      const result = await postsQueryRepository.findById(postId.insertedId.toString()) as PostsViewDto;
+      const result = await postsQueryRepository.findById(postId._id.toString()) as PostsViewDto;
       res.status(HTTP_STATUS_CODE.CREATED_201).json(result);
     } catch (error) {
       sendError(error, res);
@@ -77,7 +77,7 @@ class PostsController {
         userId: req.user.userId,
         comment: req.body.content
       });
-      const result = await commentQueryRepository.findCommentById(commentId.insertedId.toString());
+      const result = await commentQueryRepository.findCommentById(commentId._id.toString());
       res.status(HTTP_STATUS_CODE.CREATED_201).json(result);
     } catch (error) {
       sendError(error, res);

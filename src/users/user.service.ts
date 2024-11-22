@@ -19,7 +19,7 @@ class UserService {
     return result;
   }
 
-  async createUser(data: UserCreateInputModel): Promise<InsertOneResult<UserEntityType>> {
+  async createUser(data: UserCreateInputModel) {
     await this.checkUniqueEmailAndLogin(data);
     const hash = await generatePasswordHash(data.password);
 

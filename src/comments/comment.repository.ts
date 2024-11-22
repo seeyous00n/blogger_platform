@@ -1,31 +1,32 @@
-import { commentsCollection } from '../db';
 import { InsertOneResult, ObjectId, UpdateResult, WithId } from 'mongodb';
 import { isObjectId } from '../common/adapters/mongodb.service';
 import { CommentEntityType } from './types/comment.types';
+import { CommentModel } from "../common/db/schemes/commentSchema";
+import { UpdateWriteOpResult } from "mongoose";
 
 class CommentRepository {
   async findById(id: string): Promise<WithId<CommentEntityType> | null> {
     isObjectId(id);
-    return await commentsCollection.findOne({ _id: new ObjectId(id) });
+    return CommentModel.findOne({ _id: new ObjectId(id) }).lean();
   }
 
   async findByIdAndUserId(id: string, userId: string): Promise<WithId<CommentEntityType> | null> {
-    return await commentsCollection.findOne({ _id: new ObjectId(id), 'commentatorInfo.userId': userId });
+    return CommentModel.findOne({ _id: new ObjectId(id), 'commentatorInfo.userId': userId }).lean();
   }
 
-  async createByData(data: CommentEntityType): Promise<InsertOneResult<CommentEntityType>> {
-    return await commentsCollection.insertOne(data);
+  async createByData(data: CommentEntityType) {
+    return await CommentModel.create(data);
   };
 
-  async updateById(id: string, data: { content: string }): Promise<UpdateResult<CommentEntityType>> {
-    return await commentsCollection.updateOne(
+  async updateById(id: string, data: { content: string }): Promise<void> {
+    await CommentModel.updateOne(
       { _id: new ObjectId(id) },
       { $set: data },
     );
   }
 
   async deleteById(id: string): Promise<void> {
-    await commentsCollection.deleteOne({ _id: new ObjectId(id) });
+    await CommentModel.deleteOne({ _id: new ObjectId(id) });
   }
 }
 

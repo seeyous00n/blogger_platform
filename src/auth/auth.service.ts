@@ -23,7 +23,7 @@ class AuthService {
 
   async registration(email: string, code: string): Promise<void> {
     const link = `${SETTINGS.API_URL}?code=${code}`;
-    await nodemailerService.sendEmail(email, link);
+    // await nodemailerService.sendEmail(email, link);
     // nodemailerService.sendEmail(email, link).catch((error) => {});
   }
 
@@ -73,7 +73,7 @@ class AuthService {
     const newCode = uuidv4();
     await userRepository.updateConfirmationCode(userData._id, newCode);
     const link = `${SETTINGS.API_URL}?code=${newCode}`;
-    await nodemailerService.sendEmail(email, link, TYPE_EMAIL.RESEND_CODE);
+    // await nodemailerService.sendEmail(email, link, TYPE_EMAIL.RESEND_CODE);
   }
 
   async createTokens(data: CreateTokensType): Promise<PairTokensType> {

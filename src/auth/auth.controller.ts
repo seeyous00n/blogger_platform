@@ -37,7 +37,7 @@ class AuthController {
   registration = async (req: RequestWithBody<UserCreateModel>, res: Response) => {
     try {
       const result = await userService.createUser(req.body);
-      const user = await userService.getUserById(result.insertedId.toString());
+      const user = await userService.getUserById(result._id.toString());
       await authService.registration(req.body.email, user.emailConfirmation.confirmationCode);
 
       res.status(HTTP_STATUS_CODE.NO_CONTENT_204).json();

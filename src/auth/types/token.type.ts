@@ -1,7 +1,7 @@
 export type SessionType = {
   userId: string,
   tokenIat: number,
-  tokenExp: number
+  tokenExp: number,
   ip: string,
   title: string,
   deviceId: string,

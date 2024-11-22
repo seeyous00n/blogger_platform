@@ -8,7 +8,7 @@ import { WithId } from "mongodb";
 class SecurityService {
   async deleteDevice(token: string, deviceId: string): Promise<void> {
     const { userId } = tokenService.getDataToken(token);
-    const { device } = await this.checkOwnerDevice({ deviceId: deviceId, userId: userId });
+    const device = await this.checkOwnerDevice({ deviceId: deviceId, userId: userId });
 
     await securityRepository.deleteById(device._id.toString());
   }
@@ -18,7 +18,7 @@ class SecurityService {
     await securityRepository.deleteAllExceptCurrent({ deviceId, userId });
   }
 
-  async checkOwnerDevice(data: DeviceAndUserType): Promise<{device: WithId<SessionType>}> {
+  async checkOwnerDevice(data: DeviceAndUserType): Promise<WithId<SessionType>> {
     const isDevice = await securityRepository.findByIat(data.deviceId);
     if (!isDevice) {
       throw new CustomError(TYPE_ERROR.NOT_FOUND);
@@ -29,7 +29,7 @@ class SecurityService {
       throw new CustomError(TYPE_ERROR.FORBIDDEN_ERROR);
     }
 
-    return { device };
+    return device;
   }
 }
 

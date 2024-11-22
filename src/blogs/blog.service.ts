@@ -2,8 +2,6 @@ import { blogsRepository } from './blogs.repository';
 import { BlogCreateModel } from './models/blogCreate.model';
 import { BlogUpdateModal } from './models/blogUpdate.modal';
 import { CustomError, TYPE_ERROR } from '../common/errorHandler';
-import { InsertOneResult } from 'mongodb';
-import { BlogEntityType } from './types/blog.types';
 
 class BlogService {
   async findBlogById(id: string): Promise<string> {
@@ -15,7 +13,7 @@ class BlogService {
     return result._id.toString();
   }
 
-  async createBlog(blog: BlogCreateModel): Promise<InsertOneResult<BlogEntityType>> {
+  async createBlog(blog: BlogCreateModel) {
     const newBlog = {
       ...blog, isMembership: false, createdAt: new Date().toISOString(),
     };

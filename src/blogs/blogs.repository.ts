@@ -1,28 +1,28 @@
 import { BlogEntityType } from './types/blog.types';
 import { BlogUpdateModal } from './models/blogUpdate.modal';
-import { blogsCollection } from '../db';
-import { InsertOneResult, ObjectId, WithId } from 'mongodb';
+import { ObjectId, WithId } from 'mongodb';
 import { isObjectId } from '../common/adapters/mongodb.service';
+import { BlogModel } from "../common/db/schemes/blogSchema";
 
 class BlogsRepository {
   async findById(id: string): Promise<WithId<BlogEntityType> | null> {
     isObjectId(id);
-    return await blogsCollection.findOne({ _id: new ObjectId(id) });
+    return BlogModel.findOne({ _id: new ObjectId(id) }).lean();
   }
 
-  async createByData(data: BlogEntityType): Promise<InsertOneResult<BlogEntityType>> {
-    return await blogsCollection.insertOne(data);
+  async createByData(data: BlogEntityType) {
+    return await BlogModel.create(data);
   }
 
   async updateById(id: string, data: BlogUpdateModal): Promise<void> {
-    await blogsCollection.updateOne(
+    await BlogModel.updateOne(
       { _id: new ObjectId(id) },
       { $set: data },
     );
   }
 
   async deleteById(id: string): Promise<void> {
-    await blogsCollection.deleteOne({ _id: new ObjectId(id) });
+    await BlogModel.deleteOne({ _id: new ObjectId(id) });
   }
 }
 
