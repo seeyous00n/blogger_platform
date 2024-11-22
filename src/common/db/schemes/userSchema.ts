@@ -6,7 +6,11 @@ const COLLECTION_USERS = 'users';
 const userSchema = new mongoose.Schema<UserEntityType>({
   login: String,
   email: String,
-  passwordHash: String,
+  password: {
+    hash: String,
+    recovery: String,
+    expirationDate: Date
+  },
   createdAt: String,
   emailConfirmation: {
     confirmationCode: String,

@@ -39,6 +39,9 @@ class NodemailerService {
       case TYPE_EMAIL.RESEND_CODE :
         registrationHtmlTemplate = `<h1>Hi! Resend CODE</h1><div><a href="${link}">Confirm</a></div>`;
         break;
+      case TYPE_EMAIL.RECOVERY_CODE :
+        registrationHtmlTemplate = `<h1>Hi! Recovery CODE</h1><div><a href="${link}">Confirm</a></div>`;
+        break;
       default:
         registrationHtmlTemplate = '<h1>Ups... </div>';
     }

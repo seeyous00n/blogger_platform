@@ -3,7 +3,11 @@ import { ObjectId } from 'mongodb';
 export type UserEntityType = {
   login: string,
   email: string,
-  passwordHash: string,
+  password: {
+    hash: string,
+    recovery: string,
+    expirationDate: Date | null
+  },
   createdAt: string,
   emailConfirmation: {
     confirmationCode: string,

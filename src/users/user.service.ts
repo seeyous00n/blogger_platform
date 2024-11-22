@@ -6,7 +6,7 @@ import { generatePasswordHash } from '../common/adapters/bcrypt.service';
 import { v4 as uuidv4 } from 'uuid';
 import { add } from 'date-fns';
 import { UserCreateInputModel } from './models/userCreateInput.model';
-import { InsertOneResult, ObjectId, WithId } from 'mongodb';
+import { ObjectId, WithId } from 'mongodb';
 import { ERROR } from "../auth/types/auth.type";
 
 class UserService {
@@ -26,7 +26,11 @@ class UserService {
     const newUser: UserEntityType = {
       login: data.login,
       email: data.email,
-      passwordHash: hash,
+      password: {
+        hash: hash,
+        recovery: '',
+        expirationDate: null,
+      },
       createdAt: new Date().toISOString(),
       emailConfirmation: {
         confirmationCode: uuidv4(),
@@ -56,13 +60,13 @@ class UserService {
 
   async checkUniqueEmailAndLogin(data: UserCreateModel): Promise<void> {
     const userData = await userRepository.getUserByEmailOrLogin(data);
-    if (userData.email) {
+    if (userData && userData.email === data.email) {
       throw new CustomError(TYPE_ERROR.VALIDATION_ERROR, [{
         message: ERROR.MESSAGE.UNIQUE_EMAIL_AND_LOGIN,
         field: ERROR.FIELD.EMAIL
       }]);
     }
-    if (userData.login) {
+    if (userData && userData.login === data.login) {
       throw new CustomError(TYPE_ERROR.VALIDATION_ERROR, [{
         message: ERROR.MESSAGE.UNIQUE_EMAIL_AND_LOGIN,
         field: ERROR.FIELD.LOGIN

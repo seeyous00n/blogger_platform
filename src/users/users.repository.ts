@@ -1,9 +1,8 @@
 import { UserEntityType } from './types/user.types';
-import { InsertOneResult, ObjectId, WithId } from 'mongodb';
+import { ObjectId, WithId } from 'mongodb';
 import { UserCreateModel } from './models/userCreate.model';
 import { isObjectId } from '../common/adapters/mongodb.service';
-import { AuthType } from '../auth/types/auth.type';
-import { UserByEmailOrLogin } from './models/userByEmailOrLogin.model';
+import { AuthType, updateRecoveryCodeType } from '../auth/types/auth.type';
 import { UserModel } from "../common/db/schemes/userSchema";
 
 class UserRepository {
@@ -20,11 +19,8 @@ class UserRepository {
     await UserModel.deleteOne({ _id: new ObjectId(id) });
   }
 
-  async getUserByEmailOrLogin(data: UserCreateModel): Promise<UserByEmailOrLogin> {
-    const email = await UserModel.findOne({ email: data.email }).lean();
-    const login = await UserModel.findOne({ login: data.login }).lean();
-
-    return { email, login };
+  async getUserByEmailOrLogin(data: UserCreateModel): Promise<WithId<UserEntityType> | null> {
+    return UserModel.findOne({ $or: [{ email: data.email }, { login: data.login }] }).lean();
   }
 
   async findByConfirmationCode(code: string): Promise<WithId<UserEntityType> | null> {
@@ -52,6 +48,27 @@ class UserRepository {
   async findByLoginOrEmail(data: AuthType): Promise<WithId<UserEntityType> | null> {
     return UserModel.findOne({ $or: [{ email: data.loginOrEmail }, { login: data.loginOrEmail }] }).lean();
   }
+
+  async updateRecoveryCode(data: updateRecoveryCodeType) {
+    await UserModel.updateOne({ _id: data.id }, {
+      $set: {
+        'password.recovery': data.code,
+        'password.expirationDate': data.expirationDate
+      }
+    },);
+  }
+
+  async findByRecoveryCode(code: string): Promise<WithId<UserEntityType> | null> {
+    return UserModel.findOne({ 'password.recovery': code }).lean();
+  }
+
+  async updatePassword(data: { id: ObjectId, hash: string }): Promise<void> {
+    await UserModel.updateOne(
+      { _id: data.id },
+      { $set: { 'password.hash': data.hash } },
+    );
+  }
+
 }
 
 export const userRepository = new UserRepository();

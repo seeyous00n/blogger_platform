@@ -9,22 +9,23 @@ import { tokenService } from "../common/services/token.service";
 import { authRepository } from "./auth.repository";
 import { WithId } from "mongodb";
 import { CreateTokensType, PairTokensType, SessionType } from "./types/token.type";
+import { add } from "date-fns";
+import { generatePasswordHash } from "../common/adapters/bcrypt.service";
 
 class AuthService {
   async checkCredentials(data: AuthType): Promise<string> {
     const result = await userRepository.findByLoginOrEmail(data);
     if (!result) throw new CustomError(TYPE_ERROR.AUTH_ERROR);
 
-    const isAuth = await bcrypt.compare(data.password, result.passwordHash);
+    const isAuth = await bcrypt.compare(data.password, result.password.hash);
     if (!isAuth) throw new CustomError(TYPE_ERROR.AUTH_ERROR);
 
     return result._id.toString();
   }
 
   async registration(email: string, code: string): Promise<void> {
-    const link = `${SETTINGS.API_URL}?code=${code}`;
-    // await nodemailerService.sendEmail(email, link);
-    // nodemailerService.sendEmail(email, link).catch((error) => {});
+    const link = `${SETTINGS.API_URL}/auth/registration-confirmation?code=${code}`;
+    nodemailerService.sendEmail(email, link).catch();
   }
 
   async confirmation(code: string): Promise<void> {
@@ -72,8 +73,8 @@ class AuthService {
 
     const newCode = uuidv4();
     await userRepository.updateConfirmationCode(userData._id, newCode);
-    const link = `${SETTINGS.API_URL}?code=${newCode}`;
-    // await nodemailerService.sendEmail(email, link, TYPE_EMAIL.RESEND_CODE);
+    const link = `${SETTINGS.API_URL}/auth/registration-confirmation?code=${newCode}`;
+    nodemailerService.sendEmail(email, link, TYPE_EMAIL.RESEND_CODE).catch();
   }
 
   async createTokens(data: CreateTokensType): Promise<PairTokensType> {
@@ -101,7 +102,7 @@ class AuthService {
     const { userId, deviceId, iat } = tokenService.getDataToken(token);
     const result = await this.findTokenByIat(iat, deviceId);
     const tokens = tokenService.generateTokens({ userId, deviceId });
-    
+
     const data = { tokenIat: tokens.iat, lastActiveDate: new Date(tokens.iat * 1000) };
     await authRepository.updateSessionById(result._id, data);
 
@@ -120,6 +121,49 @@ class AuthService {
     }
 
     return result;
+  }
+
+  async recovery(email: string) {
+    const result = await userRepository.findByEmail(email);
+    if (!result) {
+      return;
+    }
+
+    const code = uuidv4();
+    const data = {
+      id: result._id,
+      code,
+      expirationDate: add(new Date(), { hours: 1 }),
+    };
+
+    await userRepository.updateRecoveryCode(data);
+
+    const link = `${SETTINGS.API_URL}/auth/password-recovery?recoveryCode=${code}`;
+    nodemailerService.sendEmail(email, link, TYPE_EMAIL.RECOVERY_CODE).catch();
+  }
+
+  async newPassword(code: string, password: string) {
+    const userData = await userRepository.findByRecoveryCode(code);
+    if (!userData) {
+      throw new CustomError(TYPE_ERROR.VALIDATION_ERROR, [{
+        message: ERROR.MESSAGE.INCORRECT_RECOVERY_CODE,
+        field: ERROR.FIELD.RECOVERY_CODE,
+      }]);
+    }
+
+    if (userData.password.expirationDate && userData.password.expirationDate < new Date()) {
+      throw new CustomError(TYPE_ERROR.VALIDATION_ERROR, [{
+        message: ERROR.MESSAGE.EXPIRATION_RECOVERY_CODE,
+        field: ERROR.FIELD.RECOVERY_CODE,
+      }]);
+    }
+
+    const data = {
+      id: userData._id,
+      hash: await generatePasswordHash(password),
+    };
+
+    await userRepository.updatePassword(data);
   }
 }
 
