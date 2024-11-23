@@ -23,7 +23,6 @@ export const rateLimitMiddleware = async (req: Request, res: Response, next: Nex
       res.status(HTTP_STATUS_CODE.TOO_MANY_REQUESTS_429).json();
       return;
     }
-
   } catch (e: any) {
     console.log('ERROR', e.message);
   }

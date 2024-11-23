@@ -92,6 +92,7 @@ class BlogsController {
     try {
       const blogId = await blogService.findBlogById(req.params.id);
       const result = await postsQueryRepository.findPosts(req.query, blogId);
+
       res.status(HTTP_STATUS_CODE.OK_200).json(result);
     } catch (error) {
       sendError(error, res);

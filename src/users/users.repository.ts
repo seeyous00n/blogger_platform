@@ -49,7 +49,7 @@ class UserRepository {
     return UserModel.findOne({ $or: [{ email: data.loginOrEmail }, { login: data.loginOrEmail }] }).lean();
   }
 
-  async updateRecoveryCode(data: updateRecoveryCodeType) {
+  async updateRecoveryCode(data: updateRecoveryCodeType): Promise<void> {
     await UserModel.updateOne({ _id: data.id }, {
       $set: {
         'password.recovery': data.code,

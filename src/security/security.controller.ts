@@ -1,4 +1,4 @@
-import { Request, Response, NextFunction } from "express";
+import { Request, Response } from "express";
 import { securityQueryRepository } from "./securityQuery.repository";
 import { HTTP_STATUS_CODE } from "../common/settings";
 import { securityService } from "./security.service";
@@ -11,6 +11,7 @@ class SecurityController {
       const token: string = req.cookies.refreshToken;
       const { userId } = tokenService.getDataToken(token);
       const result = await securityQueryRepository.getDevises(userId);
+
       res.status(HTTP_STATUS_CODE.OK_200).json(result);
     } catch (error) {
       sendError(error, res);

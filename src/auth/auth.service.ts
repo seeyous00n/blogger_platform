@@ -123,7 +123,7 @@ class AuthService {
     return result;
   }
 
-  async recovery(email: string) {
+  async recovery(email: string): Promise<void> {
     const result = await userRepository.findByEmail(email);
     if (!result) {
       return;
@@ -142,7 +142,7 @@ class AuthService {
     nodemailerService.sendEmail(email, link, TYPE_EMAIL.RECOVERY_CODE).catch();
   }
 
-  async newPassword(code: string, password: string) {
+  async newPassword(code: string, password: string): Promise<void> {
     const userData = await userRepository.findByRecoveryCode(code);
     if (!userData) {
       throw new CustomError(TYPE_ERROR.VALIDATION_ERROR, [{

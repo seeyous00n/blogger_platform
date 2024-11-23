@@ -1,8 +1,7 @@
-import { InsertOneResult, ObjectId, UpdateResult, WithId } from 'mongodb';
+import { ObjectId, WithId } from 'mongodb';
 import { isObjectId } from '../common/adapters/mongodb.service';
 import { CommentEntityType } from './types/comment.types';
 import { CommentModel } from "../common/db/schemes/commentSchema";
-import { UpdateWriteOpResult } from "mongoose";
 
 class CommentRepository {
   async findById(id: string): Promise<WithId<CommentEntityType> | null> {

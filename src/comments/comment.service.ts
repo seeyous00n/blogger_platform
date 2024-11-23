@@ -4,7 +4,6 @@ import { commentRepository } from './comment.repository';
 import { CommentUpdateModel } from './models/CommentUpdate.model';
 import { CommentCreateInputModel } from './models/CommentCreateInput.model';
 import { CommentEntityType } from './types/comment.types';
-import { InsertOneResult } from 'mongodb';
 import { userRepository } from "../users/users.repository";
 
 class CommentService {
