@@ -1,4 +1,5 @@
 import { ObjectId } from 'mongodb';
+import { UserCreateInputModel } from "../models/userCreateInput.model";
 
 export type UserEntityType = {
   login: string,
@@ -25,3 +26,5 @@ export type UserViewAuthType = {
   login: string,
   email: string,
 }
+
+export type CreateUserDtoType = Omit<UserCreateInputModel, 'password'> & { hash: string }
