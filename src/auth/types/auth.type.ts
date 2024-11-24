@@ -42,7 +42,7 @@ export type InputRecoveryType = {
 export type updateRecoveryCodeType = {
   id: ObjectId,
   code: string,
-  expirationDate: Date | null
+  expirationDate: Date
 }
 
 export type InputNewPasswordType = {

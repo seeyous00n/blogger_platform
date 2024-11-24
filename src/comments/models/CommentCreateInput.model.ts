@@ -1,5 +1,5 @@
 export type CommentCreateInputModel = {
   postId: string,
-  userId: string
+  userId: string,
   comment: string
 }

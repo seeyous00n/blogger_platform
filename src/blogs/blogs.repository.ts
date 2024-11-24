@@ -3,6 +3,7 @@ import { BlogUpdateModal } from './models/blogUpdate.modal';
 import { ObjectId, WithId } from 'mongodb';
 import { isObjectId } from '../common/adapters/mongodb.service';
 import { BlogModel } from "../common/db/schemes/blogSchema";
+import { HydratedDocument } from "mongoose";
 
 class BlogsRepository {
   async findById(id: string): Promise<WithId<BlogEntityType> | null> {
@@ -10,7 +11,7 @@ class BlogsRepository {
     return BlogModel.findOne({ _id: new ObjectId(id) }).lean();
   }
 
-  async createByData(data: BlogEntityType) {
+  async createByData(data: BlogEntityType): Promise<HydratedDocument<BlogEntityType>> {
     return await BlogModel.create(data);
   }
 

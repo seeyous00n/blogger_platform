@@ -2,6 +2,7 @@ import { ObjectId, WithId } from 'mongodb';
 import { isObjectId } from '../common/adapters/mongodb.service';
 import { CommentEntityType } from './types/comment.types';
 import { CommentModel } from "../common/db/schemes/commentSchema";
+import { HydratedDocument } from "mongoose";
 
 class CommentRepository {
   async findById(id: string): Promise<WithId<CommentEntityType> | null> {
@@ -13,7 +14,7 @@ class CommentRepository {
     return CommentModel.findOne({ _id: new ObjectId(id), 'commentatorInfo.userId': userId }).lean();
   }
 
-  async createByData(data: CommentEntityType) {
+  async createByData(data: CommentEntityType): Promise<HydratedDocument<CommentEntityType>> {
     return await CommentModel.create(data);
   };
 

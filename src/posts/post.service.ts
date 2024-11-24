@@ -2,9 +2,11 @@ import { postsRepository } from './posts.repository';
 import { PostCreateModel } from './models/postCreate.model';
 import { PostUpdateModal } from './models/postUpdate.modal';
 import { CustomError, TYPE_ERROR } from '../common/errorHandler';
-import { PostEntityType } from './types/post.types';
 import { blogsRepository } from '../blogs/blogs.repository';
 import { ObjectId } from 'mongodb';
+import { PostCreateDto } from "./dto/postCreate.dto";
+import { HydratedDocument } from "mongoose";
+import { UserEntityType } from "../users/types/user.types";
 
 class PostService {
   async findPostById(id: string): Promise<ObjectId> {
@@ -16,19 +18,13 @@ class PostService {
     return result._id;
   }
 
-  async createPost(post: PostCreateModel) {
+  async createPost(post: PostCreateModel): Promise<HydratedDocument<PostCreateModel>> {
     const dataBlog = await blogsRepository.findById(post.blogId.toString());
     if (!dataBlog) {
       throw new CustomError(TYPE_ERROR.NOT_FOUND);
     }
 
-    const newPost: PostEntityType = {
-      ...post,
-      blogId: dataBlog._id.toString(),
-      blogName: dataBlog.name,
-      createdAt: new Date().toISOString(),
-    };
-
+    const newPost = new PostCreateDto({ ...post, blogName: dataBlog.name });
     return await postsRepository.createByData(newPost);
   }
 

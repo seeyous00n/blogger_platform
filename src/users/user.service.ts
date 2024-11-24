@@ -1,53 +1,29 @@
 import { UserCreateModel } from './models/userCreate.model';
-import { UserEntityType } from './types/user.types';
 import { userRepository } from './users.repository';
 import { CustomError, TYPE_ERROR } from '../common/errorHandler';
 import { generatePasswordHash } from '../common/adapters/bcrypt.service';
-import { v4 as uuidv4 } from 'uuid';
-import { add } from 'date-fns';
 import { UserCreateInputModel } from './models/userCreateInput.model';
-import { ObjectId, WithId } from 'mongodb';
+import { ObjectId } from 'mongodb';
 import { ERROR } from "../auth/types/auth.type";
+import { UserCreateDto } from "./dto/userCreate.dto";
+import { HydratedDocument } from "mongoose";
+import { UserEntityType } from "./types/user.types";
 
 class UserService {
-  async getUserById(id: string): Promise<WithId<UserEntityType>> {
-    const result = await userRepository.findById(id);
-    if (!result) {
-      throw new CustomError(TYPE_ERROR.NOT_FOUND);
-    }
-
-    return result;
-  }
-
-  async createUser(data: UserCreateInputModel) {
+  async createUser(data: UserCreateInputModel): Promise<HydratedDocument<UserEntityType>> {
     await this.checkUniqueEmailAndLogin(data);
     const hash = await generatePasswordHash(data.password);
 
-    const newUser: UserEntityType = {
-      login: data.login,
-      email: data.email,
-      password: {
-        hash: hash,
-        recovery: '',
-        expirationDate: null,
-      },
-      createdAt: new Date().toISOString(),
-      emailConfirmation: {
-        confirmationCode: uuidv4(),
-        isConfirmed: false,
-        expirationDate: add(new Date(), { hours: 1 }),
-      },
-    };
-
+    const newUser = new UserCreateDto({ login: data.login, email: data.email, hash });
     return await userRepository.create(newUser);
   }
 
   async deleteUserById(id: string): Promise<void> {
-    await this.existsUserOrError(id);
+    await this.checkExistsUser(id);
     await userRepository.deleteById(id);
   }
 
-  async existsUserOrError(id: string): Promise<void> {
+  async checkExistsUser(id: string): Promise<void> {
     const result = await userRepository.findById(id);
     if (!result) {
       throw new CustomError(TYPE_ERROR.NOT_FOUND);

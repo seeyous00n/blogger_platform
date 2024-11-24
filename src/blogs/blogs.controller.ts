@@ -45,8 +45,8 @@ class BlogsController {
 
   createBlog = async (req: RequestWithBody<BlogCreateModel>, res: Response<BlogsViewDto>) => {
     try {
-      const blogId = await blogService.createBlog(req.body);
-      const result = await blogsQueryRepository.findById(blogId._id.toString()) as BlogsViewDto;
+      const blog = await blogService.createBlog(req.body);
+      const result = await blogsQueryRepository.findById(blog._id.toString()) as BlogsViewDto;
 
       res.status(HTTP_STATUS_CODE.CREATED_201).json(result);
     } catch (error) {
@@ -75,8 +75,8 @@ class BlogsController {
   createPostByBlog = async (req: RequestWithParamsAndBody<UriParamsModel, PostCreateModel>, res: Response<PostsViewDto>) => {
     try {
       req.body.blogId = req.params.id;
-      const postId = await postService.createPost(req.body);
-      const result = await postsQueryRepository.findById(postId._id.toString());
+      const post = await postService.createPost(req.body);
+      const result = await postsQueryRepository.findById(post._id.toString());
       if (!result) {
         res.status(HTTP_STATUS_CODE.NOT_FOUND_404).json();
         return;

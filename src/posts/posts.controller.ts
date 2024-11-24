@@ -44,8 +44,8 @@ class PostsController {
 
   creatPost = async (req: RequestWithBody<PostCreateModel>, res: Response<PostsViewDto>) => {
     try {
-      const postId = await postService.createPost(req.body);
-      const result = await postsQueryRepository.findById(postId._id.toString()) as PostsViewDto;
+      const post = await postService.createPost(req.body);
+      const result = await postsQueryRepository.findById(post._id.toString()) as PostsViewDto;
 
       res.status(HTTP_STATUS_CODE.CREATED_201).json(result);
     } catch (error) {

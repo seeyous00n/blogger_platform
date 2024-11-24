@@ -3,6 +3,8 @@ import { PostUpdateModal } from './models/postUpdate.modal';
 import { ObjectId, WithId } from 'mongodb';
 import { isObjectId } from '../common/adapters/mongodb.service';
 import { PostModel } from "../common/db/schemes/postSchema";
+import { HydratedDocument } from "mongoose";
+import { PostCreateModel } from "./models/postCreate.model";
 
 class PostsRepository {
   async findById(id: string): Promise<WithId<PostEntityType> | null> {
@@ -10,7 +12,7 @@ class PostsRepository {
     return PostModel.findOne({ _id: new ObjectId(id) });
   }
 
-  async createByData(data: PostEntityType) {
+  async createByData(data: PostEntityType): Promise<HydratedDocument<PostCreateModel>> {
     return await PostModel.create(data);
   }
 

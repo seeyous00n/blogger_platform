@@ -3,11 +3,13 @@ import { CustomError, TYPE_ERROR } from '../common/errorHandler';
 import { commentRepository } from './comment.repository';
 import { CommentUpdateModel } from './models/CommentUpdate.model';
 import { CommentCreateInputModel } from './models/CommentCreateInput.model';
-import { CommentEntityType } from './types/comment.types';
 import { userRepository } from "../users/users.repository";
+import { CommentCreateDto } from "./dto/commentCreate.dto";
+import { HydratedDocument } from "mongoose";
+import { CommentEntityType } from "./types/comment.types";
 
 class CommentService {
-  async createComment(data: CommentCreateInputModel) {
+  async createComment(data: CommentCreateInputModel): Promise<HydratedDocument<CommentEntityType>> {
     const post = await postsRepository.findById(data.postId);
     if (!post) {
       throw new CustomError(TYPE_ERROR.NOT_FOUND);
@@ -18,16 +20,7 @@ class CommentService {
       throw new CustomError(TYPE_ERROR.NOT_FOUND);
     }
 
-    const newComment: CommentEntityType = {
-      postId: data.postId,
-      content: data.comment,
-      commentatorInfo: {
-        userId: data.userId,
-        userLogin: user.login,
-      },
-      createdAt: new Date().toISOString(),
-    };
-
+    const newComment = new CommentCreateDto({ ...data, userLogin: user.login });
     return await commentRepository.createByData(newComment);
   }
 

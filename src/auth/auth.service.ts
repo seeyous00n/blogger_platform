@@ -2,15 +2,16 @@ import { AuthType, ERROR, TYPE_EMAIL } from './types/auth.type';
 import { CustomError, TYPE_ERROR } from '../common/errorHandler';
 import bcrypt from 'bcrypt';
 import { nodemailerService } from '../common/adapters/nodemailer.service';
-import { SETTINGS } from '../common/settings';
 import { userRepository } from '../users/users.repository';
-import { v4 as uuidv4 } from 'uuid';
 import { tokenService } from "../common/services/token.service";
 import { authRepository } from "./auth.repository";
 import { WithId } from "mongodb";
 import { CreateTokensType, PairTokensType, SessionType } from "./types/token.type";
-import { add } from "date-fns";
 import { generatePasswordHash } from "../common/adapters/bcrypt.service";
+import { SessionCreateDto } from "./dto/sessionCreate.dto";
+import { getUrlUtil } from "../common/utils/getUrl.util";
+import { RecoveryUpdateDto } from "./dto/recoveryUpdate.dto";
+import { createUuid } from "../common/utils/createUuid.util";
 
 class AuthService {
   async checkCredentials(data: AuthType): Promise<string> {
@@ -24,7 +25,7 @@ class AuthService {
   }
 
   async registration(email: string, code: string): Promise<void> {
-    const link = `${SETTINGS.API_URL}/auth/registration-confirmation?code=${code}`;
+    const link = getUrlUtil.registrationConfirmation(code);
     nodemailerService.sendEmail(email, link).catch();
   }
 
@@ -71,34 +72,24 @@ class AuthService {
       }]);
     }
 
-    const newCode = uuidv4();
+    const newCode = createUuid();
     await userRepository.updateConfirmationCode(userData._id, newCode);
-    const link = `${SETTINGS.API_URL}/auth/registration-confirmation?code=${newCode}`;
+    const link = getUrlUtil.registrationConfirmation(newCode);
     nodemailerService.sendEmail(email, link, TYPE_EMAIL.RESEND_CODE).catch();
   }
 
   async createTokens(data: CreateTokensType): Promise<PairTokensType> {
-    const newData = {
-      ip: data.ip,
-      title: data.title,
-      deviceId: uuidv4(),
-      userId: data.userId,
-    };
-
-    const payload = { deviceId: newData.deviceId, userId: data.userId };
-
+    const deviceId = createUuid();
+    const payload = { deviceId, userId: data.userId };
     const tokens = tokenService.generateTokens(payload);
-    const tokenData = {
-      tokenIat: tokens.iat, tokenExp: tokens.exp, lastActiveDate: new Date(tokens.iat * 1000)
-      , ...newData
-    };
+    const newData = new SessionCreateDto({ ...data, deviceId, tokenIat: tokens.iat, tokenExp: tokens.exp });
 
-    await authRepository.createByData(tokenData);
+    await authRepository.createSessionByData(newData);
 
     return tokens;
   }
 
-  async getNewPairOfTokens(token: string): Promise<PairTokensType> {
+  async refreshToken(token: string): Promise<PairTokensType> {
     const { userId, deviceId, iat } = tokenService.getDataToken(token);
     const result = await this.findTokenByIat(iat, deviceId);
     const tokens = tokenService.generateTokens({ userId, deviceId });
@@ -111,11 +102,11 @@ class AuthService {
 
   async deleteToken(token: number, deviceId: string): Promise<void> {
     const result = await this.findTokenByIat(token, deviceId);
-    await authRepository.deleteById(result._id);
+    await authRepository.deleteSessionById(result._id);
   }
 
   async findTokenByIat(token: number, deviceId: string): Promise<WithId<SessionType>> {
-    const result = await authRepository.findByIat(token, deviceId);
+    const result = await authRepository.findSessionByIat(token, deviceId);
     if (!result) {
       throw new CustomError(TYPE_ERROR.AUTH_ERROR);
     }
@@ -129,16 +120,10 @@ class AuthService {
       return;
     }
 
-    const code = uuidv4();
-    const data = {
-      id: result._id,
-      code,
-      expirationDate: add(new Date(), { hours: 1 }),
-    };
+    const data = new RecoveryUpdateDto({ id: result._id });
+    const link = getUrlUtil.passwordRecovery(data.code);
 
     await userRepository.updateRecoveryCode(data);
-
-    const link = `${SETTINGS.API_URL}/auth/password-recovery?recoveryCode=${code}`;
     nodemailerService.sendEmail(email, link, TYPE_EMAIL.RECOVERY_CODE).catch();
   }
 

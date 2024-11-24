@@ -4,9 +4,10 @@ import { UserCreateModel } from './models/userCreate.model';
 import { isObjectId } from '../common/adapters/mongodb.service';
 import { AuthType, updateRecoveryCodeType } from '../auth/types/auth.type';
 import { UserModel } from "../common/db/schemes/userSchema";
+import { HydratedDocument } from "mongoose";
 
 class UserRepository {
-  async create(data: UserEntityType) {
+  async create(data: UserEntityType): Promise<HydratedDocument<UserEntityType>> {
     return await UserModel.create(data);
   };
 

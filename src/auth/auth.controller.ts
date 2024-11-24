@@ -37,8 +37,7 @@ class AuthController {
   registration = async (req: RequestWithBody<UserCreateModel>, res: Response) => {
     try {
       const result = await userService.createUser(req.body);
-      const user = await userService.getUserById(result._id.toString());
-      await authService.registration(req.body.email, user.emailConfirmation.confirmationCode);
+      await authService.registration(req.body.email, result.emailConfirmation.confirmationCode);
 
       res.status(HTTP_STATUS_CODE.NO_CONTENT_204).json();
     } catch (error) {
@@ -67,7 +66,7 @@ class AuthController {
   refreshToken = async (req: RequestWithBody<DataInAccessTokenType>, res: Response) => {
     try {
       const token: string = req.cookies.refreshToken;
-      const { accessToken, refreshToken } = await authService.getNewPairOfTokens(token);
+      const { accessToken, refreshToken } = await authService.refreshToken(token);
 
       res.cookie(TOKENS_NAME.REFRESH_TOKEN, refreshToken, cookieOptions.getOptionsForRefreshToken());
       res.status(HTTP_STATUS_CODE.OK_200).json({ [TOKENS_NAME.ACCESS_TOKEN]: accessToken });
