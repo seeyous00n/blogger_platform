@@ -11,7 +11,7 @@ class AuthRepository {
   async updateSessionById(id: ObjectId, data: UpdateSessionType): Promise<void> {
     await SessionModel.updateOne(
       { _id: id },
-      { $set: { tokenIat: data.tokenIat, lastActiveDate: data.lastActiveDate } }
+      { $set: { tokenIat: data.tokenIat, tokenExp: data.tokenExp, lastActiveDate: data.lastActiveDate } }
     );
   }
 

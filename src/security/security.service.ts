@@ -19,7 +19,7 @@ class SecurityService {
   }
 
   async checkOwnerDevice(data: DeviceAndUserType): Promise<WithId<SessionType>> {
-    const isDevice = await securityRepository.findByIat(data.deviceId);
+    const isDevice = await securityRepository.findByDeviceId(data.deviceId);
     if (!isDevice) {
       throw new CustomError(TYPE_ERROR.NOT_FOUND);
     }

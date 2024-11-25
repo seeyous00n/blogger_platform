@@ -8,7 +8,7 @@ class SecurityRepository {
     return SessionModel.findOne({ deviceId: data.deviceId, userId: data.userId }).lean();
   }
 
-  async findByIat(deviceId: string): Promise<WithId<SessionType> | null> {
+  async findByDeviceId(deviceId: string): Promise<WithId<SessionType> | null> {
     return SessionModel.findOne({ deviceId: deviceId }).lean();
   }
 

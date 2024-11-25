@@ -1,13 +1,12 @@
 import { AuthType, ERROR, TYPE_EMAIL } from './types/auth.type';
 import { CustomError, TYPE_ERROR } from '../common/errorHandler';
-import bcrypt from 'bcrypt';
 import { nodemailerService } from '../common/adapters/nodemailer.service';
 import { userRepository } from '../users/users.repository';
 import { tokenService } from "../common/services/token.service";
 import { authRepository } from "./auth.repository";
 import { WithId } from "mongodb";
 import { CreateTokensType, PairTokensType, SessionType } from "./types/token.type";
-import { generatePasswordHash } from "../common/adapters/bcrypt.service";
+import { compareHash, generatePasswordHash } from "../common/adapters/bcrypt.service";
 import { SessionCreateDto } from "./dto/sessionCreate.dto";
 import { getUrlUtil } from "../common/utils/getUrl.util";
 import { RecoveryUpdateDto } from "./dto/recoveryUpdate.dto";
@@ -18,7 +17,7 @@ class AuthService {
     const result = await userRepository.findByLoginOrEmail(data);
     if (!result) throw new CustomError(TYPE_ERROR.AUTH_ERROR);
 
-    const isAuth = await bcrypt.compare(data.password, result.password.hash);
+    const isAuth = await compareHash(data.password, result.password.hash);
     if (!isAuth) throw new CustomError(TYPE_ERROR.AUTH_ERROR);
 
     return result._id.toString();
@@ -82,11 +81,11 @@ class AuthService {
     const deviceId = createUuid();
     const payload = { deviceId, userId: data.userId };
     const tokens = tokenService.generateTokens(payload);
-    const newData = new SessionCreateDto({ ...data, deviceId, tokenIat: tokens.iat, tokenExp: tokens.exp });
 
+    const newData = new SessionCreateDto({ ...data, deviceId, tokenIat: tokens.iat, tokenExp: tokens.exp });
     await authRepository.createSessionByData(newData);
 
-    return tokens;
+    return { accessToken: tokens.accessToken, refreshToken: tokens.refreshToken };
   }
 
   async refreshToken(token: string): Promise<PairTokensType> {
@@ -94,10 +93,10 @@ class AuthService {
     const result = await this.findTokenByIat(iat, deviceId);
     const tokens = tokenService.generateTokens({ userId, deviceId });
 
-    const data = { tokenIat: tokens.iat, lastActiveDate: new Date(tokens.iat * 1000) };
+    const data = { tokenIat: tokens.iat, tokenExp: tokens.exp, lastActiveDate: new Date(tokens.iat * 1000) };
     await authRepository.updateSessionById(result._id, data);
 
-    return tokens;
+    return { accessToken: tokens.accessToken, refreshToken: tokens.refreshToken };
   }
 
   async deleteToken(token: number, deviceId: string): Promise<void> {

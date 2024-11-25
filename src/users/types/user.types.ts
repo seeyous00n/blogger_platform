@@ -6,7 +6,7 @@ export type UserEntityType = {
   email: string,
   password: {
     hash: string,
-    recovery: string,
+    recovery: string | null,
     expirationDate: Date | null
   },
   createdAt: string,

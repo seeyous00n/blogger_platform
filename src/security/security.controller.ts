@@ -3,14 +3,13 @@ import { securityQueryRepository } from "./securityQuery.repository";
 import { HTTP_STATUS_CODE } from "../common/settings";
 import { securityService } from "./security.service";
 import { sendError } from "../common/errorHandler";
-import { tokenService } from "../common/services/token.service";
+import { RequestWithParams } from "../common/types/types";
 
 class SecurityController {
   getDevices = async (req: Request, res: Response) => {
     try {
       const token: string = req.cookies.refreshToken;
-      const { userId } = tokenService.getDataToken(token);
-      const result = await securityQueryRepository.getDevises(userId);
+      const result = await securityQueryRepository.getDevises(token);
 
       res.status(HTTP_STATUS_CODE.OK_200).json(result);
     } catch (error) {
@@ -18,7 +17,7 @@ class SecurityController {
     }
   };
 
-  deleteDevice = async (req: Request, res: Response) => {
+  deleteDevice = async (req: RequestWithParams<{ id: string }>, res: Response) => {
     try {
       const token: string = req.cookies.refreshToken;
       const deviceId = req.params.id;

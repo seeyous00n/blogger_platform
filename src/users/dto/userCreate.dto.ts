@@ -7,7 +7,7 @@ export class UserCreateDto {
   email: string;
   password: {
     hash: string;
-    recovery: string;
+    recovery: null;
     expirationDate: null
   };
   createdAt: string;
@@ -22,7 +22,7 @@ export class UserCreateDto {
     this.email = model.email;
     this.password = {
       hash: model.hash,
-      recovery: '',
+      recovery: null,
       expirationDate: null,
     };
     this.createdAt = new Date().toISOString();
