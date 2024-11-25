@@ -18,7 +18,7 @@ class BlogsQueryRepository {
 
     const result = await BlogModel
       .find(queryHelper.filter.search)
-      .sort(queryHelper.filter.sort as any) // Delete as any !!!!
+      .sort(queryHelper.filter.sort)
       .skip(queryHelper.filter.skip)
       .limit(queryHelper.filter.limit)
       .lean();

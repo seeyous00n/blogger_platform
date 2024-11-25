@@ -14,7 +14,7 @@ class CommentQueryRepository {
 
     const result = await CommentModel
       .find(queryHelper.filter.search)
-      .sort(queryHelper.filter.sort as any)
+      .sort(queryHelper.filter.sort)
       .skip(queryHelper.filter.skip)
       .limit(queryHelper.filter.limit)
       .lean();

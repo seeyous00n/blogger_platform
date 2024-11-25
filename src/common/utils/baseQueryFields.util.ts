@@ -1,5 +1,6 @@
 import { queryStringType } from '../types/types';
 import { Sort } from 'mongodb';
+import { FilterQuery } from "mongoose";
 
 export class BaseQueryFieldsUtil {
   protected searchNameTerm;
@@ -19,7 +20,7 @@ export class BaseQueryFieldsUtil {
 
     this.filter = {
       search: search,
-      sort: { [this.sortBy]: this.sortDirection === 'asc' ? 1 : -1 } as Sort,
+      sort: { [this.sortBy]: this.sortDirection === 'asc' ? 1 : -1 } as FilterQuery<queryStringType>,
       skip: (this.pageNumber - 1) * this.pageSize,
       limit: this.pageSize,
     };

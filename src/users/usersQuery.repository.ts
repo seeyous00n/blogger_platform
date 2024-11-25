@@ -26,7 +26,7 @@ class UsersQueryRepository {
 
     const result = await UserModel
       .find(queryHelper.filter.search)
-      .sort(queryHelper.filter.sort as any)
+      .sort(queryHelper.filter.sort)
       .skip(queryHelper.filter.skip)
       .limit(queryHelper.filter.limit)
       .lean();
