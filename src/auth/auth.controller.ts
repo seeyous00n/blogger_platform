@@ -1,5 +1,5 @@
 import { Response, Request } from 'express';
-import { authService } from './auth.service';
+import { AuthService } from './auth.service';
 import { RequestWithBody } from '../common/types/types';
 import { AuthType, DataInAccessTokenType, InputNewPasswordType, InputRecoveryType } from './types/auth.type';
 import { sendError } from '../common/errorHandler';
@@ -11,12 +11,15 @@ import { TOKENS_NAME } from "./types/token.type";
 import { tokenService } from "../common/services/token.service";
 import { cookieOptions } from "../common/utils/cookieOptions.util";
 
-class AuthController {
+export class AuthController {
+  constructor(private authService: AuthService) {
+  }
+
   authLoginUser = async (req: RequestWithBody<AuthType>, res: Response) => {
     try {
-      const userId = await authService.checkCredentials(req.body);
+      const userId = await this.authService.checkCredentials(req.body);
       const data = { userId, ip: req.ip || '', title: req.headers['user-agent'] || '' };
-      const { accessToken, refreshToken } = await authService.createTokens(data);
+      const { accessToken, refreshToken } = await this.authService.createTokens(data);
 
       res.cookie(TOKENS_NAME.REFRESH_TOKEN, refreshToken, cookieOptions.getOptionsForRefreshToken());
       res.status(HTTP_STATUS_CODE.OK_200).json({ [TOKENS_NAME.ACCESS_TOKEN]: accessToken });
@@ -37,7 +40,7 @@ class AuthController {
   registration = async (req: RequestWithBody<UserCreateModel>, res: Response) => {
     try {
       const result = await userService.createUser(req.body);
-      await authService.registration(req.body.email, result.emailConfirmation.confirmationCode);
+      await this.authService.registration(req.body.email, result.emailConfirmation.confirmationCode);
 
       res.status(HTTP_STATUS_CODE.NO_CONTENT_204).json();
     } catch (error) {
@@ -47,7 +50,7 @@ class AuthController {
 
   confirmationEmail = async (req: RequestWithBody<{ code: string }>, res: Response) => {
     try {
-      await authService.confirmation(req.body.code);
+      await this.authService.confirmation(req.body.code);
       res.status(HTTP_STATUS_CODE.NO_CONTENT_204).json();
     } catch (error) {
       sendError(error, res);
@@ -56,7 +59,7 @@ class AuthController {
 
   resendingEmail = async (req: RequestWithBody<{ email: string }>, res: Response) => {
     try {
-      await authService.resending(req.body.email);
+      await this.authService.resending(req.body.email);
       res.status(HTTP_STATUS_CODE.NO_CONTENT_204).json();
     } catch (error) {
       sendError(error, res);
@@ -66,7 +69,7 @@ class AuthController {
   refreshToken = async (req: RequestWithBody<DataInAccessTokenType>, res: Response) => {
     try {
       const token: string = req.cookies.refreshToken;
-      const { accessToken, refreshToken } = await authService.refreshToken(token);
+      const { accessToken, refreshToken } = await this.authService.refreshToken(token);
 
       res.cookie(TOKENS_NAME.REFRESH_TOKEN, refreshToken, cookieOptions.getOptionsForRefreshToken());
       res.status(HTTP_STATUS_CODE.OK_200).json({ [TOKENS_NAME.ACCESS_TOKEN]: accessToken });
@@ -79,7 +82,7 @@ class AuthController {
     try {
       const token: string = req.cookies.refreshToken;
       const { deviceId, iat } = tokenService.getDataToken(token);
-      await authService.deleteToken(iat, deviceId);
+      await this.authService.deleteToken(iat, deviceId);
 
       res.clearCookie(TOKENS_NAME.REFRESH_TOKEN);
       res.status(HTTP_STATUS_CODE.NO_CONTENT_204).json();
@@ -90,7 +93,7 @@ class AuthController {
 
   passwordRecovery = async (req: RequestWithBody<InputRecoveryType>, res: Response) => {
     try {
-      await authService.recovery(req.body.email);
+      await this.authService.recovery(req.body.email);
       res.status(HTTP_STATUS_CODE.NO_CONTENT_204).json();
     } catch (error) {
       sendError(error, res);
@@ -99,7 +102,7 @@ class AuthController {
 
   newPassword = async (req: RequestWithBody<InputNewPasswordType>, res: Response) => {
     try {
-      await authService.newPassword(req.body.recoveryCode, req.body.newPassword);
+      await this.authService.newPassword(req.body.recoveryCode, req.body.newPassword);
       res.status(HTTP_STATUS_CODE.NO_CONTENT_204).json();
     } catch (error) {
       sendError(error, res);
@@ -107,4 +110,4 @@ class AuthController {
   };
 }
 
-export const authController = new AuthController();
+// export const authController = new AuthController();

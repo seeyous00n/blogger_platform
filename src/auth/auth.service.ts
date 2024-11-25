@@ -3,7 +3,6 @@ import { CustomError, TYPE_ERROR } from '../common/errorHandler';
 import { nodemailerService } from '../common/adapters/nodemailer.service';
 import { userRepository } from '../users/users.repository';
 import { tokenService } from "../common/services/token.service";
-import { authRepository } from "./auth.repository";
 import { WithId } from "mongodb";
 import { CreateTokensType, PairTokensType, SessionType } from "./types/token.type";
 import { compareHash, generatePasswordHash } from "../common/adapters/bcrypt.service";
@@ -11,8 +10,12 @@ import { SessionCreateDto } from "./dto/sessionCreate.dto";
 import { getUrlUtil } from "../common/utils/getUrl.util";
 import { RecoveryUpdateDto } from "./dto/recoveryUpdate.dto";
 import { createUuid } from "../common/utils/createUuid.util";
+import { AuthRepository } from "./auth.repository";
 
-class AuthService {
+export class AuthService {
+  constructor(private authRepository: AuthRepository) {
+  }
+
   async checkCredentials(data: AuthType): Promise<string> {
     const result = await userRepository.findByLoginOrEmail(data);
     if (!result) throw new CustomError(TYPE_ERROR.AUTH_ERROR);
@@ -83,7 +86,7 @@ class AuthService {
     const tokens = tokenService.generateTokens(payload);
 
     const newData = new SessionCreateDto({ ...data, deviceId, tokenIat: tokens.iat, tokenExp: tokens.exp });
-    await authRepository.createSessionByData(newData);
+    await this.authRepository.createSessionByData(newData);
 
     return { accessToken: tokens.accessToken, refreshToken: tokens.refreshToken };
   }
@@ -94,18 +97,18 @@ class AuthService {
     const tokens = tokenService.generateTokens({ userId, deviceId });
 
     const data = { tokenIat: tokens.iat, tokenExp: tokens.exp, lastActiveDate: new Date(tokens.iat * 1000) };
-    await authRepository.updateSessionById(result._id, data);
+    await this.authRepository.updateSessionById(result._id, data);
 
     return { accessToken: tokens.accessToken, refreshToken: tokens.refreshToken };
   }
 
   async deleteToken(token: number, deviceId: string): Promise<void> {
     const result = await this.findTokenByIat(token, deviceId);
-    await authRepository.deleteSessionById(result._id);
+    await this.authRepository.deleteSessionById(result._id);
   }
 
   async findTokenByIat(token: number, deviceId: string): Promise<WithId<SessionType>> {
-    const result = await authRepository.findSessionByIat(token, deviceId);
+    const result = await this.authRepository.findSessionByIat(token, deviceId);
     if (!result) {
       throw new CustomError(TYPE_ERROR.AUTH_ERROR);
     }
@@ -151,4 +154,4 @@ class AuthService {
   }
 }
 
-export const authService = new AuthService();
+// export const authService = new AuthService();

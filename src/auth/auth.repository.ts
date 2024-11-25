@@ -2,7 +2,7 @@ import { SessionType, UpdateSessionType } from "./types/token.type";
 import { ObjectId, WithId } from "mongodb";
 import { SessionDocument, SessionModel } from "../common/db/schemes/sessionSchema";
 
-class AuthRepository {
+export class AuthRepository {
   async createSessionByData(data: SessionType): Promise<SessionDocument> {
     return await SessionModel.create(data);
   };
@@ -26,4 +26,4 @@ class AuthRepository {
   }
 }
 
-export const authRepository = new AuthRepository();
+// export const authRepository = new AuthRepository();

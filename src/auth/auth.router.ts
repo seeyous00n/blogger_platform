@@ -1,5 +1,4 @@
 import { Router } from 'express';
-import { authController } from './auth.controller';
 import { authJwtGuard } from '../common/middlewares/guards/authJwt.guard';
 import {
   authDataValidation,
@@ -10,6 +9,7 @@ import {
 import { authJwtRefreshGuard } from "../common/middlewares/guards/authJwtRefresh.guard";
 import { rateLimitMiddleware } from "../common/middlewares/rateLimit/rateLimitMiddleware";
 import { inputValidation } from "../common/validation/input.validation";
+import { authController } from "../composition-root";
 
 const authRouter = Router();
 
