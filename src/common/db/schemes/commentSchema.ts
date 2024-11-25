@@ -1,7 +1,11 @@
-import mongoose from "mongoose";
+import mongoose, { HydratedDocument, Model } from "mongoose";
 import { CommentEntityType } from "../../../comments/types/comment.types";
 
 const COLLECTION_COMMENTS = 'comments';
+
+type CommentModel = Model<CommentEntityType>;
+
+export type CommentDocument = HydratedDocument<CommentEntityType>;
 
 const commentSchema = new mongoose.Schema<CommentEntityType>({
   postId: String,
@@ -13,4 +17,4 @@ const commentSchema = new mongoose.Schema<CommentEntityType>({
   createdAt: Date,
 });
 
-export const CommentModel = mongoose.model(COLLECTION_COMMENTS, commentSchema);
+export const CommentModel = mongoose.model<CommentEntityType, CommentModel>(COLLECTION_COMMENTS, commentSchema);

@@ -1,7 +1,11 @@
-import mongoose from "mongoose";
+import mongoose, { HydratedDocument, Model } from "mongoose";
 import { PostEntityType } from "../../../posts/types/post.types";
 
 const COLLECTION_POSTS = 'posts';
+
+type PostModel = Model<PostEntityType>;
+
+export type PostDocument = HydratedDocument<PostEntityType>;
 
 const postSchema = new mongoose.Schema<PostEntityType>({
   title: String,
@@ -12,4 +16,4 @@ const postSchema = new mongoose.Schema<PostEntityType>({
   createdAt: String,
 });
 
-export const PostModel = mongoose.model(COLLECTION_POSTS, postSchema);
+export const PostModel = mongoose.model<PostEntityType, PostModel>(COLLECTION_POSTS, postSchema);

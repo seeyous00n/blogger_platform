@@ -1,7 +1,11 @@
-import mongoose from "mongoose";
+import mongoose, { HydratedDocument, Model } from "mongoose";
 import { SessionType } from "../../../auth/types/token.type";
 
 const COLLECTION_SESSIONS = 'sessions';
+
+type SessionModel = Model<SessionType>;
+
+export type SessionDocument = HydratedDocument<SessionType>;
 
 const sessionSchema = new mongoose.Schema<SessionType>({
   userId: String,
@@ -13,4 +17,4 @@ const sessionSchema = new mongoose.Schema<SessionType>({
   lastActiveDate: Date
 });
 
-export const SessionModel = mongoose.model(COLLECTION_SESSIONS, sessionSchema);
+export const SessionModel = mongoose.model<SessionType, SessionModel>(COLLECTION_SESSIONS, sessionSchema);

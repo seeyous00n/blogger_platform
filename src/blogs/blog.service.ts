@@ -3,8 +3,7 @@ import { BlogCreateModel } from './models/blogCreate.model';
 import { BlogUpdateModal } from './models/blogUpdate.modal';
 import { CustomError, TYPE_ERROR } from '../common/errorHandler';
 import { BlogCreateDto } from "./dto/blogCreate.dto";
-import { HydratedDocument } from "mongoose";
-import { BlogEntityType } from "./types/blog.types";
+import { BlogDocument } from "../common/db/schemes/blogSchema";
 
 class BlogService {
   async findBlogById(id: string): Promise<string> {
@@ -16,7 +15,7 @@ class BlogService {
     return result._id.toString();
   }
 
-  async createBlog(blog: BlogCreateModel): Promise<HydratedDocument<BlogEntityType>> {
+  async createBlog(blog: BlogCreateModel): Promise<BlogDocument> {
     const newBlog = new BlogCreateDto(blog);
     return await blogsRepository.createByData(newBlog);
   }

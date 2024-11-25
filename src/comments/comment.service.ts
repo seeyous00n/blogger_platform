@@ -5,11 +5,10 @@ import { CommentUpdateModel } from './models/CommentUpdate.model';
 import { CommentCreateInputModel } from './models/CommentCreateInput.model';
 import { userRepository } from "../users/users.repository";
 import { CommentCreateDto } from "./dto/commentCreate.dto";
-import { HydratedDocument } from "mongoose";
-import { CommentEntityType } from "./types/comment.types";
+import { CommentDocument } from "../common/db/schemes/commentSchema";
 
 class CommentService {
-  async createComment(data: CommentCreateInputModel): Promise<HydratedDocument<CommentEntityType>> {
+  async createComment(data: CommentCreateInputModel): Promise<CommentDocument> {
     const post = await postsRepository.findById(data.postId);
     if (!post) {
       throw new CustomError(TYPE_ERROR.NOT_FOUND);

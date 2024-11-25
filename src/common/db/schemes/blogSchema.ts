@@ -1,7 +1,11 @@
-import mongoose from "mongoose";
+import mongoose, { HydratedDocument, Model } from "mongoose";
 import { BlogEntityType } from "../../../blogs/types/blog.types";
 
 const COLLECTION_BLOGS = 'blogs';
+
+type BlogModel = Model<BlogEntityType>;
+
+export type BlogDocument = HydratedDocument<BlogEntityType>;
 
 const blogSchema = new mongoose.Schema<BlogEntityType>({
   name: String,
@@ -11,4 +15,4 @@ const blogSchema = new mongoose.Schema<BlogEntityType>({
   isMembership: Boolean,
 });
 
-export const BlogModel = mongoose.model(COLLECTION_BLOGS, blogSchema);
+export const BlogModel = mongoose.model<BlogEntityType, BlogModel>(COLLECTION_BLOGS, blogSchema);

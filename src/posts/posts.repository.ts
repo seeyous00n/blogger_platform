@@ -2,17 +2,15 @@ import { PostEntityType } from './types/post.types';
 import { PostUpdateModal } from './models/postUpdate.modal';
 import { ObjectId, WithId } from 'mongodb';
 import { isObjectId } from '../common/adapters/mongodb.service';
-import { PostModel } from "../common/db/schemes/postSchema";
-import { HydratedDocument } from "mongoose";
-import { PostCreateModel } from "./models/postCreate.model";
+import { PostDocument, PostModel } from "../common/db/schemes/postSchema";
 
 class PostsRepository {
   async findById(id: string): Promise<WithId<PostEntityType> | null> {
     isObjectId(id);
-    return PostModel.findOne({ _id: new ObjectId(id) });
+    return PostModel.findOne({ _id: new ObjectId(id) }).lean();
   }
 
-  async createByData(data: PostEntityType): Promise<HydratedDocument<PostCreateModel>> {
+  async createByData(data: PostEntityType): Promise<PostDocument> {
     return await PostModel.create(data);
   }
 

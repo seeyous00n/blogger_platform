@@ -6,11 +6,10 @@ import { UserCreateInputModel } from './models/userCreateInput.model';
 import { ObjectId } from 'mongodb';
 import { ERROR } from "../auth/types/auth.type";
 import { UserCreateDto } from "./dto/userCreate.dto";
-import { HydratedDocument } from "mongoose";
-import { UserEntityType } from "./types/user.types";
+import { UserDocument } from "../common/db/schemes/userSchema";
 
 class UserService {
-  async createUser(data: UserCreateInputModel): Promise<HydratedDocument<UserEntityType>> {
+  async createUser(data: UserCreateInputModel): Promise<UserDocument> {
     await this.checkUniqueEmailAndLogin(data);
     const hash = await generatePasswordHash(data.password);
 

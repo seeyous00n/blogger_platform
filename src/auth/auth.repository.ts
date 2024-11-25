@@ -1,10 +1,9 @@
 import { SessionType, UpdateSessionType } from "./types/token.type";
 import { ObjectId, WithId } from "mongodb";
-import { SessionModel } from "../common/db/schemes/sessionSchema";
-import { HydratedDocument } from "mongoose";
+import { SessionDocument, SessionModel } from "../common/db/schemes/sessionSchema";
 
 class AuthRepository {
-  async createSessionByData(data: SessionType): Promise<HydratedDocument<SessionType>> {
+  async createSessionByData(data: SessionType): Promise<SessionDocument> {
     return await SessionModel.create(data);
   };
 

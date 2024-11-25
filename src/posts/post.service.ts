@@ -5,8 +5,7 @@ import { CustomError, TYPE_ERROR } from '../common/errorHandler';
 import { blogsRepository } from '../blogs/blogs.repository';
 import { ObjectId } from 'mongodb';
 import { PostCreateDto } from "./dto/postCreate.dto";
-import { HydratedDocument } from "mongoose";
-import { UserEntityType } from "../users/types/user.types";
+import { PostDocument } from "../common/db/schemes/postSchema";
 
 class PostService {
   async findPostById(id: string): Promise<ObjectId> {
@@ -18,7 +17,7 @@ class PostService {
     return result._id;
   }
 
-  async createPost(post: PostCreateModel): Promise<HydratedDocument<PostCreateModel>> {
+  async createPost(post: PostCreateModel): Promise<PostDocument> {
     const dataBlog = await blogsRepository.findById(post.blogId.toString());
     if (!dataBlog) {
       throw new CustomError(TYPE_ERROR.NOT_FOUND);
