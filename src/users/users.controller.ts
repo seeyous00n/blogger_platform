@@ -1,5 +1,5 @@
 import { Request, Response } from 'express';
-import { RequestWithBody, userQueryStringType } from '../common/types/types';
+import { RequestOnlyQuery, RequestWithBody, userQueryStringType } from '../common/types/types';
 import { userService } from './user.service';
 import { HTTP_STATUS_CODE } from '../common/settings';
 import { sendError } from '../common/errorHandler';
@@ -7,9 +7,9 @@ import { usersQueryRepository } from './usersQuery.repository';
 import { UserCreateInputModel } from './models/userCreateInput.model';
 
 class UsersController {
-  getUsers = async (req: Request, res: Response) => {
+  getUsers = async (req: RequestOnlyQuery<userQueryStringType>, res: Response) => {
     try {
-      const result = await usersQueryRepository.findUsers(req.query as userQueryStringType);
+      const result = await usersQueryRepository.findUsers(req.query);
       res.status(HTTP_STATUS_CODE.OK_200).json(result);
     } catch (error) {
       sendError(error, res);
@@ -18,9 +18,9 @@ class UsersController {
 
   createUser = async (req: RequestWithBody<UserCreateInputModel>, res: Response) => {
     try {
-      const userId = await userService.createUser(req.body);
-      await userService.updateIsConfirmed(userId.insertedId);
-      const result = await usersQueryRepository.findUserById(userId.insertedId.toString());
+      const user = await userService.createUser(req.body);
+      await userService.updateIsConfirmed(user._id);
+      const result = await usersQueryRepository.findUserById(user._id.toString());
       if (!result) {
         res.status(HTTP_STATUS_CODE.NOT_FOUND_404).json();
         return;

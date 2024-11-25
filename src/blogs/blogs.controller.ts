@@ -18,7 +18,6 @@ import { PostsViewDto } from '../posts/dto/postsView.dto';
 import { BlogsViewDto } from './dto/blogsView.dto';
 import { sendError } from '../common/errorHandler';
 import { postService } from '../posts/post.service';
-import { query } from "express-validator";
 
 class BlogsController {
   getBlogs = async (req: RequestWithQuery<UriParamsModel, queryStringType>, res: Response) => {
@@ -46,8 +45,9 @@ class BlogsController {
 
   createBlog = async (req: RequestWithBody<BlogCreateModel>, res: Response<BlogsViewDto>) => {
     try {
-      const blogId = await blogService.createBlog(req.body);
-      const result = await blogsQueryRepository.findById(blogId.insertedId.toString()) as BlogsViewDto;
+      const blog = await blogService.createBlog(req.body);
+      const result = await blogsQueryRepository.findById(blog._id.toString()) as BlogsViewDto;
+
       res.status(HTTP_STATUS_CODE.CREATED_201).json(result);
     } catch (error) {
       sendError(error, res);
@@ -75,8 +75,8 @@ class BlogsController {
   createPostByBlog = async (req: RequestWithParamsAndBody<UriParamsModel, PostCreateModel>, res: Response<PostsViewDto>) => {
     try {
       req.body.blogId = req.params.id;
-      const postId = await postService.createPost(req.body);
-      const result = await postsQueryRepository.findById(postId.insertedId.toString());
+      const post = await postService.createPost(req.body);
+      const result = await postsQueryRepository.findById(post._id.toString());
       if (!result) {
         res.status(HTTP_STATUS_CODE.NOT_FOUND_404).json();
         return;
@@ -92,6 +92,7 @@ class BlogsController {
     try {
       const blogId = await blogService.findBlogById(req.params.id);
       const result = await postsQueryRepository.findPosts(req.query, blogId);
+
       res.status(HTTP_STATUS_CODE.OK_200).json(result);
     } catch (error) {
       sendError(error, res);

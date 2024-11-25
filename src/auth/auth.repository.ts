@@ -1,28 +1,28 @@
-import { sessionCollection } from "../db";
 import { SessionType, UpdateSessionType } from "./types/token.type";
-import { InsertOneResult, ObjectId, WithId } from "mongodb";
+import { ObjectId, WithId } from "mongodb";
+import { SessionDocument, SessionModel } from "../common/db/schemes/sessionSchema";
 
 class AuthRepository {
-  async createByData(data: SessionType): Promise<InsertOneResult<SessionType>> {
-    return await sessionCollection.insertOne(data);
+  async createSessionByData(data: SessionType): Promise<SessionDocument> {
+    return await SessionModel.create(data);
   };
 
   async updateSessionById(id: ObjectId, data: UpdateSessionType): Promise<void> {
-    await sessionCollection.updateOne(
+    await SessionModel.updateOne(
       { _id: id },
-      { $set: { tokenIat: data.tokenIat, lastActiveDate: data.lastActiveDate } }
+      { $set: { tokenIat: data.tokenIat, tokenExp: data.tokenExp, lastActiveDate: data.lastActiveDate } }
     );
   }
 
-  async deleteById(id: Object): Promise<void> {
-    await sessionCollection.deleteOne({ _id: id });
+  async deleteSessionById(id: Object): Promise<void> {
+    await SessionModel.deleteOne({ _id: id });
   }
 
-  async findByIat(iat: number, deviceId: string): Promise<WithId<SessionType> | null> {
-    return await sessionCollection.findOne({
+  async findSessionByIat(iat: number, deviceId: string): Promise<WithId<SessionType> | null> {
+    return SessionModel.findOne({
       deviceId: deviceId,
       tokenIat: iat
-    });
+    }).lean();
   }
 }
 

@@ -1,7 +1,7 @@
 import { authorized, req } from '../utils/test-helpers';
 import { describe } from 'node:test';
 import { HTTP_STATUS_CODE, ROUTER_PATHS } from '../../src/common/settings';
-import { client, runDB } from '../../src/db';
+import { client, runDB } from '../../src/common/db/db';
 import { UserCreateModel } from '../../src/users/models/userCreate.model';
 import { nodemailerService } from '../../src/common/adapters/nodemailer.service';
 

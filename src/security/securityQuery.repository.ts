@@ -1,9 +1,11 @@
-import { sessionCollection } from "../db";
 import { SecurityViewDto } from "./dto/securityView.dto";
+import { SessionModel } from "../common/db/schemes/sessionSchema";
+import { tokenService } from "../common/services/token.service";
 
 class SecurityQueryRepository {
-  async getDevises(userId: string): Promise<SecurityViewDto[] | null> {
-    const result = await sessionCollection.find({ userId: userId }).toArray();
+  async getDevises(token: string): Promise<SecurityViewDto[] | null> {
+    const { userId } = tokenService.getDataToken(token);
+    const result = await SessionModel.find({ userId: userId }).lean();
     if (!result) {
       return null;
     }

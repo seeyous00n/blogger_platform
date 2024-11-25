@@ -23,6 +23,7 @@ const isBlogId = body('blogId').custom(blogIdValidator);
 const loginValidator = body('login').isString().trim().isLength({ min: 3, max: 10 }).matches(/^[a-zA-Z0-9_-]*$/);
 export const emailValidator = body('email').isString().trim().matches(/^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/);
 const passwordValidator = body('password').isString().trim().isLength({ min: 6, max: 20 });
+export const newPasswordValidator = body('newPassword').isString().trim().isLength({ min: 6, max: 20 });
 const loginOrEmailValidator = body('loginOrEmail').isString().trim().notEmpty();
 
 export const confirmationCodeValidator = body('code').isString().trim().notEmpty();

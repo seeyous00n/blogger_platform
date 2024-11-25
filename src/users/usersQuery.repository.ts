@@ -1,4 +1,3 @@
-import { usersCollection } from '../db';
 import { UserViewDto } from './dto/usersView.dto';
 import { UserViewAuthDto } from './dto/userViewAuth.dto';
 import { userQueryStringType } from '../common/types/types';
@@ -6,6 +5,7 @@ import { BaseQueryFieldsUtil } from '../common/utils/baseQueryFields.util';
 import { ObjectId } from 'mongodb';
 import { isObjectId } from '../common/adapters/mongodb.service';
 import { UsersViewModel } from './models/usersView.model';
+import { UserModel } from "../common/db/schemes/userSchema";
 
 class UsersQueryRepository {
   async findUsers(queryString: userQueryStringType): Promise<UsersViewModel> {
@@ -24,14 +24,14 @@ class UsersQueryRepository {
     const searchString = { $or: [loginFilter, emailFilter] };
     const queryHelper = new BaseQueryFieldsUtil(queryString, searchString);
 
-    const result = await usersCollection
+    const result = await UserModel
       .find(queryHelper.filter.search)
       .sort(queryHelper.filter.sort)
       .skip(queryHelper.filter.skip)
       .limit(queryHelper.filter.limit)
-      .toArray();
+      .lean();
 
-    const blogsCount = await usersCollection.countDocuments(queryHelper.filter.search);
+    const blogsCount = await UserModel.countDocuments(queryHelper.filter.search);
     const resultData = result.map((item) => new UserViewDto(item));
 
     return {
@@ -45,7 +45,7 @@ class UsersQueryRepository {
 
   async findUserById(id: string): Promise<UserViewDto | null> {
     isObjectId(id);
-    const result = await usersCollection.findOne({ _id: new ObjectId(id) });
+    const result = await UserModel.findOne({ _id: new ObjectId(id) }).lean();
     if (!result) {
       return null;
     }
@@ -55,7 +55,7 @@ class UsersQueryRepository {
 
   async findAuthUserById(id: string): Promise<UserViewAuthDto | null> {
     isObjectId(id);
-    const result = await usersCollection.findOne({ _id: new ObjectId(id) });
+    const result = await UserModel.findOne({ _id: new ObjectId(id) }).lean();
     if (!result) {
       return null;
     }

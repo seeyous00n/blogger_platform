@@ -1,7 +1,7 @@
 export type SessionType = {
   userId: string,
   tokenIat: number,
-  tokenExp: number
+  tokenExp: number,
   ip: string,
   title: string,
   deviceId: string,
@@ -10,8 +10,7 @@ export type SessionType = {
 
 export type PairTokensType = {
   accessToken: string,
-  refreshToken: string,
-  iat: number
+  refreshToken: string
 }
 
 export type CreateTokensType = {
@@ -20,9 +19,11 @@ export type CreateTokensType = {
   title: string
 }
 
-export type UpdateSessionType = { tokenIat: number, lastActiveDate: Date }
+export type UpdateSessionType = { tokenIat: number, tokenExp: number, lastActiveDate: Date }
 
 export const TOKENS_NAME = {
   REFRESH_TOKEN: 'refreshToken',
   ACCESS_TOKEN: 'accessToken',
 };
+
+export type CreateSessionDtoType = Omit<SessionType, "lastActiveDate">;

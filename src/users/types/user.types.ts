@@ -1,15 +1,24 @@
 import { ObjectId } from 'mongodb';
+import { UserCreateInputModel } from "../models/userCreateInput.model";
+
+export type Password = {
+  hash: string,
+  recovery: string | null,
+  expirationDate: Date | null
+};
+
+export type EmailConfirmation = {
+  confirmationCode: string,
+  isConfirmed: boolean,
+  expirationDate: Date
+}
 
 export type UserEntityType = {
   login: string,
   email: string,
-  passwordHash: string,
+  password: Password,
   createdAt: string,
-  emailConfirmation: {
-    confirmationCode: string,
-    isConfirmed: boolean,
-    expirationDate: Date
-  }
+  emailConfirmation: EmailConfirmation
 }
 
 export type UserViewType = UserEntityType & {
@@ -21,3 +30,5 @@ export type UserViewAuthType = {
   login: string,
   email: string,
 }
+
+export type CreateUserDtoType = Omit<UserCreateInputModel, 'password'> & { hash: string }

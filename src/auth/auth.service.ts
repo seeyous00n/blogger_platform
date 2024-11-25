@@ -1,30 +1,31 @@
 import { AuthType, ERROR, TYPE_EMAIL } from './types/auth.type';
 import { CustomError, TYPE_ERROR } from '../common/errorHandler';
-import bcrypt from 'bcrypt';
 import { nodemailerService } from '../common/adapters/nodemailer.service';
-import { SETTINGS } from '../common/settings';
 import { userRepository } from '../users/users.repository';
-import { v4 as uuidv4 } from 'uuid';
 import { tokenService } from "../common/services/token.service";
 import { authRepository } from "./auth.repository";
 import { WithId } from "mongodb";
 import { CreateTokensType, PairTokensType, SessionType } from "./types/token.type";
+import { compareHash, generatePasswordHash } from "../common/adapters/bcrypt.service";
+import { SessionCreateDto } from "./dto/sessionCreate.dto";
+import { getUrlUtil } from "../common/utils/getUrl.util";
+import { RecoveryUpdateDto } from "./dto/recoveryUpdate.dto";
+import { createUuid } from "../common/utils/createUuid.util";
 
 class AuthService {
   async checkCredentials(data: AuthType): Promise<string> {
     const result = await userRepository.findByLoginOrEmail(data);
     if (!result) throw new CustomError(TYPE_ERROR.AUTH_ERROR);
 
-    const isAuth = await bcrypt.compare(data.password, result.passwordHash);
+    const isAuth = await compareHash(data.password, result.password.hash);
     if (!isAuth) throw new CustomError(TYPE_ERROR.AUTH_ERROR);
 
     return result._id.toString();
   }
 
   async registration(email: string, code: string): Promise<void> {
-    const link = `${SETTINGS.API_URL}?code=${code}`;
-    await nodemailerService.sendEmail(email, link);
-    // nodemailerService.sendEmail(email, link).catch((error) => {});
+    const link = getUrlUtil.registrationConfirmation(code);
+    nodemailerService.sendEmail(email, link).catch();
   }
 
   async confirmation(code: string): Promise<void> {
@@ -70,56 +71,83 @@ class AuthService {
       }]);
     }
 
-    const newCode = uuidv4();
+    const newCode = createUuid();
     await userRepository.updateConfirmationCode(userData._id, newCode);
-    const link = `${SETTINGS.API_URL}?code=${newCode}`;
-    await nodemailerService.sendEmail(email, link, TYPE_EMAIL.RESEND_CODE);
+    const link = getUrlUtil.registrationConfirmation(newCode);
+    nodemailerService.sendEmail(email, link, TYPE_EMAIL.RESEND_CODE).catch();
   }
 
   async createTokens(data: CreateTokensType): Promise<PairTokensType> {
-    const newData = {
-      ip: data.ip,
-      title: data.title,
-      deviceId: uuidv4(),
-      userId: data.userId,
-    };
-
-    const payload = { deviceId: newData.deviceId, userId: data.userId };
-
+    const deviceId = createUuid();
+    const payload = { deviceId, userId: data.userId };
     const tokens = tokenService.generateTokens(payload);
-    const tokenData = {
-      tokenIat: tokens.iat, tokenExp: tokens.exp, lastActiveDate: new Date(tokens.iat * 1000)
-      , ...newData
-    };
 
-    await authRepository.createByData(tokenData);
+    const newData = new SessionCreateDto({ ...data, deviceId, tokenIat: tokens.iat, tokenExp: tokens.exp });
+    await authRepository.createSessionByData(newData);
 
-    return tokens;
+    return { accessToken: tokens.accessToken, refreshToken: tokens.refreshToken };
   }
 
-  async getNewPairOfTokens(token: string): Promise<PairTokensType> {
+  async refreshToken(token: string): Promise<PairTokensType> {
     const { userId, deviceId, iat } = tokenService.getDataToken(token);
     const result = await this.findTokenByIat(iat, deviceId);
     const tokens = tokenService.generateTokens({ userId, deviceId });
-    
-    const data = { tokenIat: tokens.iat, lastActiveDate: new Date(tokens.iat * 1000) };
+
+    const data = { tokenIat: tokens.iat, tokenExp: tokens.exp, lastActiveDate: new Date(tokens.iat * 1000) };
     await authRepository.updateSessionById(result._id, data);
 
-    return tokens;
+    return { accessToken: tokens.accessToken, refreshToken: tokens.refreshToken };
   }
 
   async deleteToken(token: number, deviceId: string): Promise<void> {
     const result = await this.findTokenByIat(token, deviceId);
-    await authRepository.deleteById(result._id);
+    await authRepository.deleteSessionById(result._id);
   }
 
   async findTokenByIat(token: number, deviceId: string): Promise<WithId<SessionType>> {
-    const result = await authRepository.findByIat(token, deviceId);
+    const result = await authRepository.findSessionByIat(token, deviceId);
     if (!result) {
       throw new CustomError(TYPE_ERROR.AUTH_ERROR);
     }
 
     return result;
+  }
+
+  async recovery(email: string): Promise<void> {
+    const result = await userRepository.findByEmail(email);
+    if (!result) {
+      return;
+    }
+
+    const data = new RecoveryUpdateDto({ id: result._id });
+    const link = getUrlUtil.passwordRecovery(data.code);
+
+    await userRepository.updateRecoveryCode(data);
+    nodemailerService.sendEmail(email, link, TYPE_EMAIL.RECOVERY_CODE).catch();
+  }
+
+  async newPassword(code: string, password: string): Promise<void> {
+    const userData = await userRepository.findByRecoveryCode(code);
+    if (!userData) {
+      throw new CustomError(TYPE_ERROR.VALIDATION_ERROR, [{
+        message: ERROR.MESSAGE.INCORRECT_RECOVERY_CODE,
+        field: ERROR.FIELD.RECOVERY_CODE,
+      }]);
+    }
+
+    if (userData.password.expirationDate && userData.password.expirationDate < new Date()) {
+      throw new CustomError(TYPE_ERROR.VALIDATION_ERROR, [{
+        message: ERROR.MESSAGE.EXPIRATION_RECOVERY_CODE,
+        field: ERROR.FIELD.RECOVERY_CODE,
+      }]);
+    }
+
+    const data = {
+      id: userData._id,
+      hash: await generatePasswordHash(password),
+    };
+
+    await userRepository.updatePassword(data);
   }
 }
 
