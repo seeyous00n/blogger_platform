@@ -45,4 +45,14 @@ export class CommentsController {
       sendError(error, res);
     }
   };
+
+  likeStatus = async (req: RequestWithParamsAndBody<UriParamsModel, { likeStatus: string }>, res: Response) => {
+    try {
+      console.log('req.body.likeStatus: ', req.body.likeStatus);
+      
+      res.status(HTTP_STATUS_CODE.NO_CONTENT_204).json();
+    } catch (error) {
+      sendError(error, res);
+    }
+  };
 }

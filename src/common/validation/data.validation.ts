@@ -28,6 +28,7 @@ const loginOrEmailValidator = body('loginOrEmail').isString().trim().notEmpty();
 
 export const confirmationCodeValidator = body('code').isString().trim().notEmpty();
 export const commentContentValidator = body('content').isString().trim().isLength({ min: 20, max: 300 });
+export const likeStatusValidator = body('likeStatus').isIn(["None", "Like", "Dislike"]);
 
 export const blogDataValidation = [
   nameValidator,

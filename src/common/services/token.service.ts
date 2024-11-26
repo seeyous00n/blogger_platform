@@ -5,8 +5,8 @@ import { CustomError, TYPE_ERROR } from "../errorHandler";
 
 const JWT_SECRET = <jwt.Secret>SETTINGS.JWT_ACCESS_SECRET;
 const JWT_REFRESH_SECRET = <jwt.Secret>SETTINGS.JWT_REFRESH_SECRET;
-const ACCESS_EXP = '10sec';
-const REFRESH_EXP = '20sec';
+const ACCESS_EXP = '10m';
+const REFRESH_EXP = '20m';
 
 export class TokenService {
   generateTokens(payload: JWTPayloadRefreshType) {
