@@ -1,15 +1,19 @@
 import { Request, Response } from 'express';
 import { RequestOnlyQuery, RequestWithBody, userQueryStringType } from '../common/types/types';
-import { userService } from './user.service';
+import { UserService } from './user.service';
 import { HTTP_STATUS_CODE } from '../common/settings';
 import { sendError } from '../common/errorHandler';
-import { usersQueryRepository } from './usersQuery.repository';
 import { UserCreateInputModel } from './models/userCreateInput.model';
+import { UsersQueryRepository } from "./usersQuery.repository";
 
-class UsersController {
+export class UsersController {
+  constructor(private userService: UserService,
+              private usersQueryRepository: UsersQueryRepository) {
+  }
+
   getUsers = async (req: RequestOnlyQuery<userQueryStringType>, res: Response) => {
     try {
-      const result = await usersQueryRepository.findUsers(req.query);
+      const result = await this.usersQueryRepository.findUsers(req.query);
       res.status(HTTP_STATUS_CODE.OK_200).json(result);
     } catch (error) {
       sendError(error, res);
@@ -18,9 +22,9 @@ class UsersController {
 
   createUser = async (req: RequestWithBody<UserCreateInputModel>, res: Response) => {
     try {
-      const user = await userService.createUser(req.body);
-      await userService.updateIsConfirmed(user._id);
-      const result = await usersQueryRepository.findUserById(user._id.toString());
+      const user = await this.userService.createUser(req.body);
+      await this.userService.updateIsConfirmed(user._id);
+      const result = await this.usersQueryRepository.findUserById(user._id.toString());
       if (!result) {
         res.status(HTTP_STATUS_CODE.NOT_FOUND_404).json();
         return;
@@ -34,12 +38,10 @@ class UsersController {
 
   deleteUser = async (req: Request, res: Response) => {
     try {
-      await userService.deleteUserById(req.params.id);
+      await this.userService.deleteUserById(req.params.id);
       res.status(HTTP_STATUS_CODE.NO_CONTENT_204).json();
     } catch (error) {
       sendError(error, res);
     }
   };
 }
-
-export const usersController = new UsersController();

@@ -6,7 +6,7 @@ import { isObjectId } from '../common/adapters/mongodb.service';
 import { CommentsViewModel } from './models/CommentsView.model';
 import { CommentModel } from "../common/db/schemes/commentSchema";
 
-class CommentQueryRepository {
+export class CommentQueryRepository {
   async findComments(queryString: queryStringType, id?: string): Promise<CommentsViewModel> {
     const searchString = { postId: id };
 
@@ -41,5 +41,3 @@ class CommentQueryRepository {
     return new CommentViewDto(result);
   }
 }
-
-export const commentQueryRepository = new CommentQueryRepository();

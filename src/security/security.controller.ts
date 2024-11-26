@@ -1,15 +1,20 @@
 import { Request, Response } from "express";
-import { securityQueryRepository } from "./securityQuery.repository";
+import { SecurityQueryRepository } from "./securityQuery.repository";
 import { HTTP_STATUS_CODE } from "../common/settings";
-import { securityService } from "./security.service";
+import { SecurityService } from "./security.service";
 import { sendError } from "../common/errorHandler";
 import { RequestWithParams } from "../common/types/types";
 
-class SecurityController {
+export class SecurityController {
+  constructor(
+    private securityService: SecurityService,
+    private securityQueryRepository: SecurityQueryRepository) {
+  }
+
   getDevices = async (req: Request, res: Response) => {
     try {
       const token: string = req.cookies.refreshToken;
-      const result = await securityQueryRepository.getDevises(token);
+      const result = await this.securityQueryRepository.getDevises(token);
 
       res.status(HTTP_STATUS_CODE.OK_200).json(result);
     } catch (error) {
@@ -21,7 +26,7 @@ class SecurityController {
     try {
       const token: string = req.cookies.refreshToken;
       const deviceId = req.params.id;
-      await securityService.deleteDevice(token, deviceId);
+      await this.securityService.deleteDevice(token, deviceId);
 
       res.status(HTTP_STATUS_CODE.NO_CONTENT_204).json();
     } catch (error) {
@@ -32,7 +37,7 @@ class SecurityController {
   deleteDevices = async (req: Request, res: Response) => {
     try {
       const token: string = req.cookies.refreshToken;
-      await securityService.deleteDevices(token);
+      await this.securityService.deleteDevices(token);
 
       res.status(HTTP_STATUS_CODE.NO_CONTENT_204).json();
     } catch (error) {
@@ -40,5 +45,3 @@ class SecurityController {
     }
   };
 }
-
-export const securityController = new SecurityController();

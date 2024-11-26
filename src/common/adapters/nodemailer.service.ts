@@ -13,7 +13,7 @@ const smtpConfig: SMTPTransport.Options = {
   },
 };
 
-class NodemailerService {
+export class NodemailerService {
   sendEmail = async (to: string, link: string, type: string = TYPE_EMAIL.REGISTRATION): Promise<void> => {
     try {
       const htmlTemplate = this.getTemplate(link, type);
@@ -49,5 +49,3 @@ class NodemailerService {
     return registrationHtmlTemplate;
   };
 }
-
-export const nodemailerService = new NodemailerService();

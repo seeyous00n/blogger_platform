@@ -4,7 +4,7 @@ import { RateLimitModel } from "../db/schemes/rateLimitSchema";
 
 const SECONDS_AGO = -10;
 
-class RateLimitService {
+export class RateLimitService {
   async addVisitor(data: RateLimitType): Promise<void> {
     await RateLimitModel.create({
       IP: data.IP,
@@ -21,5 +21,3 @@ class RateLimitService {
     });
   }
 }
-
-export const rateLimitService = new RateLimitService();

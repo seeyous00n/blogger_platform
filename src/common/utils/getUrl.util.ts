@@ -1,6 +1,6 @@
 import { SETTINGS } from "../settings";
 
-class GetUrlUtil {
+export class GetUrlUtil {
   registrationConfirmation(code: string): string {
     return `${SETTINGS.API_URL}/auth/registration-confirmation?code=${code}`;
   }

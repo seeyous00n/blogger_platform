@@ -25,5 +25,3 @@ export class AuthRepository {
     }).lean();
   }
 }
-
-// export const authRepository = new AuthRepository();

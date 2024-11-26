@@ -4,7 +4,7 @@ import { ObjectId, WithId } from 'mongodb';
 import { isObjectId } from '../common/adapters/mongodb.service';
 import { PostDocument, PostModel } from "../common/db/schemes/postSchema";
 
-class PostsRepository {
+export class PostsRepository {
   async findById(id: string): Promise<WithId<PostEntityType> | null> {
     isObjectId(id);
     return PostModel.findOne({ _id: new ObjectId(id) }).lean();
@@ -25,5 +25,3 @@ class PostsRepository {
     await PostModel.deleteOne({ _id: new ObjectId(id) });
   }
 }
-
-export const postsRepository = new PostsRepository();

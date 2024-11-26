@@ -1,8 +1,8 @@
 import { Router } from 'express';
 import { authJwtGuard } from '../common/middlewares/guards/authJwt.guard';
-import { commentsController } from './comments.controller';
 import { commentContentValidator } from '../common/validation/data.validation';
 import { inputValidation } from '../common/validation/input.validation';
+import { commentsController } from "../composition-root";
 
 const commentsRouter = Router();
 

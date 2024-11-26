@@ -6,7 +6,7 @@ import { isObjectId } from '../common/adapters/mongodb.service';
 import { CommentsViewModel } from './models/postsView.model';
 import { PostModel } from "../common/db/schemes/postSchema";
 
-class PostsQueryRepository {
+export class PostsQueryRepository {
   async findPosts(queryString: queryStringType, id?: string): Promise<CommentsViewModel> {
     const searchString = id ? { blogId: id } : queryString.searchNameTerm ? {
       name: {
@@ -45,5 +45,3 @@ class PostsQueryRepository {
     return new PostsViewDto(result);
   }
 }
-
-export const postsQueryRepository = new PostsQueryRepository();

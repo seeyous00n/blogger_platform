@@ -8,7 +8,7 @@ const JWT_REFRESH_SECRET = <jwt.Secret>SETTINGS.JWT_REFRESH_SECRET;
 const ACCESS_EXP = '10sec';
 const REFRESH_EXP = '20sec';
 
-class TokenService {
+export class TokenService {
   generateTokens(payload: JWTPayloadRefreshType) {
     const accessToken = jwt.sign({ userId: payload.userId }, JWT_SECRET, { expiresIn: ACCESS_EXP });
     const refreshToken = jwt.sign(payload, JWT_REFRESH_SECRET, { expiresIn: REFRESH_EXP });
@@ -40,5 +40,3 @@ class TokenService {
     return { userId: result.userId, deviceId: result.deviceId, iat: result.iat, exp: result.exp };
   }
 }
-
-export const tokenService = new TokenService();

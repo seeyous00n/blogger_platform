@@ -1,11 +1,11 @@
 import { Router } from 'express';
-import { blogsController } from './blogs.controller';
 import { blogDataValidation, postDataValidationWithoutId } from '../common/validation/data.validation';
 import { authBaseGuard } from '../common/middlewares/guards/authBase.guard';
 import {
   queryStringPaginationPostsValidation,
   queryStringPaginationValidation
 } from '../common/validation/queryStringPagination.validation';
+import { blogsController } from "../composition-root";
 
 const blogsRouter = Router();
 

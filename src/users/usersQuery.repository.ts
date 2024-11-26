@@ -7,7 +7,7 @@ import { isObjectId } from '../common/adapters/mongodb.service';
 import { UsersViewModel } from './models/usersView.model';
 import { UserModel } from "../common/db/schemes/userSchema";
 
-class UsersQueryRepository {
+export class UsersQueryRepository {
   async findUsers(queryString: userQueryStringType): Promise<UsersViewModel> {
     const loginFilter = queryString.searchLoginTerm ? {
       login: {
@@ -63,5 +63,3 @@ class UsersQueryRepository {
     return new UserViewAuthDto(result);
   }
 }
-
-export const usersQueryRepository = new UsersQueryRepository();

@@ -4,15 +4,19 @@ import { RequestWithBody } from '../common/types/types';
 import { AuthType, DataInAccessTokenType, InputNewPasswordType, InputRecoveryType } from './types/auth.type';
 import { sendError } from '../common/errorHandler';
 import { HTTP_STATUS_CODE } from '../common/settings';
-import { usersQueryRepository } from '../users/usersQuery.repository';
-import { userService } from '../users/user.service';
 import { UserCreateModel } from '../users/models/userCreate.model';
 import { TOKENS_NAME } from "./types/token.type";
-import { tokenService } from "../common/services/token.service";
-import { cookieOptions } from "../common/utils/cookieOptions.util";
+import { TokenService } from "../common/services/token.service";
+import { UserService } from "../users/user.service";
+import { UsersQueryRepository } from "../users/usersQuery.repository";
+import { cookieOptionsForRefreshToken } from "../common/utils/cookieOptions.util";
 
 export class AuthController {
-  constructor(private authService: AuthService) {
+  constructor(
+    private authService: AuthService,
+    private userService: UserService,
+    private usersQueryRepository: UsersQueryRepository,
+    private tokenService: TokenService) {
   }
 
   authLoginUser = async (req: RequestWithBody<AuthType>, res: Response) => {
@@ -21,7 +25,7 @@ export class AuthController {
       const data = { userId, ip: req.ip || '', title: req.headers['user-agent'] || '' };
       const { accessToken, refreshToken } = await this.authService.createTokens(data);
 
-      res.cookie(TOKENS_NAME.REFRESH_TOKEN, refreshToken, cookieOptions.getOptionsForRefreshToken());
+      res.cookie(TOKENS_NAME.REFRESH_TOKEN, refreshToken, cookieOptionsForRefreshToken());
       res.status(HTTP_STATUS_CODE.OK_200).json({ [TOKENS_NAME.ACCESS_TOKEN]: accessToken });
     } catch (error) {
       sendError(error, res);
@@ -30,7 +34,7 @@ export class AuthController {
 
   getMe = async (req: RequestWithBody<DataInAccessTokenType>, res: Response) => {
     try {
-      const result = await usersQueryRepository.findAuthUserById(req.user.userId);
+      const result = await this.usersQueryRepository.findAuthUserById(req.user.userId);
       res.status(HTTP_STATUS_CODE.OK_200).json(result);
     } catch (error) {
       sendError(error, res);
@@ -39,7 +43,7 @@ export class AuthController {
 
   registration = async (req: RequestWithBody<UserCreateModel>, res: Response) => {
     try {
-      const result = await userService.createUser(req.body);
+      const result = await this.userService.createUser(req.body);
       await this.authService.registration(req.body.email, result.emailConfirmation.confirmationCode);
 
       res.status(HTTP_STATUS_CODE.NO_CONTENT_204).json();
@@ -71,7 +75,7 @@ export class AuthController {
       const token: string = req.cookies.refreshToken;
       const { accessToken, refreshToken } = await this.authService.refreshToken(token);
 
-      res.cookie(TOKENS_NAME.REFRESH_TOKEN, refreshToken, cookieOptions.getOptionsForRefreshToken());
+      res.cookie(TOKENS_NAME.REFRESH_TOKEN, refreshToken, cookieOptionsForRefreshToken());
       res.status(HTTP_STATUS_CODE.OK_200).json({ [TOKENS_NAME.ACCESS_TOKEN]: accessToken });
     } catch (error) {
       sendError(error, res);
@@ -81,7 +85,7 @@ export class AuthController {
   logout = async (req: Request, res: Response) => {
     try {
       const token: string = req.cookies.refreshToken;
-      const { deviceId, iat } = tokenService.getDataToken(token);
+      const { deviceId, iat } = this.tokenService.getDataToken(token);
       await this.authService.deleteToken(iat, deviceId);
 
       res.clearCookie(TOKENS_NAME.REFRESH_TOKEN);
@@ -109,5 +113,3 @@ export class AuthController {
     }
   };
 }
-
-// export const authController = new AuthController();

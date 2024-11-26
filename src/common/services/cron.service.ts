@@ -1,6 +1,6 @@
 import { SessionModel } from "../db/schemes/sessionSchema";
 
-class CronService {
+export class CronService {
   private readonly repeatTime: number;
   private readonly stopCron: number = Math.trunc(new Date().getTime() / 1000) + 60 * 5;
 
@@ -28,5 +28,3 @@ class CronService {
     setTimeout(this.deleteExpiredSessions, this.repeatTime);
   };
 }
-
-export { CronService };

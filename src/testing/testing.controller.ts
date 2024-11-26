@@ -7,7 +7,7 @@ import { CommentModel } from "../common/db/schemes/commentSchema";
 import { SessionModel } from "../common/db/schemes/sessionSchema";
 import { RateLimitModel } from "../common/db/schemes/rateLimitSchema";
 
-class TestingController {
+export class TestingController {
   async clearAllData(req: Request, res: Response): Promise<void> {
     try {
       await BlogModel.deleteMany({});
@@ -22,5 +22,3 @@ class TestingController {
     }
   }
 }
-
-export const testingController = new TestingController();

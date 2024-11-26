@@ -1,6 +1,5 @@
 import { Response } from 'express';
 import { HTTP_STATUS_CODE } from '../common/settings';
-import { postService } from './post.service';
 import { PostCreateModel } from './models/postCreate.model';
 import {
   queryStringType,
@@ -11,17 +10,25 @@ import {
 } from '../common/types/types';
 import { UriParamsModel } from '../common/models/uriParams.model';
 import { PostUpdateModal } from './models/postUpdate.modal';
-import { postsQueryRepository } from './postsQuery.repository';
+import { PostsQueryRepository } from './postsQuery.repository';
 import { PostsViewDto } from './dto/postsView.dto';
 import { sendError } from '../common/errorHandler';
 import { CommentInputParamModel } from '../comments/models/CommentInputParam.model';
-import { commentService } from '../comments/comment.service';
-import { commentQueryRepository } from '../comments/commentQuery.repository';
+import { CommentService } from '../comments/comment.service';
+import { CommentQueryRepository } from '../comments/commentQuery.repository';
+import { PostService } from "./post.service";
 
-class PostsController {
+export class PostsController {
+  constructor(
+    private postService: PostService,
+    private postsQueryRepository: PostsQueryRepository,
+    private commentService: CommentService,
+    private commentQueryRepository: CommentQueryRepository) {
+  }
+
   getPosts = async (req: RequestWithQuery<UriParamsModel, queryStringType>, res: Response) => {
     try {
-      const result = await postsQueryRepository.findPosts(req.query);
+      const result = await this.postsQueryRepository.findPosts(req.query);
       res.status(HTTP_STATUS_CODE.OK_200).json(result);
     } catch (error) {
       sendError(error, res);
@@ -30,7 +37,7 @@ class PostsController {
 
   getPost = async (req: RequestWithParams<UriParamsModel>, res: Response<PostsViewDto>) => {
     try {
-      const result = await postsQueryRepository.findById(req.params.id);
+      const result = await this.postsQueryRepository.findById(req.params.id);
       if (!result) {
         res.status(HTTP_STATUS_CODE.NOT_FOUND_404).json();
         return;
@@ -44,8 +51,8 @@ class PostsController {
 
   creatPost = async (req: RequestWithBody<PostCreateModel>, res: Response<PostsViewDto>) => {
     try {
-      const post = await postService.createPost(req.body);
-      const result = await postsQueryRepository.findById(post._id.toString()) as PostsViewDto;
+      const post = await this.postService.createPost(req.body);
+      const result = await this.postsQueryRepository.findById(post._id.toString()) as PostsViewDto;
 
       res.status(HTTP_STATUS_CODE.CREATED_201).json(result);
     } catch (error) {
@@ -55,7 +62,7 @@ class PostsController {
 
   updatePost = async (req: RequestWithParamsAndBody<UriParamsModel, PostUpdateModal>, res: Response) => {
     try {
-      await postService.updatePostById(req.params.id, req.body);
+      await this.postService.updatePostById(req.params.id, req.body);
       res.status(HTTP_STATUS_CODE.NO_CONTENT_204).json();
     } catch (error) {
       sendError(error, res);
@@ -64,7 +71,7 @@ class PostsController {
 
   deletePost = async (req: RequestWithParams<UriParamsModel>, res: Response) => {
     try {
-      await postService.deletePostById(req.params.id);
+      await this.postService.deletePostById(req.params.id);
       res.status(HTTP_STATUS_CODE.NO_CONTENT_204).json();
     } catch (error) {
       sendError(error, res);
@@ -73,12 +80,12 @@ class PostsController {
 
   createCommentByPost = async (req: RequestWithParamsAndBody<UriParamsModel, CommentInputParamModel>, res: Response) => {
     try {
-      const commentId = await commentService.createComment({
+      const commentId = await this.commentService.createComment({
         postId: req.params.id,
         userId: req.user.userId,
         comment: req.body.content
       });
-      const result = await commentQueryRepository.findCommentById(commentId._id.toString());
+      const result = await this.commentQueryRepository.findCommentById(commentId._id.toString());
 
       res.status(HTTP_STATUS_CODE.CREATED_201).json(result);
     } catch (error) {
@@ -88,8 +95,8 @@ class PostsController {
 
   getCommentsByPost = async (req: RequestWithQuery<UriParamsModel, queryStringType>, res: Response) => {
     try {
-      const postId = await postService.findPostById(req.params.id);
-      const result = await commentQueryRepository.findComments(req.query, postId.toString());
+      const postId = await this.postService.findPostById(req.params.id);
+      const result = await this.commentQueryRepository.findComments(req.query, postId.toString());
 
       res.status(HTTP_STATUS_CODE.OK_200).json(result);
     } catch (error) {
@@ -97,5 +104,3 @@ class PostsController {
     }
   };
 }
-
-export const postsController = new PostsController();

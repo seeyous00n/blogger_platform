@@ -1,6 +1,6 @@
 import { body } from 'express-validator';
 import { inputValidation } from './input.validation';
-import { blogsRepository } from '../../blogs/blogs.repository';
+import { blogsRepository } from "../../composition-root";
 
 const BLOG_ID_ERROR_MESSAGE = 'Blog ID not found';
 

@@ -3,7 +3,7 @@ import { isObjectId } from '../common/adapters/mongodb.service';
 import { CommentEntityType } from './types/comment.types';
 import { CommentDocument, CommentModel } from "../common/db/schemes/commentSchema";
 
-class CommentRepository {
+export class CommentRepository {
   async findById(id: string): Promise<WithId<CommentEntityType> | null> {
     isObjectId(id);
     return CommentModel.findOne({ _id: new ObjectId(id) }).lean();
@@ -28,5 +28,3 @@ class CommentRepository {
     await CommentModel.deleteOne({ _id: new ObjectId(id) });
   }
 }
-
-export const commentRepository = new CommentRepository();

@@ -6,7 +6,7 @@ import { isObjectId } from '../common/adapters/mongodb.service';
 import { BlogsViewModel } from './models/blogsView.model';
 import { BlogModel } from "../common/db/schemes/blogSchema";
 
-class BlogsQueryRepository {
+export class BlogsQueryRepository {
   async findBlogs(queryString: queryStringType): Promise<BlogsViewModel> {
     const searchString = queryString.searchNameTerm ? {
       name: {
@@ -45,5 +45,3 @@ class BlogsQueryRepository {
     return new BlogsViewDto(result);
   }
 }
-
-export const blogsQueryRepository = new BlogsQueryRepository();
