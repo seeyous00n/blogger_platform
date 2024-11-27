@@ -21,7 +21,7 @@ export class CommentQueryRepository {
       .skip(queryHelper.filter.skip)
       .limit(queryHelper.filter.limit)
       .lean();
-
+    //TODO get only ID comments
     const likes: LikesType[] = await LikesModel.find({}).lean();
     const result = countLikeForAllComments(comments, likes, authorId);
     const commentsCount = await CommentModel.countDocuments(queryHelper.filter.search);

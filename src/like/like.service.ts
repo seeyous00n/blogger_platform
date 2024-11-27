@@ -1,19 +1,21 @@
 import { LikesType } from "../common/db/schemes/likesSchema";
 import { LikeWithMyStatusType } from "./types/like.types";
 import { tokenService } from "../composition-root";
-import { BEARER } from "../common/middlewares/guards/authJwt.guard";
 import { RequestWithQuery } from "../common/types/types";
 import { CommentWithLikeViewDto } from "../comments/dto/commentView.dto";
 import { CommentViewType } from "../comments/types/comment.types";
 
+const LIKE = 'Like';
+const DISLIKE = 'Dislike';
+const DEFAULT_MY_STATUS = 'None';
 
 export const countLikeComments = (likes: LikesType[], authorId: string | undefined): LikeWithMyStatusType => {
   return likes.reduce<LikeWithMyStatusType>((accum: LikeWithMyStatusType, currentValue: LikesType): LikeWithMyStatusType => {
-    if (currentValue.status === 'Like') {
+    if (currentValue.status === LIKE) {
       accum.likesCount += 1;
     }
 
-    if (currentValue.status === 'Dislike') {
+    if (currentValue.status === DISLIKE) {
       accum.dislikesCount += 1;
     }
 
@@ -22,7 +24,7 @@ export const countLikeComments = (likes: LikesType[], authorId: string | undefin
     }
 
     return accum;
-  }, { likesCount: 0, dislikesCount: 0, myStatus: "None" });
+  }, { likesCount: 0, dislikesCount: 0, myStatus: DEFAULT_MY_STATUS });
 };
 
 export const countLikeForAllComments = (comments: CommentViewType[], likes: LikesType[], authorId: string | undefined): CommentWithLikeViewDto[] => {
@@ -31,15 +33,15 @@ export const countLikeForAllComments = (comments: CommentViewType[], likes: Like
   comments.forEach((comment) => {
     let likeCount = 0;
     let dislikeCount = 0;
-    let myStatus = 'None';
+    let myStatus = DEFAULT_MY_STATUS;
 
     likes.forEach((like) => {
       if (comment._id.toString() === like.parentId) {
-        if (like.status === 'Like') {
+        if (like.status === LIKE) {
           likeCount += 1;
         }
 
-        if (like.status === 'Dislike') {
+        if (like.status === DISLIKE) {
           dislikeCount += 1;
         }
 
@@ -56,26 +58,23 @@ export const countLikeForAllComments = (comments: CommentViewType[], likes: Like
 
     likeCount = 0;
     dislikeCount = 0;
-    myStatus = 'None';
+    myStatus = DEFAULT_MY_STATUS;
   });
 
   return result;
 };
 
-export const isLoginUser = async (req: RequestWithQuery<{}, {}>): Promise<string> => {
+export const isLoginUser = (req: RequestWithQuery<{}, {}>): string | undefined => {
   const authHeader = req.headers.authorization;
   if (!authHeader) {
-    return '';
+    return;
   }
 
-  const [type, token] = authHeader.split(' ');
-  if (type !== BEARER) {
-    return '';
-  }
+  const [_, token] = authHeader.split(' ');
 
   const payload = tokenService.validateAccessToken(token);
   if (!payload) {
-    return '';
+    return;
   }
 
   return payload.userId;

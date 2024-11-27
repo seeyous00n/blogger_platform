@@ -96,8 +96,8 @@ export class PostsController {
 
   getCommentsByPost = async (req: RequestWithQuery<UriParamsModel, queryStringType>, res: Response) => {
     try {
-      //TODO дерьмо
-      const userId = await isLoginUser(req);
+      //TODO
+      const userId = isLoginUser(req);
       const postId = await this.postService.findPostById(req.params.id);
       const result = await this.commentQueryRepository.findComments(req.query, postId.toString(), userId);
 

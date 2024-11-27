@@ -19,7 +19,7 @@ export class CommentsController {
   getComment = async (req: RequestWithParams<UriParamsModel>, res: Response) => {
     try {
       //TODO
-      const userId = await isLoginUser(req);
+      const userId = isLoginUser(req);
       const result = await this.commentQueryRepository.findCommentById(req.params.id, userId);
 
       if (!result) {
@@ -44,7 +44,6 @@ export class CommentsController {
 
   deleteComment = async (req: RequestWithParamsAndBody<UriParamsModel, DataInAccessTokenType>, res: Response) => {
     try {
-      //TODO delete comments with post? hmmm...
       await this.commentService.deleteCommentById(req.params.id, req.user.userId);
       res.status(HTTP_STATUS_CODE.NO_CONTENT_204).json();
     } catch (error) {
