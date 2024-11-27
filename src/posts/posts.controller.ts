@@ -17,7 +17,6 @@ import { CommentInputParamModel } from '../comments/models/CommentInputParam.mod
 import { CommentService } from '../comments/comment.service';
 import { CommentQueryRepository } from '../comments/commentQuery.repository';
 import { PostService } from "./post.service";
-import { isLoginUser } from "../like/like.service";
 
 export class PostsController {
   constructor(
@@ -96,10 +95,8 @@ export class PostsController {
 
   getCommentsByPost = async (req: RequestWithQuery<UriParamsModel, queryStringType>, res: Response) => {
     try {
-      //TODO
-      const userId = isLoginUser(req);
       const postId = await this.postService.findPostById(req.params.id);
-      const result = await this.commentQueryRepository.findComments(req.query, postId.toString(), userId);
+      const result = await this.commentQueryRepository.findComments(req.query, postId.toString(), req.authorizedUserId);
 
       res.status(HTTP_STATUS_CODE.OK_200).json(result);
     } catch (error) {

@@ -8,7 +8,6 @@ import { CommentService } from './comment.service';
 import { CommentInputUpdateModel } from './models/CommentInputUpdate.model';
 import { DataInAccessTokenType } from '../auth/types/auth.type';
 import { LikeStatusType } from "../common/db/schemes/likesSchema";
-import { isLoginUser } from "../like/like.service";
 
 export class CommentsController {
   constructor(
@@ -18,9 +17,7 @@ export class CommentsController {
 
   getComment = async (req: RequestWithParams<UriParamsModel>, res: Response) => {
     try {
-      //TODO
-      const userId = isLoginUser(req);
-      const result = await this.commentQueryRepository.findCommentById(req.params.id, userId);
+      const result = await this.commentQueryRepository.findCommentById(req.params.id, req.authorizedUserId);
 
       if (!result) {
         res.status(HTTP_STATUS_CODE.NOT_FOUND_404).json();

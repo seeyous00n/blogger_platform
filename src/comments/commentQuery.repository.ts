@@ -21,9 +21,12 @@ export class CommentQueryRepository {
       .skip(queryHelper.filter.skip)
       .limit(queryHelper.filter.limit)
       .lean();
-    //TODO get only ID comments
-    const likes: LikesType[] = await LikesModel.find({}).lean();
+
+    const commentsId = comments.map((comment) => comment._id.toString());
+
+    const likes: LikesType[] = await LikesModel.find({ parentId: commentsId }).lean();
     const result = countLikeForAllComments(comments, likes, authorId);
+
     const commentsCount = await CommentModel.countDocuments(queryHelper.filter.search);
 
     return {
