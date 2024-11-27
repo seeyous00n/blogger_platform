@@ -7,6 +7,8 @@ import { UriParamsModel } from '../common/models/uriParams.model';
 import { CommentService } from './comment.service';
 import { CommentInputUpdateModel } from './models/CommentInputUpdate.model';
 import { DataInAccessTokenType } from '../auth/types/auth.type';
+import { LikeStatusType } from "../common/db/schemes/likesSchema";
+import { isLoginUser } from "../like/like.service";
 
 export class CommentsController {
   constructor(
@@ -16,7 +18,10 @@ export class CommentsController {
 
   getComment = async (req: RequestWithParams<UriParamsModel>, res: Response) => {
     try {
-      const result = await this.commentQueryRepository.findCommentById(req.params.id);
+      //TODO
+      const userId = await isLoginUser(req);
+      const result = await this.commentQueryRepository.findCommentById(req.params.id, userId);
+
       if (!result) {
         res.status(HTTP_STATUS_CODE.NOT_FOUND_404).json();
         return;
@@ -39,6 +44,7 @@ export class CommentsController {
 
   deleteComment = async (req: RequestWithParamsAndBody<UriParamsModel, DataInAccessTokenType>, res: Response) => {
     try {
+      //TODO delete comments with post? hmmm...
       await this.commentService.deleteCommentById(req.params.id, req.user.userId);
       res.status(HTTP_STATUS_CODE.NO_CONTENT_204).json();
     } catch (error) {
@@ -46,10 +52,15 @@ export class CommentsController {
     }
   };
 
-  likeStatus = async (req: RequestWithParamsAndBody<UriParamsModel, { likeStatus: string }>, res: Response) => {
+  likeStatus = async (req: RequestWithParamsAndBody<UriParamsModel, { likeStatus: LikeStatusType }>, res: Response) => {
     try {
-      console.log('req.body.likeStatus: ', req.body.likeStatus);
-      
+      const data = {
+        likeStatus: req.body.likeStatus,
+        parentId: req.params.id,
+        authorId: req.user.userId
+      };
+      await this.commentService.updateLike(data);
+
       res.status(HTTP_STATUS_CODE.NO_CONTENT_204).json();
     } catch (error) {
       sendError(error, res);

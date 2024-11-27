@@ -6,12 +6,16 @@ import { CommentCreateDto } from "./dto/commentCreate.dto";
 import { CommentDocument } from "../common/db/schemes/commentSchema";
 import { CommentRepository } from "./comment.repository";
 import { UserRepository } from "../users/users.repository";
+import { LikeRepository } from "../like/like.repository";
+import { InputLikeStatusType } from "./types/comment.types";
+import { LikeCreateDto } from "../like/dto/likeCreate.dto";
 
 export class CommentService {
   constructor(
     private commentRepository: CommentRepository,
     private userRepository: UserRepository,
-    private postsRepository: PostsRepository) {
+    private postsRepository: PostsRepository,
+    private likeRepository: LikeRepository) {
   }
 
   async createComment(data: CommentCreateInputModel): Promise<CommentDocument> {
@@ -26,6 +30,7 @@ export class CommentService {
     }
 
     const newComment = new CommentCreateDto({ ...data, userLogin: user.login });
+
     return await this.commentRepository.createByData(newComment);
   }
 
@@ -48,6 +53,27 @@ export class CommentService {
     const result = await this.commentRepository.findByIdAndUserId(commentId, userId);
     if (!result) {
       throw new CustomError(TYPE_ERROR.FORBIDDEN_ERROR);
+    }
+  }
+
+  async updateLike(data: InputLikeStatusType): Promise<void> {
+    const comment = await this.commentRepository.findById(data.parentId);
+    if (!comment) {
+      throw new CustomError(TYPE_ERROR.NOT_FOUND);
+    }
+
+    const like = await this.likeRepository.getLikeByParentIdAuthorId(data.parentId, data.authorId);
+    if (!like) {
+      const newLike = new LikeCreateDto(data);
+      await this.likeRepository.createLike(newLike);
+
+      return;
+    }
+
+    if (data.likeStatus !== like.status) {
+      like.status = data.likeStatus;
+
+      await like.save();
     }
   }
 }
