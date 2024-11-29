@@ -1,9 +1,6 @@
 import { ObjectId } from 'mongodb';
 import { LikeStatusType } from "../../common/db/schemes/likesSchema";
-
-export type CommentViewType = CommentEntityType & {
-  _id: ObjectId,
-}
+import { LikeWithMyStatusType } from "../../like/types/like.types";
 
 export type CommentEntityType = {
   postId: string,
@@ -14,6 +11,11 @@ export type CommentEntityType = {
   }
   createdAt: string,
 }
+
+export type CommentViewType = CommentEntityType & {
+  _id: ObjectId,
+}
+export type CommentWithLikeViewType = CommentViewType & LikeWithMyStatusType;
 
 export type InputLikeStatusType = {
   likeStatus: LikeStatusType,

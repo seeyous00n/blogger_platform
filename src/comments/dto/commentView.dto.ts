@@ -1,5 +1,4 @@
-import { CommentViewType } from '../types/comment.types';
-import { LikeWithMyStatusType } from "../../like/types/like.types";
+import { CommentWithLikeViewType } from '../types/comment.types';
 
 export class CommentWithLikeViewDto {
   id;
@@ -8,15 +7,15 @@ export class CommentWithLikeViewDto {
   createdAt;
   likesInfo;
 
-  constructor(model: CommentViewType, likeModel: LikeWithMyStatusType) {
+  constructor(model: CommentWithLikeViewType) {
     this.id = model._id.toString();
     this.content = model.content;
     this.commentatorInfo = model.commentatorInfo;
     this.createdAt = model.createdAt;
     this.likesInfo = {
-      likesCount: likeModel.likesCount,
-      dislikesCount: likeModel.dislikesCount,
-      myStatus: likeModel.myStatus
+      likesCount: model.likesCount,
+      dislikesCount: model.dislikesCount,
+      myStatus: model.myStatus
     };
   }
 }

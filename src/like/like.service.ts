@@ -1,49 +1,35 @@
-import { LikesType } from "../common/db/schemes/likesSchema";
-import { LikeWithMyStatusType } from "./types/like.types";
-import { CommentWithLikeViewDto } from "../comments/dto/commentView.dto";
-import { CommentViewType } from "../comments/types/comment.types";
+import { CommentViewType, CommentWithLikeViewType } from "../comments/types/comment.types";
+import { LikeRepository } from "./like.repository";
 
 const LIKE = 'Like';
 const DISLIKE = 'Dislike';
 const DEFAULT_MY_STATUS = 'None';
 
 export class LikeService {
-  countLikeComments(likes: LikesType[], authorId: string | undefined): LikeWithMyStatusType {
-    return likes.reduce<LikeWithMyStatusType>((accum: LikeWithMyStatusType, currentValue: LikesType): LikeWithMyStatusType => {
-      if (currentValue.status === LIKE) {
-        accum.likesCount += 1;
-      }
-      if (currentValue.status === DISLIKE) {
-        accum.dislikesCount += 1;
-      }
-      if (currentValue.authorId === authorId) {
-        accum.myStatus = currentValue.status;
-      }
+  constructor(private likeRepository: LikeRepository) {
+  }
 
-      return accum;
-    }, { likesCount: 0, dislikesCount: 0, myStatus: DEFAULT_MY_STATUS });
+  async getCommentWithLike(comment: CommentViewType, authorId: string | undefined): Promise<CommentWithLikeViewType> {
+    const likesCount = await this.likeRepository.getCount(comment._id.toString(), LIKE);
+    const dislikesCount = await this.likeRepository.getCount(comment._id.toString(), DISLIKE);
+    let myStatus = DEFAULT_MY_STATUS;
+
+    if (authorId) {
+      const like = await this.likeRepository.findLikeByParentIdAndAuthorId(comment._id.toString(), authorId);
+
+      if (like) {
+        myStatus = like.status;
+      }
+    }
+
+    return { ...comment, likesCount, dislikesCount, myStatus };
   };
 
-  //TODO rename..
-  countLikeForAllComments(comments: CommentViewType[], likes: LikesType[], authorId: string | undefined): CommentWithLikeViewDto[] {
-    return comments.map((comment) => {
-      const likesInfo = likes.reduce<LikeWithMyStatusType>((accum: LikeWithMyStatusType, currentValue: LikesType): LikeWithMyStatusType => {
-        if (comment._id.toString() === currentValue.parentId) {
-          if (currentValue.status === LIKE) {
-            accum.likesCount += 1;
-          }
-          if (currentValue.status === DISLIKE) {
-            accum.dislikesCount += 1;
-          }
-          if (currentValue.authorId === authorId) {
-            accum.myStatus = currentValue.status;
-          }
-        }
-
-        return accum;
-      }, { likesCount: 0, dislikesCount: 0, myStatus: DEFAULT_MY_STATUS });
-
-      return new CommentWithLikeViewDto(comment, likesInfo);
+  async getCommentsWithLikes(comments: CommentViewType[], authorId: string | undefined): Promise<CommentWithLikeViewType[]> {
+    const commentsWithLike = comments.map(async (comment): Promise<CommentWithLikeViewType> => {
+      return await this.getCommentWithLike(comment, authorId);
     });
+
+    return await Promise.all(commentsWithLike);
   };
 }

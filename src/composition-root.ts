@@ -40,7 +40,7 @@ const nodemailerService = new NodemailerService();
 export const tokenService = new TokenService();
 export const rateLimitService = new RateLimitService();
 
-const likeService = new LikeService();
+const likeService = new LikeService(likeRepository);
 const authService = new AuthService(authRepository, userRepository, nodemailerService, tokenService);
 const securityService = new SecurityService(securityRepository, tokenService);
 const userService = new UserService(userRepository);

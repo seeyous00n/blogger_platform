@@ -5,7 +5,6 @@ import { CommentWithLikeViewDto } from './dto/commentView.dto';
 import { isObjectId } from '../common/adapters/mongodb.service';
 import { CommentsViewModel } from './models/CommentsView.model';
 import { CommentModel } from "../common/db/schemes/commentSchema";
-import { LikesModel, LikesType } from "../common/db/schemes/likesSchema";
 import { CommentViewType } from "./types/comment.types";
 import { LikeService } from "../like/like.service";
 
@@ -25,12 +24,11 @@ export class CommentQueryRepository {
       .limit(queryHelper.filter.limit)
       .lean();
 
-    const commentsId = comments.map((comment) => comment._id.toString());
-
-    const likes: LikesType[] = await LikesModel.find({ parentId: commentsId }).lean();
-    const result = this.likeService.countLikeForAllComments(comments, likes, authorId);
-
     const commentsCount = await CommentModel.countDocuments(queryHelper.filter.search);
+
+    const commentsWithLikes = await this.likeService.getCommentsWithLikes(comments, authorId);
+
+    const result = commentsWithLikes.map((item) => new CommentWithLikeViewDto(item));
 
     return {
       'pagesCount': Math.ceil(commentsCount / queryHelper.pageSize),
@@ -48,9 +46,8 @@ export class CommentQueryRepository {
       return null;
     }
 
-    const likes: LikesType[] = await LikesModel.find({ parentId: comment._id.toString() }).lean();
-    const likesInfo = this.likeService.countLikeComments(likes, authorId);
+    const commentWithLike = await this.likeService.getCommentWithLike(comment, authorId);
 
-    return new CommentWithLikeViewDto(comment, likesInfo);
+    return new CommentWithLikeViewDto(commentWithLike);
   }
 }

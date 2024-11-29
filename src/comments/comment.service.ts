@@ -62,7 +62,7 @@ export class CommentService {
       throw new CustomError(TYPE_ERROR.NOT_FOUND);
     }
 
-    const like = await this.likeRepository.getLikeByParentIdAuthorId(data.parentId, data.authorId);
+    const like = await this.likeRepository.findLikeByParentIdAndAuthorId(data.parentId, data.authorId);
     if (!like) {
       const newLike = new LikeCreateDto(data);
       await this.likeRepository.createLike(newLike);
