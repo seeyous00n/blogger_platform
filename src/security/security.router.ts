@@ -1,6 +1,6 @@
 import { Router } from "express";
-import { securityController } from "./security.controller";
 import { authJwtRefreshGuard } from "../common/middlewares/guards/authJwtRefresh.guard";
+import { securityController } from "../composition-root";
 
 const securityRouter = Router();
 

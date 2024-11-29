@@ -3,7 +3,7 @@ import { SessionType } from "../auth/types/token.type";
 import { DeviceAndUserType } from "./types/security.types";
 import { SessionModel } from "../common/db/schemes/sessionSchema";
 
-class SecurityRepository {
+export class SecurityRepository {
   async findByDeviceIdAndUserId(data: DeviceAndUserType): Promise<WithId<SessionType> | null> {
     return SessionModel.findOne({ deviceId: data.deviceId, userId: data.userId }).lean();
   }
@@ -23,5 +23,3 @@ class SecurityRepository {
     });
   }
 }
-
-export const securityRepository = new SecurityRepository();

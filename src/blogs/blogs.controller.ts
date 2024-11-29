@@ -8,21 +8,28 @@ import {
   RequestWithQuery,
 } from '../common/types/types';
 import { UriParamsModel } from '../common/models/uriParams.model';
-import { blogService } from './blog.service';
 import { BlogCreateModel } from './models/blogCreate.model';
 import { BlogUpdateModal } from './models/blogUpdate.modal';
-import { blogsQueryRepository } from './blogsQuery.repository';
-import { postsQueryRepository } from '../posts/postsQuery.repository';
+import { PostsQueryRepository } from '../posts/postsQuery.repository';
 import { PostCreateModel } from '../posts/models/postCreate.model';
 import { PostsViewDto } from '../posts/dto/postsView.dto';
 import { BlogsViewDto } from './dto/blogsView.dto';
 import { sendError } from '../common/errorHandler';
-import { postService } from '../posts/post.service';
+import { PostService } from '../posts/post.service';
+import { BlogService } from "./blog.service";
+import { BlogsQueryRepository } from "./blogsQuery.repository";
 
-class BlogsController {
+export class BlogsController {
+  constructor(
+    private blogService: BlogService,
+    private blogsQueryRepository: BlogsQueryRepository,
+    private postService: PostService,
+    private postsQueryRepository: PostsQueryRepository) {
+  }
+
   getBlogs = async (req: RequestWithQuery<UriParamsModel, queryStringType>, res: Response) => {
     try {
-      const result = await blogsQueryRepository.findBlogs(req.query);
+      const result = await this.blogsQueryRepository.findBlogs(req.query);
       res.status(HTTP_STATUS_CODE.OK_200).json(result);
     } catch (error) {
       sendError(error, res);
@@ -31,7 +38,7 @@ class BlogsController {
 
   getBlog = async (req: RequestWithParams<UriParamsModel>, res: Response<BlogsViewDto>) => {
     try {
-      const result = await blogsQueryRepository.findById(req.params.id);
+      const result = await this.blogsQueryRepository.findById(req.params.id);
       if (!result) {
         res.status(HTTP_STATUS_CODE.NOT_FOUND_404).json();
         return;
@@ -45,8 +52,8 @@ class BlogsController {
 
   createBlog = async (req: RequestWithBody<BlogCreateModel>, res: Response<BlogsViewDto>) => {
     try {
-      const blog = await blogService.createBlog(req.body);
-      const result = await blogsQueryRepository.findById(blog._id.toString()) as BlogsViewDto;
+      const blog = await this.blogService.createBlog(req.body);
+      const result = await this.blogsQueryRepository.findById(blog._id.toString()) as BlogsViewDto;
 
       res.status(HTTP_STATUS_CODE.CREATED_201).json(result);
     } catch (error) {
@@ -56,7 +63,7 @@ class BlogsController {
 
   updateBlog = async (req: RequestWithParamsAndBody<UriParamsModel, BlogUpdateModal>, res: Response) => {
     try {
-      await blogService.updateBlogById(req.params.id, req.body);
+      await this.blogService.updateBlogById(req.params.id, req.body);
       res.status(HTTP_STATUS_CODE.NO_CONTENT_204).json();
     } catch (error) {
       sendError(error, res);
@@ -65,7 +72,7 @@ class BlogsController {
 
   deleteBlog = async (req: RequestWithParams<UriParamsModel>, res: Response) => {
     try {
-      await blogService.deleteBlogById(req.params.id);
+      await this.blogService.deleteBlogById(req.params.id);
       res.status(HTTP_STATUS_CODE.NO_CONTENT_204).json();
     } catch (error) {
       sendError(error, res);
@@ -75,8 +82,8 @@ class BlogsController {
   createPostByBlog = async (req: RequestWithParamsAndBody<UriParamsModel, PostCreateModel>, res: Response<PostsViewDto>) => {
     try {
       req.body.blogId = req.params.id;
-      const post = await postService.createPost(req.body);
-      const result = await postsQueryRepository.findById(post._id.toString());
+      const post = await this.postService.createPost(req.body);
+      const result = await this.postsQueryRepository.findById(post._id.toString());
       if (!result) {
         res.status(HTTP_STATUS_CODE.NOT_FOUND_404).json();
         return;
@@ -90,8 +97,8 @@ class BlogsController {
 
   getPostsByBLog = async (req: RequestWithQuery<UriParamsModel, queryStringType>, res: Response) => {
     try {
-      const blogId = await blogService.findBlogById(req.params.id);
-      const result = await postsQueryRepository.findPosts(req.query, blogId);
+      const blogId = await this.blogService.findBlogById(req.params.id);
+      const result = await this.postsQueryRepository.findPosts(req.query, blogId);
 
       res.status(HTTP_STATUS_CODE.OK_200).json(result);
     } catch (error) {
@@ -99,5 +106,3 @@ class BlogsController {
     }
   };
 }
-
-export const blogsController = new BlogsController();

@@ -6,8 +6,9 @@ import { UserModel } from "../common/db/schemes/userSchema";
 import { CommentModel } from "../common/db/schemes/commentSchema";
 import { SessionModel } from "../common/db/schemes/sessionSchema";
 import { RateLimitModel } from "../common/db/schemes/rateLimitSchema";
+import { LikesModel } from "../common/db/schemes/likesSchema";
 
-class TestingController {
+export class TestingController {
   async clearAllData(req: Request, res: Response): Promise<void> {
     try {
       await BlogModel.deleteMany({});
@@ -16,11 +17,10 @@ class TestingController {
       await SessionModel.deleteMany({});
       await CommentModel.deleteMany({});
       await RateLimitModel.deleteMany({});
+      await LikesModel.deleteMany({});
       res.status(HTTP_STATUS_CODE.NO_CONTENT_204).json();
     } catch (error) {
       res.status(HTTP_STATUS_CODE.SERVER_ERROR_500).json(HTTP_MESSAGE.SERVER_ERROR);
     }
   }
 }
-
-export const testingController = new TestingController();

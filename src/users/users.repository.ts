@@ -5,7 +5,7 @@ import { isObjectId } from '../common/adapters/mongodb.service';
 import { AuthType, updateRecoveryCodeType } from '../auth/types/auth.type';
 import { UserDocument, UserModel } from "../common/db/schemes/userSchema";
 
-class UserRepository {
+export class UserRepository {
   async create(data: UserEntityType): Promise<UserDocument> {
     return await UserModel.create(data);
   };
@@ -55,7 +55,7 @@ class UserRepository {
         'password.recovery': data.code,
         'password.expirationDate': data.expirationDate
       }
-    },);
+    });
   }
 
   async findByRecoveryCode(code: string): Promise<WithId<UserEntityType> | null> {
@@ -70,5 +70,3 @@ class UserRepository {
   }
 
 }
-
-export const userRepository = new UserRepository();

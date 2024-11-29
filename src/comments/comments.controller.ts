@@ -1,17 +1,24 @@
 import { Response } from 'express';
 import { sendError } from '../common/errorHandler';
-import { commentQueryRepository } from './commentQuery.repository';
+import { CommentQueryRepository } from './commentQuery.repository';
 import { HTTP_STATUS_CODE } from '../common/settings';
 import { RequestWithParams, RequestWithParamsAndBody } from '../common/types/types';
 import { UriParamsModel } from '../common/models/uriParams.model';
-import { commentService } from './comment.service';
+import { CommentService } from './comment.service';
 import { CommentInputUpdateModel } from './models/CommentInputUpdate.model';
 import { DataInAccessTokenType } from '../auth/types/auth.type';
+import { LikeStatusType } from "../common/db/schemes/likesSchema";
 
-class CommentsController {
+export class CommentsController {
+  constructor(
+    private commentService: CommentService,
+    private commentQueryRepository: CommentQueryRepository) {
+  }
+
   getComment = async (req: RequestWithParams<UriParamsModel>, res: Response) => {
     try {
-      const result = await commentQueryRepository.findCommentById(req.params.id);
+      const result = await this.commentQueryRepository.findCommentById(req.params.id, req.authorizedUserId);
+
       if (!result) {
         res.status(HTTP_STATUS_CODE.NOT_FOUND_404).json();
         return;
@@ -25,7 +32,7 @@ class CommentsController {
 
   updateComment = async (req: RequestWithParamsAndBody<UriParamsModel, CommentInputUpdateModel>, res: Response) => {
     try {
-      await commentService.updateCommentById(req.params.id, { content: req.body.content }, req.user.userId);
+      await this.commentService.updateCommentById(req.params.id, { content: req.body.content }, req.user.userId);
       res.status(HTTP_STATUS_CODE.NO_CONTENT_204).json();
     } catch (error) {
       sendError(error, res);
@@ -34,12 +41,25 @@ class CommentsController {
 
   deleteComment = async (req: RequestWithParamsAndBody<UriParamsModel, DataInAccessTokenType>, res: Response) => {
     try {
-      await commentService.deleteCommentById(req.params.id, req.user.userId);
+      await this.commentService.deleteCommentById(req.params.id, req.user.userId);
+      res.status(HTTP_STATUS_CODE.NO_CONTENT_204).json();
+    } catch (error) {
+      sendError(error, res);
+    }
+  };
+
+  likeStatus = async (req: RequestWithParamsAndBody<UriParamsModel, { likeStatus: LikeStatusType }>, res: Response) => {
+    try {
+      const data = {
+        likeStatus: req.body.likeStatus,
+        parentId: req.params.id,
+        authorId: req.user.userId
+      };
+      await this.commentService.updateLike(data);
+
       res.status(HTTP_STATUS_CODE.NO_CONTENT_204).json();
     } catch (error) {
       sendError(error, res);
     }
   };
 }
-
-export const commentsController = new CommentsController();

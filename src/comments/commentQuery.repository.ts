@@ -1,18 +1,23 @@
 import { queryStringType } from '../common/types/types';
 import { ObjectId } from 'mongodb';
 import { BaseQueryFieldsUtil } from '../common/utils/baseQueryFields.util';
-import { CommentViewDto } from './dto/commentView.dto';
+import { CommentWithLikeViewDto } from './dto/commentView.dto';
 import { isObjectId } from '../common/adapters/mongodb.service';
 import { CommentsViewModel } from './models/CommentsView.model';
 import { CommentModel } from "../common/db/schemes/commentSchema";
+import { CommentViewType } from "./types/comment.types";
+import { LikeService } from "../like/like.service";
 
-class CommentQueryRepository {
-  async findComments(queryString: queryStringType, id?: string): Promise<CommentsViewModel> {
+export class CommentQueryRepository {
+  constructor(private likeService: LikeService) {
+  }
+
+  async findComments(queryString: queryStringType, id: string, authorId: string | undefined): Promise<CommentsViewModel> {
     const searchString = { postId: id };
 
     const queryHelper = new BaseQueryFieldsUtil(queryString, searchString);
 
-    const result = await CommentModel
+    const comments: CommentViewType[] = await CommentModel
       .find(queryHelper.filter.search)
       .sort(queryHelper.filter.sort)
       .skip(queryHelper.filter.skip)
@@ -20,26 +25,29 @@ class CommentQueryRepository {
       .lean();
 
     const commentsCount = await CommentModel.countDocuments(queryHelper.filter.search);
-    const comments = result.map((item) => new CommentViewDto(item));
+
+    const commentsWithLikes = await this.likeService.getCommentsWithLikes(comments, authorId);
+
+    const result = commentsWithLikes.map((item) => new CommentWithLikeViewDto(item));
 
     return {
       'pagesCount': Math.ceil(commentsCount / queryHelper.pageSize),
       'page': queryHelper.pageNumber,
       'pageSize': queryHelper.pageSize,
       'totalCount': commentsCount,
-      'items': comments,
+      'items': result,
     };
   }
 
-  async findCommentById(id: string): Promise<CommentViewDto | null> {
+  async findCommentById(id: string, authorId?: string): Promise<CommentWithLikeViewDto | null> {
     isObjectId(id);
-    const result = await CommentModel.findOne({ _id: new ObjectId(id) }).lean();
-    if (!result) {
+    const comment = await CommentModel.findOne({ _id: new ObjectId(id) }).lean();
+    if (!comment) {
       return null;
     }
 
-    return new CommentViewDto(result);
+    const commentWithLike = await this.likeService.getCommentWithLike(comment, authorId);
+
+    return new CommentWithLikeViewDto(commentWithLike);
   }
 }
-
-export const commentQueryRepository = new CommentQueryRepository();

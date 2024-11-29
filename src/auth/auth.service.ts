@@ -1,8 +1,7 @@
 import { AuthType, ERROR, TYPE_EMAIL } from './types/auth.type';
 import { CustomError, TYPE_ERROR } from '../common/errorHandler';
-import { nodemailerService } from '../common/adapters/nodemailer.service';
-import { userRepository } from '../users/users.repository';
-import { tokenService } from "../common/services/token.service";
+import { NodemailerService } from '../common/adapters/nodemailer.service';
+import { TokenService } from "../common/services/token.service";
 import { WithId } from "mongodb";
 import { CreateTokensType, PairTokensType, SessionType } from "./types/token.type";
 import { compareHash, generatePasswordHash } from "../common/adapters/bcrypt.service";
@@ -11,13 +10,18 @@ import { getUrlUtil } from "../common/utils/getUrl.util";
 import { RecoveryUpdateDto } from "./dto/recoveryUpdate.dto";
 import { createUuid } from "../common/utils/createUuid.util";
 import { AuthRepository } from "./auth.repository";
+import { UserRepository } from "../users/users.repository";
 
 export class AuthService {
-  constructor(private authRepository: AuthRepository) {
+  constructor(
+    private authRepository: AuthRepository,
+    private userRepository: UserRepository,
+    private nodemailerService: NodemailerService,
+    private tokenService: TokenService) {
   }
 
   async checkCredentials(data: AuthType): Promise<string> {
-    const result = await userRepository.findByLoginOrEmail(data);
+    const result = await this.userRepository.findByLoginOrEmail(data);
     if (!result) throw new CustomError(TYPE_ERROR.AUTH_ERROR);
 
     const isAuth = await compareHash(data.password, result.password.hash);
@@ -28,11 +32,11 @@ export class AuthService {
 
   async registration(email: string, code: string): Promise<void> {
     const link = getUrlUtil.registrationConfirmation(code);
-    nodemailerService.sendEmail(email, link).catch();
+    this.nodemailerService.sendEmail(email, link).catch();
   }
 
   async confirmation(code: string): Promise<void> {
-    const userData = await userRepository.findByConfirmationCode(code);
+    const userData = await this.userRepository.findByConfirmationCode(code);
 
     if (!userData) {
       throw new CustomError(TYPE_ERROR.VALIDATION_ERROR, [{
@@ -55,11 +59,11 @@ export class AuthService {
       }]);
     }
 
-    await userRepository.updateIsConfirmed(userData._id);
+    await this.userRepository.updateIsConfirmed(userData._id);
   }
 
   async resending(email: string): Promise<void> {
-    const userData = await userRepository.findByEmail(email);
+    const userData = await this.userRepository.findByEmail(email);
     if (!userData) {
       throw new CustomError(TYPE_ERROR.VALIDATION_ERROR, [{
         message: ERROR.MESSAGE.EMAIL_NOT_FOUND,
@@ -75,15 +79,15 @@ export class AuthService {
     }
 
     const newCode = createUuid();
-    await userRepository.updateConfirmationCode(userData._id, newCode);
+    await this.userRepository.updateConfirmationCode(userData._id, newCode);
     const link = getUrlUtil.registrationConfirmation(newCode);
-    nodemailerService.sendEmail(email, link, TYPE_EMAIL.RESEND_CODE).catch();
+    this.nodemailerService.sendEmail(email, link, TYPE_EMAIL.RESEND_CODE).catch();
   }
 
   async createTokens(data: CreateTokensType): Promise<PairTokensType> {
     const deviceId = createUuid();
     const payload = { deviceId, userId: data.userId };
-    const tokens = tokenService.generateTokens(payload);
+    const tokens = this.tokenService.generateTokens(payload);
 
     const newData = new SessionCreateDto({ ...data, deviceId, tokenIat: tokens.iat, tokenExp: tokens.exp });
     await this.authRepository.createSessionByData(newData);
@@ -92,9 +96,9 @@ export class AuthService {
   }
 
   async refreshToken(token: string): Promise<PairTokensType> {
-    const { userId, deviceId, iat } = tokenService.getDataToken(token);
+    const { userId, deviceId, iat } = this.tokenService.getDataToken(token);
     const result = await this.findTokenByIat(iat, deviceId);
-    const tokens = tokenService.generateTokens({ userId, deviceId });
+    const tokens = this.tokenService.generateTokens({ userId, deviceId });
 
     const data = { tokenIat: tokens.iat, tokenExp: tokens.exp, lastActiveDate: new Date(tokens.iat * 1000) };
     await this.authRepository.updateSessionById(result._id, data);
@@ -117,7 +121,7 @@ export class AuthService {
   }
 
   async recovery(email: string): Promise<void> {
-    const result = await userRepository.findByEmail(email);
+    const result = await this.userRepository.findByEmail(email);
     if (!result) {
       return;
     }
@@ -125,12 +129,12 @@ export class AuthService {
     const data = new RecoveryUpdateDto({ id: result._id });
     const link = getUrlUtil.passwordRecovery(data.code);
 
-    await userRepository.updateRecoveryCode(data);
-    nodemailerService.sendEmail(email, link, TYPE_EMAIL.RECOVERY_CODE).catch();
+    await this.userRepository.updateRecoveryCode(data);
+    this.nodemailerService.sendEmail(email, link, TYPE_EMAIL.RECOVERY_CODE).catch();
   }
 
   async newPassword(code: string, password: string): Promise<void> {
-    const userData = await userRepository.findByRecoveryCode(code);
+    const userData = await this.userRepository.findByRecoveryCode(code);
     if (!userData) {
       throw new CustomError(TYPE_ERROR.VALIDATION_ERROR, [{
         message: ERROR.MESSAGE.INCORRECT_RECOVERY_CODE,
@@ -150,8 +154,6 @@ export class AuthService {
       hash: await generatePasswordHash(password),
     };
 
-    await userRepository.updatePassword(data);
+    await this.userRepository.updatePassword(data);
   }
 }
-
-// export const authService = new AuthService();

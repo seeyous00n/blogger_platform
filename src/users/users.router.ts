@@ -1,8 +1,8 @@
 import { Router } from 'express';
-import { usersController } from './users.controller';
 import { userDataValidation } from '../common/validation/data.validation';
 import { authBaseGuard } from '../common/middlewares/guards/authBase.guard';
 import { queryStringPaginationUserValidation } from '../common/validation/queryStringPagination.validation';
+import { usersController } from "../composition-root";
 
 const usersRouter = Router();
 
