@@ -26,6 +26,7 @@ import { TokenService } from "./common/services/token.service";
 import { SecurityQueryRepository } from "./security/securityQuery.repository";
 import { RateLimitService } from "./common/services/rateLimit.service";
 import { LikeRepository } from "./like/like.repository";
+import { LikeService } from "./like/like.service";
 
 const authRepository = new AuthRepository();
 const securityRepository = new SecurityRepository();
@@ -38,6 +39,8 @@ const likeRepository = new LikeRepository();
 const nodemailerService = new NodemailerService();
 export const tokenService = new TokenService();
 export const rateLimitService = new RateLimitService();
+
+const likeService = new LikeService();
 const authService = new AuthService(authRepository, userRepository, nodemailerService, tokenService);
 const securityService = new SecurityService(securityRepository, tokenService);
 const userService = new UserService(userRepository);
@@ -49,7 +52,7 @@ const securityQueryRepository = new SecurityQueryRepository(tokenService);
 const usersQueryRepository = new UsersQueryRepository();
 const blogsQueryRepository = new BlogsQueryRepository();
 const postsQueryRepository = new PostsQueryRepository();
-const commentQueryRepository = new CommentQueryRepository();
+const commentQueryRepository = new CommentQueryRepository(likeService);
 
 export const authController = new AuthController(authService, userService, usersQueryRepository, tokenService);
 export const securityController = new SecurityController(securityService, securityQueryRepository);
