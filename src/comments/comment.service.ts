@@ -6,16 +6,15 @@ import { CommentCreateDto } from "./dto/commentCreate.dto";
 import { CommentDocument } from "../common/db/schemes/commentSchema";
 import { CommentRepository } from "./comment.repository";
 import { UserRepository } from "../users/users.repository";
-import { LikeRepository } from "../like/like.repository";
 import { InputLikeStatusType } from "./types/comment.types";
-import { LikeCreateDto } from "../like/dto/likeCreate.dto";
+import { LikeService } from "../like/like.service";
 
 export class CommentService {
   constructor(
     private commentRepository: CommentRepository,
     private userRepository: UserRepository,
     private postsRepository: PostsRepository,
-    private likeRepository: LikeRepository) {
+    private likeService: LikeService) {
   }
 
   async createComment(data: CommentCreateInputModel): Promise<CommentDocument> {
@@ -56,24 +55,25 @@ export class CommentService {
     }
   }
 
-  async updateLike(data: InputLikeStatusType): Promise<void> {
+  async like(data: InputLikeStatusType): Promise<void> {
     const comment = await this.commentRepository.findById(data.parentId);
     if (!comment) {
       throw new CustomError(TYPE_ERROR.NOT_FOUND);
     }
 
-    const like = await this.likeRepository.findLikeByParentIdAndAuthorId(data.parentId, data.authorId);
-    if (!like) {
-      const newLike = new LikeCreateDto(data);
-      await this.likeRepository.createLike(newLike);
-
-      return;
-    }
-
-    if (data.likeStatus !== like.status) {
-      like.status = data.likeStatus;
-
-      await like.save();
-    }
+    await this.likeService.createLike(data);
+    // const like = await this.likeRepository.findLikeByParentIdAndAuthorId(data.parentId, data.authorId);
+    // if (!like) {
+    //   const newLike = new LikeCreateDto(data);
+    //   await this.likeRepository.createLike(newLike);
+    //
+    //   return;
+    // }
+    //
+    // if (data.likeStatus !== like.status) {
+    //   like.status = data.likeStatus;
+    //
+    //   await like.save();
+    // }
   }
 }

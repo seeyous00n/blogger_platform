@@ -6,11 +6,14 @@ import { ObjectId } from 'mongodb';
 import { PostCreateDto } from "./dto/postCreate.dto";
 import { PostDocument } from "../common/db/schemes/postSchema";
 import { PostsRepository } from "./posts.repository";
+import { InputLikeStatusType } from "../comments/types/comment.types";
+import { LikeService } from "../like/like.service";
 
 export class PostService {
   constructor(
     private postsRepository: PostsRepository,
-    private blogsRepository: BlogsRepository) {
+    private blogsRepository: BlogsRepository,
+    private likeService: LikeService) {
   }
 
   async findPostById(id: string): Promise<ObjectId> {
@@ -47,5 +50,14 @@ export class PostService {
     if (!result) {
       throw new CustomError(TYPE_ERROR.NOT_FOUND);
     }
+  }
+
+  async like(data: InputLikeStatusType): Promise<void> {
+    const post = await this.postsRepository.findById(data.parentId);
+    if (!post) {
+      throw new CustomError(TYPE_ERROR.NOT_FOUND);
+    }
+
+    await this.likeService.createLike(data)
   }
 }

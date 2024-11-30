@@ -40,18 +40,18 @@ const nodemailerService = new NodemailerService();
 export const tokenService = new TokenService();
 export const rateLimitService = new RateLimitService();
 
-const likeService = new LikeService(likeRepository);
+const likeService = new LikeService(likeRepository, userRepository);
 const authService = new AuthService(authRepository, userRepository, nodemailerService, tokenService);
 const securityService = new SecurityService(securityRepository, tokenService);
 const userService = new UserService(userRepository);
 const blogService = new BlogService(blogsRepository);
-const postService = new PostService(postsRepository, blogsRepository);
-const commentService = new CommentService(commentRepository, userRepository, postsRepository, likeRepository);
+const postService = new PostService(postsRepository, blogsRepository, likeService);
+const commentService = new CommentService(commentRepository, userRepository, postsRepository, likeService);
 
 const securityQueryRepository = new SecurityQueryRepository(tokenService);
 const usersQueryRepository = new UsersQueryRepository();
 const blogsQueryRepository = new BlogsQueryRepository();
-const postsQueryRepository = new PostsQueryRepository();
+const postsQueryRepository = new PostsQueryRepository(likeService);
 const commentQueryRepository = new CommentQueryRepository(likeService);
 
 export const authController = new AuthController(authService, userService, usersQueryRepository, tokenService);

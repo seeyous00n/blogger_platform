@@ -17,6 +17,7 @@ import { CommentInputParamModel } from '../comments/models/CommentInputParam.mod
 import { CommentService } from '../comments/comment.service';
 import { CommentQueryRepository } from '../comments/commentQuery.repository';
 import { PostService } from "./post.service";
+import { LikeStatusType } from "../common/db/schemes/likesSchema";
 
 export class PostsController {
   constructor(
@@ -28,7 +29,7 @@ export class PostsController {
 
   getPosts = async (req: RequestWithQuery<UriParamsModel, queryStringType>, res: Response) => {
     try {
-      const result = await this.postsQueryRepository.findPosts(req.query);
+      const result = await this.postsQueryRepository.findPosts(req.query, req.authorizedUserId);
       res.status(HTTP_STATUS_CODE.OK_200).json(result);
     } catch (error) {
       sendError(error, res);
@@ -37,7 +38,7 @@ export class PostsController {
 
   getPost = async (req: RequestWithParams<UriParamsModel>, res: Response<PostsViewDto>) => {
     try {
-      const result = await this.postsQueryRepository.findById(req.params.id);
+      const result = await this.postsQueryRepository.findById(req.params.id, req.authorizedUserId);
       if (!result) {
         res.status(HTTP_STATUS_CODE.NOT_FOUND_404).json();
         return;
@@ -99,6 +100,21 @@ export class PostsController {
       const result = await this.commentQueryRepository.findComments(req.query, postId.toString(), req.authorizedUserId);
 
       res.status(HTTP_STATUS_CODE.OK_200).json(result);
+    } catch (error) {
+      sendError(error, res);
+    }
+  };
+
+  likeStatus = async (req: RequestWithParamsAndBody<UriParamsModel, { likeStatus: LikeStatusType }>, res: Response) => {
+    try {
+      const data = {
+        likeStatus: req.body.likeStatus,
+        parentId: req.params.id,
+        authorId: req.user.userId
+      };
+       await this.postService.like(data);
+
+      res.status(HTTP_STATUS_CODE.NO_CONTENT_204).json();
     } catch (error) {
       sendError(error, res);
     }

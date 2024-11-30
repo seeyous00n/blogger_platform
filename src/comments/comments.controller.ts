@@ -55,7 +55,7 @@ export class CommentsController {
         parentId: req.params.id,
         authorId: req.user.userId
       };
-      await this.commentService.updateLike(data);
+      await this.commentService.like(data);
 
       res.status(HTTP_STATUS_CODE.NO_CONTENT_204).json();
     } catch (error) {

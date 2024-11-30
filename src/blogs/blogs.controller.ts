@@ -98,7 +98,7 @@ export class BlogsController {
   getPostsByBLog = async (req: RequestWithQuery<UriParamsModel, queryStringType>, res: Response) => {
     try {
       const blogId = await this.blogService.findBlogById(req.params.id);
-      const result = await this.postsQueryRepository.findPosts(req.query, blogId);
+      const result = await this.postsQueryRepository.findPosts(req.query, req.authorizedUserId, blogId);
 
       res.status(HTTP_STATUS_CODE.OK_200).json(result);
     } catch (error) {
