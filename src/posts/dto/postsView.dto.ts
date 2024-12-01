@@ -1,5 +1,4 @@
 import { ExtendedLikesInfo, PostViewForMapType } from '../types/post.types';
-import { LikeStatusType } from "../../common/db/schemes/likesSchema";
 
 export class PostsViewDto {
   id;

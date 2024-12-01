@@ -1,7 +1,7 @@
 import { queryStringType } from '../common/types/types';
 import { ObjectId } from 'mongodb';
 import { BaseQueryFieldsUtil } from '../common/utils/baseQueryFields.util';
-import { CommentWithLikeViewDto } from './dto/commentView.dto';
+import { CommentViewDto } from './dto/commentView.dto';
 import { isObjectId } from '../common/adapters/mongodb.service';
 import { CommentsViewModel } from './models/CommentsView.model';
 import { CommentModel } from "../common/db/schemes/commentSchema";
@@ -25,21 +25,18 @@ export class CommentQueryRepository {
       .lean();
 
     const commentsCount = await CommentModel.countDocuments(queryHelper.filter.search);
-
     const commentsWithLikes = await this.likeHelper.getCommentsWithLikes(comments, authorId);
-
-    const result = commentsWithLikes.map((item) => new CommentWithLikeViewDto(item));
 
     return {
       'pagesCount': Math.ceil(commentsCount / queryHelper.pageSize),
       'page': queryHelper.pageNumber,
       'pageSize': queryHelper.pageSize,
       'totalCount': commentsCount,
-      'items': result,
+      'items': commentsWithLikes,
     };
   }
 
-  async findCommentById(id: string, authorId?: string): Promise<CommentWithLikeViewDto | null> {
+  async findCommentById(id: string, authorId?: string): Promise<CommentViewDto | null> {
     isObjectId(id);
     const comment = await CommentModel.findOne({ _id: new ObjectId(id) }).lean();
     if (!comment) {
@@ -48,6 +45,6 @@ export class CommentQueryRepository {
 
     const commentWithLike = await this.likeHelper.getCommentWithLike(comment, authorId);
 
-    return new CommentWithLikeViewDto(commentWithLike);
+    return new CommentViewDto(commentWithLike);
   }
 }

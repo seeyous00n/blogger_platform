@@ -27,17 +27,14 @@ export class PostsQueryRepository {
       .lean();
 
     const postsCount = await PostModel.countDocuments(queryHelper.filter.search);
-
     const postsWithLikes = await this.likeHelper.getPostsWithLikes(posts, authorId);
-
-    const result = postsWithLikes.map((item) => new PostsViewDto(item));
 
     return {
       'pagesCount': Math.ceil(postsCount / queryHelper.pageSize),
       'page': queryHelper.pageNumber,
       'pageSize': queryHelper.pageSize,
       'totalCount': postsCount,
-      'items': result,
+      'items': postsWithLikes,
     };
   }
 
