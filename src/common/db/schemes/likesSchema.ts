@@ -9,6 +9,7 @@ export type LikesType = {
   status: LikeStatusType;
   authorId: string;
   parentId: string;
+  authorLogin: string;
   isNewLike: number;
 }
 
@@ -21,6 +22,7 @@ const likesSchema = new mongoose.Schema<LikesType>({
   status: { type: String, enum: ['None', 'Like', 'Dislike'], required: true },
   authorId: { type: String, required: true },
   parentId: { type: String, required: true },
+  authorLogin: { type: String, required: true },
   isNewLike: { type: Number, required: true },
 });
 

@@ -5,10 +5,10 @@ import { BaseQueryFieldsUtil } from '../common/utils/baseQueryFields.util';
 import { isObjectId } from '../common/adapters/mongodb.service';
 import { CommentsViewModel } from './models/postsView.model';
 import { PostModel } from "../common/db/schemes/postSchema";
-import { LikeService } from "../like/like.service";
+import { LikeHelper } from "../like/like.helper";
 
 export class PostsQueryRepository {
-  constructor(private likeService: LikeService) {
+  constructor(private likeHelper: LikeHelper) {
   }
   async findPosts(queryString: queryStringType, authorId: string | undefined, id?: string): Promise<CommentsViewModel> {
     const searchString = id ? { blogId: id } : queryString.searchNameTerm ? {
@@ -28,7 +28,7 @@ export class PostsQueryRepository {
 
     const postsCount = await PostModel.countDocuments(queryHelper.filter.search);
 
-    const postsWithLikes = await this.likeService.getPostsWithLikes(posts, authorId);
+    const postsWithLikes = await this.likeHelper.getPostsWithLikes(posts, authorId);
 
     const result = postsWithLikes.map((item) => new PostsViewDto(item));
 
@@ -48,7 +48,7 @@ export class PostsQueryRepository {
       return null;
     }
 
-    const PostWithLike = await this.likeService.getPostWithLike(post, authorId)
+    const PostWithLike = await this.likeHelper.getPostWithLike(post, authorId)
 
     return new PostsViewDto(PostWithLike);
   }

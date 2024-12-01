@@ -25,8 +25,8 @@ import { NodemailerService } from "./common/adapters/nodemailer.service";
 import { TokenService } from "./common/services/token.service";
 import { SecurityQueryRepository } from "./security/securityQuery.repository";
 import { RateLimitService } from "./common/services/rateLimit.service";
-import { LikeRepository } from "./like/like.repository";
-import { LikeService } from "./like/like.service";
+import { LikeHelper } from "./like/like.helper";
+
 
 const authRepository = new AuthRepository();
 const securityRepository = new SecurityRepository();
@@ -34,25 +34,24 @@ const userRepository = new UserRepository();
 export const blogsRepository = new BlogsRepository();
 const postsRepository = new PostsRepository();
 const commentRepository = new CommentRepository();
-const likeRepository = new LikeRepository();
 
 const nodemailerService = new NodemailerService();
 export const tokenService = new TokenService();
 export const rateLimitService = new RateLimitService();
 
-const likeService = new LikeService(likeRepository, userRepository);
+const likeHelper = new LikeHelper();
 const authService = new AuthService(authRepository, userRepository, nodemailerService, tokenService);
 const securityService = new SecurityService(securityRepository, tokenService);
 const userService = new UserService(userRepository);
 const blogService = new BlogService(blogsRepository);
-const postService = new PostService(postsRepository, blogsRepository, likeService);
-const commentService = new CommentService(commentRepository, userRepository, postsRepository, likeService);
+const postService = new PostService(postsRepository, blogsRepository, userRepository, likeHelper);
+const commentService = new CommentService(commentRepository, userRepository, postsRepository, likeHelper);
 
 const securityQueryRepository = new SecurityQueryRepository(tokenService);
 const usersQueryRepository = new UsersQueryRepository();
 const blogsQueryRepository = new BlogsQueryRepository();
-const postsQueryRepository = new PostsQueryRepository(likeService);
-const commentQueryRepository = new CommentQueryRepository(likeService);
+const postsQueryRepository = new PostsQueryRepository(likeHelper);
+const commentQueryRepository = new CommentQueryRepository(likeHelper);
 
 export const authController = new AuthController(authService, userService, usersQueryRepository, tokenService);
 export const securityController = new SecurityController(securityService, securityQueryRepository);

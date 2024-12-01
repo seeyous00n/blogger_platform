@@ -7,13 +7,15 @@ import { PostCreateDto } from "./dto/postCreate.dto";
 import { PostDocument } from "../common/db/schemes/postSchema";
 import { PostsRepository } from "./posts.repository";
 import { InputLikeStatusType } from "../comments/types/comment.types";
-import { LikeService } from "../like/like.service";
+import { LikeHelper } from "../like/like.helper";
+import { UserRepository } from "../users/users.repository";
 
 export class PostService {
   constructor(
     private postsRepository: PostsRepository,
     private blogsRepository: BlogsRepository,
-    private likeService: LikeService) {
+    private userRepository: UserRepository,
+    private likeHelper: LikeHelper) {
   }
 
   async findPostById(id: string): Promise<ObjectId> {
@@ -57,7 +59,11 @@ export class PostService {
     if (!post) {
       throw new CustomError(TYPE_ERROR.NOT_FOUND);
     }
+    const user = await this.userRepository.findById(data.authorId);
+    if (!user) {
+      throw new CustomError(TYPE_ERROR.NOT_FOUND);
+    }
 
-    await this.likeService.createLike(data)
+    await this.likeHelper.createLike({...data, authorLogin: user.login});
   }
 }

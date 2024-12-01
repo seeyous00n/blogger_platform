@@ -8,4 +8,7 @@ export type ResultLikeType = {
 
 export type LikeWithMyStatusType = ResultLikeType & { myStatus: string }
 
-export type LikesTypeWithId = LikesType & { _id: ObjectId, __v: number }
+export type LikesWithIdType = LikesType & { _id: ObjectId, __v: number }
+
+type NewestType = { addedAt: string, userId: string, login: string }
+export type LikeWithNewestType = LikeWithMyStatusType & { newestLikes: NewestType[] }

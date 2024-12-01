@@ -6,10 +6,10 @@ import { isObjectId } from '../common/adapters/mongodb.service';
 import { CommentsViewModel } from './models/CommentsView.model';
 import { CommentModel } from "../common/db/schemes/commentSchema";
 import { CommentViewType } from "./types/comment.types";
-import { LikeService } from "../like/like.service";
+import { LikeHelper } from "../like/like.helper";
 
 export class CommentQueryRepository {
-  constructor(private likeService: LikeService) {
+  constructor(private likeHelper: LikeHelper) {
   }
 
   async findComments(queryString: queryStringType, id: string, authorId: string | undefined): Promise<CommentsViewModel> {
@@ -26,7 +26,7 @@ export class CommentQueryRepository {
 
     const commentsCount = await CommentModel.countDocuments(queryHelper.filter.search);
 
-    const commentsWithLikes = await this.likeService.getCommentsWithLikes(comments, authorId);
+    const commentsWithLikes = await this.likeHelper.getCommentsWithLikes(comments, authorId);
 
     const result = commentsWithLikes.map((item) => new CommentWithLikeViewDto(item));
 
@@ -46,7 +46,7 @@ export class CommentQueryRepository {
       return null;
     }
 
-    const commentWithLike = await this.likeService.getCommentWithLike(comment, authorId);
+    const commentWithLike = await this.likeHelper.getCommentWithLike(comment, authorId);
 
     return new CommentWithLikeViewDto(commentWithLike);
   }
