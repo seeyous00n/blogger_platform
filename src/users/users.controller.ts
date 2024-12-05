@@ -1,26 +1,27 @@
-import { Request, Response } from 'express';
+import { NextFunction, Request, Response } from 'express';
 import { RequestOnlyQuery, RequestWithBody, userQueryStringType } from '../common/types/types';
 import { UserService } from './user.service';
 import { HTTP_STATUS_CODE } from '../common/settings';
-import { sendError } from '../common/errorHandler';
 import { UserCreateInputModel } from './models/userCreateInput.model';
 import { UsersQueryRepository } from "./usersQuery.repository";
+import { inject, injectable } from "inversify";
 
+@injectable()
 export class UsersController {
-  constructor(private userService: UserService,
-              private usersQueryRepository: UsersQueryRepository) {
+  constructor(@inject(UserService) private userService: UserService,
+              @inject(UsersQueryRepository) private usersQueryRepository: UsersQueryRepository) {
   }
 
-  getUsers = async (req: RequestOnlyQuery<userQueryStringType>, res: Response) => {
+  getUsers = async (req: RequestOnlyQuery<userQueryStringType>, res: Response, next: NextFunction) => {
     try {
       const result = await this.usersQueryRepository.findUsers(req.query);
       res.status(HTTP_STATUS_CODE.OK_200).json(result);
     } catch (error) {
-      sendError(error, res);
+      next(error);
     }
   };
 
-  createUser = async (req: RequestWithBody<UserCreateInputModel>, res: Response) => {
+  createUser = async (req: RequestWithBody<UserCreateInputModel>, res: Response, next: NextFunction) => {
     try {
       const user = await this.userService.createUser(req.body);
       await this.userService.updateIsConfirmed(user._id);
@@ -32,16 +33,16 @@ export class UsersController {
 
       res.status(HTTP_STATUS_CODE.CREATED_201).json(result);
     } catch (error) {
-      sendError(error, res);
+      next(error);
     }
   };
 
-  deleteUser = async (req: Request, res: Response) => {
+  deleteUser = async (req: Request, res: Response, next: NextFunction) => {
     try {
       await this.userService.deleteUserById(req.params.id);
       res.status(HTTP_STATUS_CODE.NO_CONTENT_204).json();
     } catch (error) {
-      sendError(error, res);
+      next(error);
     }
   };
 }

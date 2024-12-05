@@ -1,6 +1,7 @@
 import { NextFunction, Request, Response } from 'express';
 import { HTTP_MESSAGE, HTTP_STATUS_CODE } from '../../settings';
-import { tokenService } from "../../../composition-root";
+import { TokenService } from "../../services/token.service";
+import { container } from "../../../composition-root";
 
 export const BEARER = 'Bearer';
 
@@ -18,6 +19,7 @@ export const authJwtGuard = async (req: Request, res: Response, next: NextFuncti
     return;
   }
 
+  const tokenService = container.resolve(TokenService);
   const payload = tokenService.validateAccessToken(token);
 
   if (!payload) {

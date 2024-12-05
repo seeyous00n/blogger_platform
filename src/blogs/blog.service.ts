@@ -4,9 +4,11 @@ import { BlogUpdateModal } from './models/blogUpdate.modal';
 import { CustomError, TYPE_ERROR } from '../common/errorHandler';
 import { BlogCreateDto } from "./dto/blogCreate.dto";
 import { BlogDocument } from "../common/db/schemes/blogSchema";
+import { inject, injectable } from "inversify";
 
+@injectable()
 export class BlogService {
-  constructor(private blogsRepository: BlogsRepository) {
+  constructor(@inject(BlogsRepository) private blogsRepository: BlogsRepository) {
   }
 
   async findBlogById(id: string): Promise<string> {

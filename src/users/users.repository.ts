@@ -4,7 +4,9 @@ import { UserCreateModel } from './models/userCreate.model';
 import { isObjectId } from '../common/adapters/mongodb.service';
 import { AuthType, updateRecoveryCodeType } from '../auth/types/auth.type';
 import { UserDocument, UserModel } from "../common/db/schemes/userSchema";
+import { injectable } from "inversify";
 
+@injectable()
 export class UserRepository {
   async create(data: UserEntityType): Promise<UserDocument> {
     return await UserModel.create(data);

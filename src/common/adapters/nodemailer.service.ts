@@ -2,6 +2,7 @@ import SMTPTransport from 'nodemailer/lib/smtp-transport';
 import nodemailer from 'nodemailer';
 import { SETTINGS } from '../settings';
 import { TYPE_EMAIL } from '../../auth/types/auth.type';
+import { injectable } from "inversify";
 
 const smtpConfig: SMTPTransport.Options = {
   host: 'smtp.gmail.com',
@@ -13,6 +14,7 @@ const smtpConfig: SMTPTransport.Options = {
   },
 };
 
+@injectable()
 export class NodemailerService {
   sendEmail = async (to: string, link: string, type: string = TYPE_EMAIL.REGISTRATION): Promise<void> => {
     try {

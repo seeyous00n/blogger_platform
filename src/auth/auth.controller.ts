@@ -1,8 +1,7 @@
-import { Response, Request } from 'express';
+import { Response, Request, NextFunction } from 'express';
 import { AuthService } from './auth.service';
 import { RequestWithBody } from '../common/types/types';
 import { AuthType, DataInAccessTokenType, InputNewPasswordType, InputRecoveryType } from './types/auth.type';
-import { sendError } from '../common/errorHandler';
 import { HTTP_STATUS_CODE } from '../common/settings';
 import { UserCreateModel } from '../users/models/userCreate.model';
 import { TOKENS_NAME } from "./types/token.type";
@@ -10,16 +9,18 @@ import { TokenService } from "../common/services/token.service";
 import { UserService } from "../users/user.service";
 import { UsersQueryRepository } from "../users/usersQuery.repository";
 import { cookieOptionsForRefreshToken } from "../common/utils/cookieOptions.util";
+import { inject, injectable } from "inversify";
 
+@injectable()
 export class AuthController {
   constructor(
-    private authService: AuthService,
-    private userService: UserService,
-    private usersQueryRepository: UsersQueryRepository,
-    private tokenService: TokenService) {
+    @inject(AuthService) private authService: AuthService,
+    @inject(UserService) private userService: UserService,
+    @inject(UsersQueryRepository) private usersQueryRepository: UsersQueryRepository,
+    @inject(TokenService) private tokenService: TokenService) {
   }
 
-  authLoginUser = async (req: RequestWithBody<AuthType>, res: Response) => {
+  authLoginUser = async (req: RequestWithBody<AuthType>, res: Response, next: NextFunction) => {
     try {
       const userId = await this.authService.checkCredentials(req.body);
       const data = { userId, ip: req.ip || '', title: req.headers['user-agent'] || '' };
@@ -28,49 +29,49 @@ export class AuthController {
       res.cookie(TOKENS_NAME.REFRESH_TOKEN, refreshToken, cookieOptionsForRefreshToken());
       res.status(HTTP_STATUS_CODE.OK_200).json({ [TOKENS_NAME.ACCESS_TOKEN]: accessToken });
     } catch (error) {
-      sendError(error, res);
+      next(error);
     }
   };
 
-  getMe = async (req: RequestWithBody<DataInAccessTokenType>, res: Response) => {
+  getMe = async (req: RequestWithBody<DataInAccessTokenType>, res: Response, next: NextFunction) => {
     try {
       const result = await this.usersQueryRepository.findAuthUserById(req.user.userId);
       res.status(HTTP_STATUS_CODE.OK_200).json(result);
     } catch (error) {
-      sendError(error, res);
+      next(error);
     }
   };
 
-  registration = async (req: RequestWithBody<UserCreateModel>, res: Response) => {
+  registration = async (req: RequestWithBody<UserCreateModel>, res: Response, next: NextFunction) => {
     try {
       const result = await this.userService.createUser(req.body);
       await this.authService.registration(req.body.email, result.emailConfirmation.confirmationCode);
 
       res.status(HTTP_STATUS_CODE.NO_CONTENT_204).json();
     } catch (error) {
-      sendError(error, res);
+      next(error);
     }
   };
 
-  confirmationEmail = async (req: RequestWithBody<{ code: string }>, res: Response) => {
+  confirmationEmail = async (req: RequestWithBody<{ code: string }>, res: Response, next: NextFunction) => {
     try {
       await this.authService.confirmation(req.body.code);
       res.status(HTTP_STATUS_CODE.NO_CONTENT_204).json();
     } catch (error) {
-      sendError(error, res);
+      next(error);
     }
   };
 
-  resendingEmail = async (req: RequestWithBody<{ email: string }>, res: Response) => {
+  resendingEmail = async (req: RequestWithBody<{ email: string }>, res: Response, next: NextFunction) => {
     try {
       await this.authService.resending(req.body.email);
       res.status(HTTP_STATUS_CODE.NO_CONTENT_204).json();
     } catch (error) {
-      sendError(error, res);
+      next(error);
     }
   };
 
-  refreshToken = async (req: RequestWithBody<DataInAccessTokenType>, res: Response) => {
+  refreshToken = async (req: RequestWithBody<DataInAccessTokenType>, res: Response, next: NextFunction) => {
     try {
       const token: string = req.cookies.refreshToken;
       const { accessToken, refreshToken } = await this.authService.refreshToken(token);
@@ -78,11 +79,11 @@ export class AuthController {
       res.cookie(TOKENS_NAME.REFRESH_TOKEN, refreshToken, cookieOptionsForRefreshToken());
       res.status(HTTP_STATUS_CODE.OK_200).json({ [TOKENS_NAME.ACCESS_TOKEN]: accessToken });
     } catch (error) {
-      sendError(error, res);
+      next(error);
     }
   };
 
-  logout = async (req: Request, res: Response) => {
+  logout = async (req: Request, res: Response, next: NextFunction) => {
     try {
       const token: string = req.cookies.refreshToken;
       const { deviceId, iat } = this.tokenService.getDataToken(token);
@@ -91,25 +92,25 @@ export class AuthController {
       res.clearCookie(TOKENS_NAME.REFRESH_TOKEN);
       res.status(HTTP_STATUS_CODE.NO_CONTENT_204).json();
     } catch (error) {
-      sendError(error, res);
+      next(error);
     }
   };
 
-  passwordRecovery = async (req: RequestWithBody<InputRecoveryType>, res: Response) => {
+  passwordRecovery = async (req: RequestWithBody<InputRecoveryType>, res: Response, next: NextFunction) => {
     try {
       await this.authService.recovery(req.body.email);
       res.status(HTTP_STATUS_CODE.NO_CONTENT_204).json();
     } catch (error) {
-      sendError(error, res);
+      next(error);
     }
   };
 
-  newPassword = async (req: RequestWithBody<InputNewPasswordType>, res: Response) => {
+  newPassword = async (req: RequestWithBody<InputNewPasswordType>, res: Response, next: NextFunction) => {
     try {
       await this.authService.newPassword(req.body.recoveryCode, req.body.newPassword);
       res.status(HTTP_STATUS_CODE.NO_CONTENT_204).json();
     } catch (error) {
-      sendError(error, res);
+      next(error);
     }
   };
 }

@@ -4,11 +4,13 @@ import { SecurityRepository } from "./security.repository";
 import { DeviceAndUserType } from "./types/security.types";
 import { SessionType } from "../auth/types/token.type";
 import { WithId } from "mongodb";
+import { inject, injectable } from "inversify";
 
+@injectable()
 export class SecurityService {
   constructor(
-    private securityRepository: SecurityRepository,
-    private tokenService: TokenService) {
+    @inject(SecurityRepository) private securityRepository: SecurityRepository,
+    @inject(TokenService) private tokenService: TokenService) {
   }
 
   async deleteDevice(token: string, deviceId: string): Promise<void> {

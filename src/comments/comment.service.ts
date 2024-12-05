@@ -8,13 +8,15 @@ import { CommentRepository } from "./comment.repository";
 import { UserRepository } from "../users/users.repository";
 import { InputLikeStatusType } from "./types/comment.types";
 import { LikeHelper } from "../like/like.helper";
+import { inject, injectable } from "inversify";
 
+@injectable()
 export class CommentService {
   constructor(
-    private commentRepository: CommentRepository,
-    private userRepository: UserRepository,
-    private postsRepository: PostsRepository,
-    private likeHelper: LikeHelper) {
+    @inject(CommentRepository) private commentRepository: CommentRepository,
+    @inject(UserRepository) private userRepository: UserRepository,
+    @inject(PostsRepository) private postsRepository: PostsRepository,
+    @inject(LikeHelper) private likeHelper: LikeHelper) {
   }
 
   async createComment(data: CommentCreateInputModel): Promise<CommentDocument> {

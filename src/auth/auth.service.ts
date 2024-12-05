@@ -11,13 +11,15 @@ import { RecoveryUpdateDto } from "./dto/recoveryUpdate.dto";
 import { createUuid } from "../common/utils/createUuid.util";
 import { AuthRepository } from "./auth.repository";
 import { UserRepository } from "../users/users.repository";
+import { inject, injectable } from "inversify";
 
+@injectable()
 export class AuthService {
   constructor(
-    private authRepository: AuthRepository,
-    private userRepository: UserRepository,
-    private nodemailerService: NodemailerService,
-    private tokenService: TokenService) {
+    @inject(AuthRepository) private authRepository: AuthRepository,
+    @inject(UserRepository) private userRepository: UserRepository,
+    @inject(NodemailerService) private nodemailerService: NodemailerService,
+    @inject(TokenService) private tokenService: TokenService) {
   }
 
   async checkCredentials(data: AuthType): Promise<string> {

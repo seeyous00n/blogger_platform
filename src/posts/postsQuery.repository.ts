@@ -6,10 +6,13 @@ import { isObjectId } from '../common/adapters/mongodb.service';
 import { CommentsViewModel } from './models/postsView.model';
 import { PostModel } from "../common/db/schemes/postSchema";
 import { LikeHelper } from "../like/like.helper";
+import { inject, injectable } from "inversify";
 
+@injectable()
 export class PostsQueryRepository {
-  constructor(private likeHelper: LikeHelper) {
+  constructor(@inject(LikeHelper) private likeHelper: LikeHelper) {
   }
+
   async findPosts(queryString: queryStringType, authorId: string | undefined, id?: string): Promise<CommentsViewModel> {
     const searchString = id ? { blogId: id } : queryString.searchNameTerm ? {
       name: {
@@ -45,7 +48,7 @@ export class PostsQueryRepository {
       return null;
     }
 
-    const PostWithLike = await this.likeHelper.getPostWithLike(post, authorId)
+    const PostWithLike = await this.likeHelper.getPostWithLike(post, authorId);
 
     return new PostsViewDto(PostWithLike);
   }

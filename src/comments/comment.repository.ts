@@ -2,7 +2,9 @@ import { ObjectId, WithId } from 'mongodb';
 import { isObjectId } from '../common/adapters/mongodb.service';
 import { CommentEntityType } from './types/comment.types';
 import { CommentDocument, CommentModel } from "../common/db/schemes/commentSchema";
+import { injectable } from "inversify";
 
+@injectable()
 export class CommentRepository {
   async findById(id: string): Promise<WithId<CommentEntityType> | null> {
     isObjectId(id);

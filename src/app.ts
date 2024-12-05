@@ -9,6 +9,7 @@ import cookieParser from "cookie-parser";
 import { securityRouter } from "./security/security.router";
 import { CronService } from "./common/services/cron.service";
 import { testingController } from "./composition-root";
+import { sendError } from "./common/errorHandler";
 
 export const app = express();
 
@@ -25,6 +26,8 @@ app.delete(ROUTER_PATHS.TESTING, testingController.clearAllData);
 app.use('*', (req: Request, res: Response) => {
   res.status(HTTP_STATUS_CODE.NOT_FOUND_404).send(HTTP_MESSAGE.NOT_FOUND);
 });
+//@ts-ignore
+app.use(sendError);
 
 const cronSession = new CronService(60);
 cronSession.deleteExpiredSessions().then();

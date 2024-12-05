@@ -1,4 +1,4 @@
-import { Response } from 'express';
+import { NextFunction, Response } from 'express';
 import { HTTP_STATUS_CODE } from './settings';
 
 export const TYPE_ERROR = {
@@ -27,7 +27,7 @@ export class CustomError extends Error {
   }
 }
 
-export const sendError = (error: any, res: Response): void => {
+export const sendError = (error: Error | CustomError, req: Request, res: Response, next: NextFunction) => {
   if (error instanceof CustomError) {
     const status = STATUSES[error.message as keyof typeof STATUSES];
     const isArrayErrors = !!(error.arrayErrors && error.arrayErrors.length);
@@ -37,4 +37,5 @@ export const sendError = (error: any, res: Response): void => {
   }
 
   res.status(HTTP_STATUS_CODE.SERVER_ERROR_500).json(error.message);
+  next();
 };

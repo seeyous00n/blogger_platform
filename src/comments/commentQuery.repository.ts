@@ -7,9 +7,11 @@ import { CommentsViewModel } from './models/CommentsView.model';
 import { CommentModel } from "../common/db/schemes/commentSchema";
 import { CommentViewType } from "./types/comment.types";
 import { LikeHelper } from "../like/like.helper";
+import { inject, injectable } from "inversify";
 
+@injectable()
 export class CommentQueryRepository {
-  constructor(private likeHelper: LikeHelper) {
+  constructor(@inject(LikeHelper) private likeHelper: LikeHelper) {
   }
 
   async findComments(queryString: queryStringType, id: string, authorId: string | undefined): Promise<CommentsViewModel> {

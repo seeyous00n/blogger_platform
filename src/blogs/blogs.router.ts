@@ -5,8 +5,11 @@ import {
   queryStringPaginationPostsValidation,
   queryStringPaginationValidation
 } from '../common/validation/queryStringPagination.validation';
-import { blogsController } from "../composition-root";
+import { container } from "../composition-root";
 import { isUserAuthorized } from "../common/middlewares/isUserAuthorized";
+import { BlogsController } from "./blogs.controller";
+
+const blogsController = container.resolve(BlogsController);
 
 const blogsRouter = Router();
 

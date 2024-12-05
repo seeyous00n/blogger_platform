@@ -9,13 +9,15 @@ import { PostsRepository } from "./posts.repository";
 import { InputLikeStatusType } from "../comments/types/comment.types";
 import { LikeHelper } from "../like/like.helper";
 import { UserRepository } from "../users/users.repository";
+import { inject, injectable } from "inversify";
 
+@injectable()
 export class PostService {
   constructor(
-    private postsRepository: PostsRepository,
-    private blogsRepository: BlogsRepository,
-    private userRepository: UserRepository,
-    private likeHelper: LikeHelper) {
+    @inject(PostsRepository) private postsRepository: PostsRepository,
+    @inject(BlogsRepository) private blogsRepository: BlogsRepository,
+    @inject(UserRepository) private userRepository: UserRepository,
+    @inject(LikeHelper) private likeHelper: LikeHelper) {
   }
 
   async findPostById(id: string): Promise<ObjectId> {

@@ -4,8 +4,11 @@ import { authBaseGuard } from '../common/middlewares/guards/authBase.guard';
 import { authJwtGuard } from '../common/middlewares/guards/authJwt.guard';
 import { inputValidation } from '../common/validation/input.validation';
 import { queryStringPaginationPostsValidation } from '../common/validation/queryStringPagination.validation';
-import { postsController } from "../composition-root";
+import { container } from "../composition-root";
 import { isUserAuthorized } from "../common/middlewares/isUserAuthorized";
+import { PostsController } from "./posts.controller";
+
+const postsController = container.resolve(PostsController);
 
 const postsRouter = Router();
 
