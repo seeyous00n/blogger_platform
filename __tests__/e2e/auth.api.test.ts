@@ -3,7 +3,7 @@ import { describe } from 'node:test';
 import { HTTP_STATUS_CODE, ROUTER_PATHS } from '../../src/common/settings';
 import { client, runDB } from '../../src/common/db/db';
 import { UserCreateModel } from '../../src/users/models/userCreate.model';
-import { nodemailerService } from '../../src/common/adapters/nodemailer.service';
+// import { nodemailerService } from '../../src/common/adapters/nodemailer.service';
 
 const data: UserCreateModel = { login: 'login11', password: 'login11111', email: 'borovikov.live@gmail.com' };
 
@@ -11,7 +11,7 @@ describe('/auth', async () => {
   beforeAll(async () => {
     await runDB();
 
-    nodemailerService.sendEmail = jest.fn().mockImplementationOnce((): Promise<void> => Promise.resolve());
+    // nodemailerService.sendEmail = jest.fn().mockImplementationOnce((): Promise<void> => Promise.resolve());
   });
 
   beforeEach(async () => {
