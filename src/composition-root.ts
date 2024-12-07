@@ -1,3 +1,4 @@
+import "reflect-metadata";
 import { AuthController } from "./auth/auth.controller";
 import { AuthRepository } from "./auth/auth.repository";
 import { AuthService } from "./auth/auth.service";
@@ -25,40 +26,37 @@ import { NodemailerService } from "./common/adapters/nodemailer.service";
 import { TokenService } from "./common/services/token.service";
 import { SecurityQueryRepository } from "./security/securityQuery.repository";
 import { RateLimitService } from "./common/services/rateLimit.service";
-import { LikeRepository } from "./like/like.repository";
-import { LikeService } from "./like/like.service";
+import { LikeHelper } from "./like/like.helper";
+import { Container } from "inversify";
 
-const authRepository = new AuthRepository();
-const securityRepository = new SecurityRepository();
-const userRepository = new UserRepository();
-export const blogsRepository = new BlogsRepository();
-const postsRepository = new PostsRepository();
-const commentRepository = new CommentRepository();
-const likeRepository = new LikeRepository();
-
-const nodemailerService = new NodemailerService();
-export const tokenService = new TokenService();
 export const rateLimitService = new RateLimitService();
-
-const likeService = new LikeService(likeRepository);
-const authService = new AuthService(authRepository, userRepository, nodemailerService, tokenService);
-const securityService = new SecurityService(securityRepository, tokenService);
-const userService = new UserService(userRepository);
-const blogService = new BlogService(blogsRepository);
-const postService = new PostService(postsRepository, blogsRepository);
-const commentService = new CommentService(commentRepository, userRepository, postsRepository, likeRepository);
-
-const securityQueryRepository = new SecurityQueryRepository(tokenService);
-const usersQueryRepository = new UsersQueryRepository();
-const blogsQueryRepository = new BlogsQueryRepository();
-const postsQueryRepository = new PostsQueryRepository();
-const commentQueryRepository = new CommentQueryRepository(likeService);
-
-export const authController = new AuthController(authService, userService, usersQueryRepository, tokenService);
-export const securityController = new SecurityController(securityService, securityQueryRepository);
-export const usersController = new UsersController(userService, usersQueryRepository);
-export const blogsController = new BlogsController(blogService, blogsQueryRepository, postService, postsQueryRepository);
-export const postsController = new PostsController(postService, postsQueryRepository, commentService, commentQueryRepository);
-export const commentsController = new CommentsController(commentService, commentQueryRepository);
-
 export const testingController = new TestingController();
+
+export const container = new Container();
+
+container.bind<AuthRepository>(AuthRepository).to(AuthRepository);
+container.bind<SecurityRepository>(SecurityRepository).to(SecurityRepository);
+container.bind<UserRepository>(UserRepository).to(UserRepository);
+container.bind<BlogsRepository>(BlogsRepository).to(BlogsRepository);
+container.bind<PostsRepository>(PostsRepository).to(PostsRepository);
+container.bind<CommentRepository>(CommentRepository).to(CommentRepository);
+container.bind<NodemailerService>(NodemailerService).to(NodemailerService);
+container.bind<TokenService>(TokenService).to(TokenService);
+container.bind<LikeHelper>(LikeHelper).to(LikeHelper);
+container.bind<AuthService>(AuthService).to(AuthService);
+container.bind<SecurityService>(SecurityService).to(SecurityService);
+container.bind<UserService>(UserService).to(UserService);
+container.bind<BlogService>(BlogService).to(BlogService);
+container.bind<PostService>(PostService).to(PostService);
+container.bind<CommentService>(CommentService).to(CommentService);
+container.bind<SecurityQueryRepository>(SecurityQueryRepository).to(SecurityQueryRepository);
+container.bind<UsersQueryRepository>(UsersQueryRepository).to(UsersQueryRepository);
+container.bind<BlogsQueryRepository>(BlogsQueryRepository).to(BlogsQueryRepository);
+container.bind<PostsQueryRepository>(PostsQueryRepository).to(PostsQueryRepository);
+container.bind<CommentQueryRepository>(CommentQueryRepository).to(CommentQueryRepository);
+container.bind<AuthController>(AuthController).to(AuthController);
+container.bind<SecurityController>(SecurityController).to(SecurityController);
+container.bind<UsersController>(UsersController).to(UsersController);
+container.bind<BlogsController>(BlogsController).to(BlogsController);
+container.bind<PostsController>(PostsController).to(PostsController);
+container.bind<CommentsController>(CommentsController).to(CommentsController);

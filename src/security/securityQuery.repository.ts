@@ -1,9 +1,11 @@
 import { SecurityViewDto } from "./dto/securityView.dto";
 import { SessionModel } from "../common/db/schemes/sessionSchema";
 import { TokenService } from "../common/services/token.service";
+import { inject, injectable } from "inversify";
 
+@injectable()
 export class SecurityQueryRepository {
-  constructor(private tokenService: TokenService) {
+  constructor(@inject(TokenService) private tokenService: TokenService) {
   }
 
   async getDevises(token: string): Promise<SecurityViewDto[] | null> {

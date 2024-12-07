@@ -1,7 +1,9 @@
 import { SessionType, UpdateSessionType } from "./types/token.type";
 import { ObjectId, WithId } from "mongodb";
 import { SessionDocument, SessionModel } from "../common/db/schemes/sessionSchema";
+import { injectable } from "inversify";
 
+@injectable()
 export class AuthRepository {
   async createSessionByData(data: SessionType): Promise<SessionDocument> {
     return await SessionModel.create(data);

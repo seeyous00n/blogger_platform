@@ -5,7 +5,9 @@ import { BaseQueryFieldsUtil } from '../common/utils/baseQueryFields.util';
 import { isObjectId } from '../common/adapters/mongodb.service';
 import { BlogsViewModel } from './models/blogsView.model';
 import { BlogModel } from "../common/db/schemes/blogSchema";
+import { injectable } from "inversify";
 
+@injectable()
 export class BlogsQueryRepository {
   async findBlogs(queryString: queryStringType): Promise<BlogsViewModel> {
     const searchString = queryString.searchNameTerm ? {

@@ -1,4 +1,4 @@
-import { PostViewType } from '../types/post.types';
+import { ExtendedLikesInfo, PostViewForMapType } from '../types/post.types';
 
 export class PostsViewDto {
   id;
@@ -8,8 +8,9 @@ export class PostsViewDto {
   blogId;
   blogName;
   createdAt;
+  extendedLikesInfo: ExtendedLikesInfo;
 
-  constructor(model: PostViewType) {
+  constructor(model: PostViewForMapType) {
     this.id = model._id.toString();
     this.title = model.title;
     this.shortDescription = model.shortDescription;
@@ -17,5 +18,6 @@ export class PostsViewDto {
     this.blogId = model.blogId.toString();
     this.blogName = model.blogName;
     this.createdAt = model.createdAt;
+    this.extendedLikesInfo = model.extendedLikesInfo;
   }
 }

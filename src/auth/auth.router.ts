@@ -9,7 +9,10 @@ import {
 import { authJwtRefreshGuard } from "../common/middlewares/guards/authJwtRefresh.guard";
 import { rateLimitMiddleware } from "../common/middlewares/rateLimit/rateLimitMiddleware";
 import { inputValidation } from "../common/validation/input.validation";
-import { authController } from "../composition-root";
+import { container } from "../composition-root";
+import { AuthController } from "./auth.controller";
+
+const authController = container.resolve(AuthController);
 
 const authRouter = Router();
 

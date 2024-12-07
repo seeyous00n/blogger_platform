@@ -1,6 +1,6 @@
 import { CommentWithLikeViewType } from '../types/comment.types';
 
-export class CommentWithLikeViewDto {
+export class CommentViewDto {
   id;
   content;
   commentatorInfo;

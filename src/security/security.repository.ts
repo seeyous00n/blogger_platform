@@ -2,7 +2,9 @@ import { ObjectId, WithId } from "mongodb";
 import { SessionType } from "../auth/types/token.type";
 import { DeviceAndUserType } from "./types/security.types";
 import { SessionModel } from "../common/db/schemes/sessionSchema";
+import { injectable } from "inversify";
 
+@injectable()
 export class SecurityRepository {
   async findByDeviceIdAndUserId(data: DeviceAndUserType): Promise<WithId<SessionType> | null> {
     return SessionModel.findOne({ deviceId: data.deviceId, userId: data.userId }).lean();

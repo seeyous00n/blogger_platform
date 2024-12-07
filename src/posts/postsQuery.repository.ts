@@ -5,9 +5,15 @@ import { BaseQueryFieldsUtil } from '../common/utils/baseQueryFields.util';
 import { isObjectId } from '../common/adapters/mongodb.service';
 import { CommentsViewModel } from './models/postsView.model';
 import { PostModel } from "../common/db/schemes/postSchema";
+import { LikeHelper } from "../like/like.helper";
+import { inject, injectable } from "inversify";
 
+@injectable()
 export class PostsQueryRepository {
-  async findPosts(queryString: queryStringType, id?: string): Promise<CommentsViewModel> {
+  constructor(@inject(LikeHelper) private likeHelper: LikeHelper) {
+  }
+
+  async findPosts(queryString: queryStringType, authorId: string | undefined, id?: string): Promise<CommentsViewModel> {
     const searchString = id ? { blogId: id } : queryString.searchNameTerm ? {
       name: {
         $regex: queryString.searchNameTerm,
@@ -16,7 +22,7 @@ export class PostsQueryRepository {
     } : {};
     const queryHelper = new BaseQueryFieldsUtil(queryString, searchString);
 
-    const result = await PostModel
+    const posts = await PostModel
       .find(queryHelper.filter.search)
       .sort(queryHelper.filter.sort)
       .skip(queryHelper.filter.skip)
@@ -24,24 +30,26 @@ export class PostsQueryRepository {
       .lean();
 
     const postsCount = await PostModel.countDocuments(queryHelper.filter.search);
-    const posts = result.map((item) => new PostsViewDto(item));
+    const postsWithLikes = await this.likeHelper.getPostsWithLikes(posts, authorId);
 
     return {
       'pagesCount': Math.ceil(postsCount / queryHelper.pageSize),
       'page': queryHelper.pageNumber,
       'pageSize': queryHelper.pageSize,
       'totalCount': postsCount,
-      'items': posts,
+      'items': postsWithLikes,
     };
   }
 
-  async findById(id: string): Promise<PostsViewDto | null> {
+  async findById(id: string, authorId?: string): Promise<PostsViewDto | null> {
     isObjectId(id);
-    const result = await PostModel.findOne({ _id: new ObjectId(id) }).lean();
-    if (!result) {
+    const post = await PostModel.findOne({ _id: new ObjectId(id) }).lean();
+    if (!post) {
       return null;
     }
 
-    return new PostsViewDto(result);
+    const PostWithLike = await this.likeHelper.getPostWithLike(post, authorId);
+
+    return new PostsViewDto(PostWithLike);
   }
 }

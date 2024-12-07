@@ -7,9 +7,11 @@ import { ObjectId } from 'mongodb';
 import { ERROR } from "../auth/types/auth.type";
 import { UserCreateDto } from "./dto/userCreate.dto";
 import { UserDocument } from "../common/db/schemes/userSchema";
+import { inject, injectable } from "inversify";
 
+@injectable()
 export class UserService {
-  constructor(private userRepository: UserRepository) {
+  constructor(@inject(UserRepository) private userRepository: UserRepository) {
   }
 
   async createUser(data: UserCreateInputModel): Promise<UserDocument> {

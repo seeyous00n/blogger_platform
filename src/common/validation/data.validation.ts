@@ -1,10 +1,13 @@
 import { body } from 'express-validator';
 import { inputValidation } from './input.validation';
-import { blogsRepository } from "../../composition-root";
+import { BlogsRepository } from "../../blogs/blogs.repository";
+import { container } from "../../composition-root";
 
 const BLOG_ID_ERROR_MESSAGE = 'Blog ID not found';
 
 const blogIdValidator = async (value: string): Promise<void> => {
+  const blogsRepository = container.resolve(BlogsRepository);
+
   const blog = await blogsRepository.findById(value);
   if (!blog) {
     throw new Error(BLOG_ID_ERROR_MESSAGE);

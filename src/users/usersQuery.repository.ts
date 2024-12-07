@@ -6,7 +6,9 @@ import { ObjectId } from 'mongodb';
 import { isObjectId } from '../common/adapters/mongodb.service';
 import { UsersViewModel } from './models/usersView.model';
 import { UserModel } from "../common/db/schemes/userSchema";
+import { injectable } from "inversify";
 
+@injectable()
 export class UsersQueryRepository {
   async findUsers(queryString: userQueryStringType): Promise<UsersViewModel> {
     const loginFilter = queryString.searchLoginTerm ? {

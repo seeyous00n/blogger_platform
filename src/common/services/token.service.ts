@@ -2,12 +2,14 @@ import jwt from 'jsonwebtoken';
 import { SETTINGS } from '../settings';
 import { JWTPayloadAccessType, JWTPayloadRefreshType } from '../types/jwt.types';
 import { CustomError, TYPE_ERROR } from "../errorHandler";
+import { injectable } from "inversify";
 
 const JWT_SECRET = <jwt.Secret>SETTINGS.JWT_ACCESS_SECRET;
 const JWT_REFRESH_SECRET = <jwt.Secret>SETTINGS.JWT_REFRESH_SECRET;
-const ACCESS_EXP = '500m';
-const REFRESH_EXP = '1000m';
+const ACCESS_EXP = '10m';
+const REFRESH_EXP = '20m';
 
+@injectable()
 export class TokenService {
   generateTokens(payload: JWTPayloadRefreshType) {
     const accessToken = jwt.sign({ userId: payload.userId }, JWT_SECRET, { expiresIn: ACCESS_EXP });

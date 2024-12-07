@@ -2,8 +2,11 @@ import { Router } from 'express';
 import { authJwtGuard } from '../common/middlewares/guards/authJwt.guard';
 import { commentContentValidator, likeStatusValidator } from '../common/validation/data.validation';
 import { inputValidation } from '../common/validation/input.validation';
-import { commentsController } from "../composition-root";
+import { container } from "../composition-root";
 import { isUserAuthorized } from "../common/middlewares/isUserAuthorized";
+import { CommentsController } from "./comments.controller";
+
+const commentsController = container.resolve(CommentsController);
 
 const commentsRouter = Router();
 

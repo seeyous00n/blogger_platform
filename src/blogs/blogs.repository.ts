@@ -3,7 +3,9 @@ import { BlogUpdateModal } from './models/blogUpdate.modal';
 import { ObjectId, WithId } from 'mongodb';
 import { isObjectId } from '../common/adapters/mongodb.service';
 import { BlogDocument, BlogModel } from "../common/db/schemes/blogSchema";
+import { injectable } from "inversify";
 
+@injectable()
 export class BlogsRepository {
   async findById(id: string): Promise<WithId<BlogEntityType> | null> {
     isObjectId(id);

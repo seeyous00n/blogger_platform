@@ -3,7 +3,9 @@ import { PostUpdateModal } from './models/postUpdate.modal';
 import { ObjectId, WithId } from 'mongodb';
 import { isObjectId } from '../common/adapters/mongodb.service';
 import { PostDocument, PostModel } from "../common/db/schemes/postSchema";
+import { injectable } from "inversify";
 
+@injectable()
 export class PostsRepository {
   async findById(id: string): Promise<WithId<PostEntityType> | null> {
     isObjectId(id);

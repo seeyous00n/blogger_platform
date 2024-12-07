@@ -6,16 +6,17 @@ import { CommentCreateDto } from "./dto/commentCreate.dto";
 import { CommentDocument } from "../common/db/schemes/commentSchema";
 import { CommentRepository } from "./comment.repository";
 import { UserRepository } from "../users/users.repository";
-import { LikeRepository } from "../like/like.repository";
 import { InputLikeStatusType } from "./types/comment.types";
-import { LikeCreateDto } from "../like/dto/likeCreate.dto";
+import { LikeHelper } from "../like/like.helper";
+import { inject, injectable } from "inversify";
 
+@injectable()
 export class CommentService {
   constructor(
-    private commentRepository: CommentRepository,
-    private userRepository: UserRepository,
-    private postsRepository: PostsRepository,
-    private likeRepository: LikeRepository) {
+    @inject(CommentRepository) private commentRepository: CommentRepository,
+    @inject(UserRepository) private userRepository: UserRepository,
+    @inject(PostsRepository) private postsRepository: PostsRepository,
+    @inject(LikeHelper) private likeHelper: LikeHelper) {
   }
 
   async createComment(data: CommentCreateInputModel): Promise<CommentDocument> {
@@ -56,24 +57,17 @@ export class CommentService {
     }
   }
 
-  async updateLike(data: InputLikeStatusType): Promise<void> {
+  async like(data: InputLikeStatusType): Promise<void> {
     const comment = await this.commentRepository.findById(data.parentId);
     if (!comment) {
       throw new CustomError(TYPE_ERROR.NOT_FOUND);
     }
 
-    const like = await this.likeRepository.findLikeByParentIdAndAuthorId(data.parentId, data.authorId);
-    if (!like) {
-      const newLike = new LikeCreateDto(data);
-      await this.likeRepository.createLike(newLike);
-
-      return;
+    const user = await this.userRepository.findById(data.authorId);
+    if (!user) {
+      throw new CustomError(TYPE_ERROR.NOT_FOUND);
     }
 
-    if (data.likeStatus !== like.status) {
-      like.status = data.likeStatus;
-
-      await like.save();
-    }
+    await this.likeHelper.createLike({...data, authorLogin: user.login});
   }
 }

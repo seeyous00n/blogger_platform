@@ -13,7 +13,7 @@ import { BlogCreateModel } from "../../src/blogs/models/blogCreate.model";
 import { PostCreateModel } from "../../src/posts/models/postCreate.model";
 import { CommentCreateInputModel } from "../../src/comments/models/CommentCreateInput.model";
 import { UserCreateModel } from "../../src/users/models/userCreate.model";
-import { nodemailerService } from "../../src/common/adapters/nodemailer.service";
+// import { nodemailerService } from "../../src/common/adapters/nodemailer.service";
 
 export const req = agent(app);
 
@@ -146,7 +146,7 @@ class CreateEntity {
 
   async createUserAndGetToken() {
     const data: UserCreateModel = { login: 'login11', password: 'login11111', email: 'borovikov.live@gmail.com' };
-    nodemailerService.sendEmail = jest.fn().mockImplementationOnce((): Promise<void> => Promise.resolve());
+    // nodemailerService.sendEmail = jest.fn().mockImplementationOnce((): Promise<void> => Promise.resolve());
 
     await req
       .post(`${ROUTER_PATHS.AUTH}/registration`)

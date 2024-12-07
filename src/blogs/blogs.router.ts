@@ -5,13 +5,17 @@ import {
   queryStringPaginationPostsValidation,
   queryStringPaginationValidation
 } from '../common/validation/queryStringPagination.validation';
-import { blogsController } from "../composition-root";
+import { container } from "../composition-root";
+import { isUserAuthorized } from "../common/middlewares/isUserAuthorized";
+import { BlogsController } from "./blogs.controller";
+
+const blogsController = container.resolve(BlogsController);
 
 const blogsRouter = Router();
 
 blogsRouter.get('/', queryStringPaginationValidation, blogsController.getBlogs);
 blogsRouter.get('/:id', blogsController.getBlog);
-blogsRouter.get('/:id/posts', queryStringPaginationPostsValidation, blogsController.getPostsByBLog);
+blogsRouter.get('/:id/posts', isUserAuthorized, queryStringPaginationPostsValidation, blogsController.getPostsByBLog);
 blogsRouter.post('/', authBaseGuard, blogDataValidation, blogsController.createBlog);
 blogsRouter.post('/:id/posts', authBaseGuard, postDataValidationWithoutId, blogsController.createPostByBlog);
 blogsRouter.put('/:id', authBaseGuard, blogDataValidation, blogsController.updateBlog);
